@@ -21,7 +21,6 @@ public class DataController {
 		int brk_pedal = pedal_log.getBrk_pedal();
 		String createAt = pedal_log.getCreateAt();
 		
-		// 데이터베이스 추가 로직 만들기
 		System.out.println(carId);
 		System.out.println(acl_pedal);
 		System.out.println(brk_pedal);
