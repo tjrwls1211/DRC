@@ -6,7 +6,7 @@ public class PedalLog {
 	private int car_id;
 	private int acl_pedal;
 	private int brk_pedal;
-	private LocalDateTime createAt;
+	private String createAt;
 	
 	public PedalLog() {
 		super();
@@ -36,11 +36,11 @@ public class PedalLog {
 		this.brk_pedal = brk_pedal;
 	}
 
-	public LocalDateTime getCreateAt() {
+	public String getCreateAt() {
 		return createAt;
 	}
 
-	public void setCreateAt(LocalDateTime createAt) {
+	public void setCreateAt(String createAt) {
 		this.createAt = createAt;
 	}
 	
