@@ -1,25 +1,21 @@
-package com.trustping.DRC;
+package com.trustping.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trustping.domain.PedalLog;
+
 @RestController
-public class DataController {
+public class PedalDataController {
 	
-	@GetMapping("/")
-	public String Index() {
-		return "hello";
-	}
-	
-	@PostMapping("/data")
-	public ResponseEntity<String> receivePedalLog(@RequestBody PedalLog pedal_log){
-		int carId = pedal_log.getCar_id();
-		int acl_pedal = pedal_log.getAcl_pedal();
-		int brk_pedal = pedal_log.getBrk_pedal();
-		String createAt = pedal_log.getCreateAt();
+	@PostMapping("/pedal")
+	public ResponseEntity<String> receivePedalLog(@RequestBody PedalLog pedalLog){
+		int carId = pedalLog.getCar_id();
+		int acl_pedal = pedalLog.getAcl_pedal();
+		int brk_pedal = pedalLog.getBrk_pedal();
+		String createAt = pedalLog.getCreateAt();
 		
 		System.out.println(carId);
 		System.out.println(acl_pedal);

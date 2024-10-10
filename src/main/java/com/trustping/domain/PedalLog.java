@@ -1,6 +1,4 @@
-package com.trustping.DRC;
-
-import java.time.*;
+package com.trustping.domain;
 
 public class PedalLog {
 	private int car_id;
