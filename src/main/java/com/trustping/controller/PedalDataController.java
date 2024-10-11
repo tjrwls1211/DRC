@@ -12,15 +12,17 @@ public class PedalDataController {
 	
 	@PostMapping("/pedal")
 	public ResponseEntity<String> receivePedalLog(@RequestBody PedalLog pedalLog){
-		int carId = pedalLog.getCar_id();
-		int acl_pedal = pedalLog.getAcl_pedal();
-		int brk_pedal = pedalLog.getBrk_pedal();
-		String createAt = pedalLog.getCreateAt();
+		int carId = pedalLog.getCarId();
+		int aclPedal = pedalLog.getAclPedal();
+		int brkPedal = pedalLog.getBrkPedal();
+		String createdAt = pedalLog.getCreatedAt();
+		String driveState = pedalLog.getDriveState();
 		
 		System.out.println(carId);
-		System.out.println(acl_pedal);
-		System.out.println(brk_pedal);
-		System.out.println(createAt);
+		System.out.println(aclPedal);
+		System.out.println(brkPedal);
+		System.out.println(createdAt);
+		System.out.println(driveState);
 		System.out.println("--------------------------------");
 		return ResponseEntity.ok("데이터 수신 성공");
 	}

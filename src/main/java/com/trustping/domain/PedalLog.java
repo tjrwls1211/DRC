@@ -1,48 +1,55 @@
 package com.trustping.domain;
 
+
 public class PedalLog {
-	private int car_id;
-	private int acl_pedal;
-	private int brk_pedal;
-	private String createAt;
+	private int carId;
+	private int aclPedal;
+	private int brkPedal;
+	private String createdAt;
+	private String driveState;
 	
 	public PedalLog() {
 		super();
 	}
 
-	public int getCar_id() {
-		return car_id;
+	public int getCarId() {
+		return carId;
 	}
 
-	public void setCar_id(int car_id) {
-		this.car_id = car_id;
+	public void setCarId(int carId) {
+		this.carId = carId;
 	}
 
-	public int getAcl_pedal() {
-		return acl_pedal;
+	public int getAclPedal() {
+		return aclPedal;
 	}
 
-	public void setAcl_pedal(int acl_pedal) {
-		this.acl_pedal = acl_pedal;
+	public void setAclPedal(int aclPedal) {
+		this.aclPedal = aclPedal;
 	}
 
-	public int getBrk_pedal() {
-		return brk_pedal;
+	public int getBrkPedal() {
+		return brkPedal;
 	}
 
-	public void setBrk_pedal(int brk_pedal) {
-		this.brk_pedal = brk_pedal;
+	public void setBrkPedal(int brkPedal) {
+		this.brkPedal = brkPedal;
 	}
 
-	public String getCreateAt() {
-		return createAt;
+	public String getCreatedAt() {
+		return createdAt;
 	}
 
-	public void setCreateAt(String createAt) {
-		this.createAt = createAt;
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
 	}
-	
-	
-	
+
+	public String getDriveState() {
+		return driveState;
+	}
+
+	public void setDriveState(String driveState) {
+		this.driveState = driveState;
+	}
 	
 }
