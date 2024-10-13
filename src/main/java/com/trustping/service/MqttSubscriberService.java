@@ -20,7 +20,7 @@ public class MqttSubscriberService implements MqttCallback {
     private MqttClient mqttClient; // 구성에서 mqttclient 받아옴
     
     @Autowired
-    private PedalLogService pedalLogService; // 메시지 전달을 위해 연결
+    private PedalLogSaveService pedalLogService; // 메시지 전달을 위해 연결
     
     @PostConstruct
     public void subscribeToTopic() {

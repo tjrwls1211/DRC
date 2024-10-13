@@ -1,15 +1,31 @@
-package com.trustping.domain;
+package com.trustping.entity;
 
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
+@Entity
 public class PedalLog {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long logId;
 	private int carId;
 	private int aclPedal;
 	private int brkPedal;
-	private String createdAt;
+	@Column(name = "createdAt", columnDefinition = "TIMESTAMP")
+	private LocalDateTime createdAt;
 	private String driveState;
 	
 	public PedalLog() {
 		super();
+	}
+
+	public Long getLogId() {
+		return logId;
+	}
+
+	public void setLogId(Long logId) {
+		this.logId = logId;
 	}
 
 	public int getCarId() {
@@ -36,11 +52,11 @@ public class PedalLog {
 		this.brkPedal = brkPedal;
 	}
 
-	public String getCreatedAt() {
+	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(String createdAt) {
+	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 

@@ -1,8 +1,13 @@
 package com.trustping.repository;
 
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
-public class PedalLogRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.trustping.entity.PedalLog;
+
+
+public interface PedalLogRepository extends JpaRepository<PedalLog, Long> {
+	List<PedalLog> findByCarId(int carId); 
+	void deleteByCarId(int carId);
 }
