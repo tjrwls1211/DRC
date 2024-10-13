@@ -1,3 +1,32 @@
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import MainScreen from './src/screens/MainScreen';
+import MypageScreen from './src/screens/MypageScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
+import SuddenAcceleration from './src/screens/Analysis/SuddenAcceleration';
+import SuddenBraking from './src/screens/Analysis/SuddenBraking';
+import SamePedal from './src/screens/Analysis/SamePedal';
+
+const Stack = createStackNavigator(); // 스택 내비게이션 생성
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="HomeScreen">
+        <Stack.Screen name="MainScreen" component={MainScreen} />
+        <Stack.Screen name="MypageScreen" component={MypageScreen} />
+        <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
+        <Stack.Screen name="SuddenAcceleration" component={SuddenAcceleration} />
+        <Stack.Screen name="SuddenBraking" component={SuddenBraking} />
+        <Stack.Screen name="SamePedal" component={SamePedal} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+/*
+// 오류 발생시 테스트용
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -19,3 +48,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+*/
