@@ -1,8 +1,12 @@
 import React from "react";
 import {View, StyleSheet, Button} from 'react-native';
-import Card from "../components/Card";
+import ViewCard from "../components/Card/ViewCard";
+import TouchCard from "../components/Card/TouchCard";
 import {useNavigation} from '@react-navigation/native';
 import AnalysisTabs from "./Analysis/AnalysisTabs";
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon3 from 'react-native-vector-icons/Ionicons';
 
 const MainScreen = () => {
     const navigation = useNavigation(); // 네비게이션 훅 사용
@@ -27,10 +31,12 @@ const MainScreen = () => {
                 <Button title="설정" onPress={() => navigation.navigate('SettingsScreen')} />
             </View>
             
+            <ViewCard name="OOO" score="30" />
+
             <View style={styles.cardContainer}>
-                <Card title="급가속 분석 결과" onPress={goToSuddenAcceleration} />
-                <Card title="급정거 분석 결과" onPress={goToSuddenBraking} />
-                <Card title="페달동시사용 분석 결과" onPress={goToSamePedal} />
+                <TouchCard analysis_item="급가속 분석 결과" onPress={goToSuddenAcceleration} />
+                <TouchCard analysis_item="급정거 분석 결과" onPress={goToSuddenBraking} />
+                <TouchCard analysis_item="페달동시사용 분석 결과" onPress={goToSamePedal} />
             </View>
         </View>
     );
@@ -53,6 +59,6 @@ const styles = StyleSheet.create({
       flex: 1, // 카드 컨테이너가 남은 공간을 차지하도록 설정
       justifyContent: 'center', // 카드들을 중앙에 정렬
     },
-  });
+});
 
 export default MainScreen;
