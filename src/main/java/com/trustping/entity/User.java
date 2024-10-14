@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "\"user\"")
 public class User {
 	
 	@Id
@@ -13,7 +14,7 @@ public class User {
 	private String nickname;
 	private LocalDateTime birthDate;
 	@Column(name="carId",unique = true)
-	private int carId;
+	private Long carId;
 	
 	public String getId() {
 		return id;
@@ -40,10 +41,10 @@ public class User {
 	public void setBirthDate(LocalDateTime birthDate) {
 		this.birthDate = birthDate;
 	}
-	public int getCarId() {
+	public Long getCarId() {
 		return carId;
 	}
-	public void setCarId(int carId) {
+	public void setCarId(Long carId) {
 		this.carId = carId;
 	}
 

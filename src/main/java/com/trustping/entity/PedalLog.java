@@ -9,6 +9,7 @@ public class PedalLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long logId;
+	@Column(name = "carId",unique=true)
 	private int carId;
 	private int aclPedal;
 	private int brkPedal;

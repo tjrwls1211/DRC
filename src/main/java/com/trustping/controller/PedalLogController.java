@@ -18,10 +18,9 @@ public class PedalLogController {
 	@Autowired
 	private PedalLogService pedalLogService;
 	
-	
 	// READ(차량 번호 입력)
 	@GetMapping("/sel/{carId}")
-	public ResponseEntity<List<PedalLog>> getPedalLogsByData(@PathVariable("carId") int carId) {
+	public ResponseEntity<List<PedalLog>> findPedalLogsByData(@PathVariable("carId") int carId) {
 	    List<PedalLog> pedalLogs = pedalLogService.findByCarId(carId);
 	    return ResponseEntity.ok(pedalLogs);
 	}
@@ -31,4 +30,7 @@ public class PedalLogController {
 	public void delPedalLogsByData(@PathVariable("carId") int carId) {
 	    pedalLogService.deleteByCarId(carId);
 	}
+
+	
+	
 }
