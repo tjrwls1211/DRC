@@ -5,15 +5,17 @@ import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "\"user\"")
-public class User {
-	
+public class UserData {	
 	@Id
 	private String id;
 	private String pw;
 	private String nickname;
 	private LocalDateTime birthDate;
 	private Long carId;
+	
+	public UserData() {
+		super();
+	}
 	
 	public String getId() {
 		return id;

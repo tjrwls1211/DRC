@@ -1,7 +1,13 @@
 package com.trustping.service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+
+import com.trustping.DTO.SAclDTO;
+import com.trustping.DTO.SBrkDTO;
 
 public interface AbnormalDataService {
-	Long findSACLByCarIdAndCreatedAt(Long carId, LocalDateTime createdAt);
+	public Optional<SAclDTO> getSaclByCarIdAndDate(int carId, LocalDateTime dateTime);
+
+	public Optional<SBrkDTO> getSbrkByCarIdAndDate(int carId, LocalDateTime dateTime);
 }

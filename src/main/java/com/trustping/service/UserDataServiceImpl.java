@@ -3,22 +3,24 @@ package com.trustping.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.trustping.entity.User;
-import com.trustping.repository.UserRepository;
+import com.trustping.entity.UserData;
+import com.trustping.repository.UserDataRepository;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserDataServiceImpl implements UserDataService {
 	
 	@Autowired
-	private UserRepository userRepository;
+	private UserDataRepository userDataRepository;
 	
 	public boolean isUserIdDuplicate(String id) {
-	    return userRepository.existsById(id);
+	    return userDataRepository.existsById(id);
 	}
-
-	public void signUpUser(User user) {
-		userRepository.save(user);
+	
+	@Transactional(rollbackFor = Exception.class)
+	public void signUpUser(UserData userData) {
+		userDataRepository.save(userData);
 	}
 
 }

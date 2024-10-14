@@ -2,7 +2,11 @@ package com.trustping.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class AbnormalData {
@@ -10,10 +14,9 @@ public class AbnormalData {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long logId;
-	@Column(name = "carId",unique=true)
-	private Long carId;
-	@Column(name = "createdAt", columnDefinition = "TIMESTAMP")
-	private LocalDateTime createdAt;
+	private int carId;
+	@Column(columnDefinition = "TIMESTAMP")
+	private LocalDateTime dateTime;
 	private int sAcl;
 	private int sBrk;
 	private int bothPedal;
@@ -25,28 +28,28 @@ public class AbnormalData {
 	public void setLogId(Long logId) {
 		this.logId = logId;
 	}
-	public Long getCarId() {
+	public int getCarId() {
 		return carId;
 	}
-	public void setCarId(Long carId) {
+	public void setCarId(int carId) {
 		this.carId = carId;
 	}
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
+	public LocalDateTime getDateTime() {
+		return dateTime;
 	}
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
+	public void setDateTime(LocalDateTime dateTime) {
+		this.dateTime = dateTime;
 	}
 	public int getsAcl() {
 		return sAcl;
 	}
-	public void setsAcl(int sAcl) {
+	public void setSAcl(int sAcl) {
 		this.sAcl = sAcl;
 	}
-	public int getsBrk() {
+	public int getSBrk() {
 		return sBrk;
 	}
-	public void setsBrk(int sBrk) {
+	public void setSBrk(int sBrk) {
 		this.sBrk = sBrk;
 	}
 	public int getBothPedal() {

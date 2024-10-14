@@ -1,16 +1,15 @@
-package com.trustping.dto;
+package com.trustping.DTO;
 
 import java.time.LocalDateTime;
 
-public class AbnormalDataRequest {
+public class AbnormalDataRequestDTO {
     private Long carId;
     private LocalDateTime createdAt; 
 
 
-    public AbnormalDataRequest() {
+    public AbnormalDataRequestDTO() {
     	super();
     }
-
 
     public Long getCarId() {
         return carId;

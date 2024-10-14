@@ -1,8 +1,8 @@
 package com.trustping.service;
 
-import com.trustping.entity.User;
+import com.trustping.entity.UserData;
 
-public interface UserService {
+public interface UserDataService {
 	public boolean isUserIdDuplicate(String id);
-	public void signUpUser(User user);
+	public void signUpUser(UserData userData);
 }
