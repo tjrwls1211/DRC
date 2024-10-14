@@ -12,8 +12,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.trustping.entity.PedalLog;
 import com.trustping.repository.PedalLogRepository;
 
-
-
 @Service
 public class PedalLogSaveService {
 	

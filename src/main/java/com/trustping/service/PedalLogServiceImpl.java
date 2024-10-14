@@ -16,7 +16,7 @@ public class PedalLogServiceImpl implements PedalLogService {
 	private PedalLogRepository pedalLogRepository;
 	
 	public List<PedalLog> findByCarId(int carId) {
-	        return pedalLogRepository.findByCarId(carId); // 이 메서드가 호출되어야 함
+	        return pedalLogRepository.findByCarId(carId); 
 	  }
 	 
 	 @Transactional(rollbackFor = Exception.class)
