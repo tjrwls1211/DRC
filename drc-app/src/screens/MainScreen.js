@@ -2,21 +2,22 @@ import React from "react";
 import {View, StyleSheet, Button} from 'react-native';
 import Card from "../components/Card";
 import {useNavigation} from '@react-navigation/native';
+import AnalysisTabs from "./Analysis/AnalysisTabs";
 
 const MainScreen = () => {
     const navigation = useNavigation(); // 네비게이션 훅 사용
 
     // 각 분석 화면 이동 함수 정의
     const goToSuddenAcceleration = () => {
-        navigation.navigate('SuddenAcceleration');
+        navigation.navigate('AnalysisTabs', { screen: '급가속 분석' });
     };
 
     const goToSuddenBraking = () => {
-        navigation.navigate('SuddenBraking');
+        navigation.navigate('AnalysisTabs', { screen: '급정거 분석' });
     };
 
     const goToSamePedal = () => {
-        navigation.navigate('SamePedal');
+        navigation.navigate('AnalysisTabs', { screen: '페달동시사용 분석' });
     };
 
     return(
@@ -27,7 +28,7 @@ const MainScreen = () => {
             </View>
             
             <View style={styles.cardContainer}>
-                <Card title="급발진 분석 결과" onPress={goToSuddenAcceleration} />
+                <Card title="급가속 분석 결과" onPress={goToSuddenAcceleration} />
                 <Card title="급정거 분석 결과" onPress={goToSuddenBraking} />
                 <Card title="페달동시사용 분석 결과" onPress={goToSamePedal} />
             </View>
