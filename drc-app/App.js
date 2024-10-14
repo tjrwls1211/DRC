@@ -7,6 +7,8 @@ import SettingsScreen from './src/screens/SettingsScreen';
 import SuddenAcceleration from './src/screens/Analysis/SuddenAcceleration';
 import SuddenBraking from './src/screens/Analysis/SuddenBraking';
 import SamePedal from './src/screens/Analysis/SamePedal';
+import PersonalInfoScreen from './src/screens/PersonalInfoScreen';
+import AnalysisTabs from './src/screens/Analysis/AnalysisTabs';
 
 const Stack = createStackNavigator(); // 스택 내비게이션 생성
 
@@ -20,6 +22,8 @@ export default function App() {
         <Stack.Screen name="SuddenAcceleration" component={SuddenAcceleration} />
         <Stack.Screen name="SuddenBraking" component={SuddenBraking} />
         <Stack.Screen name="SamePedal" component={SamePedal} />
+        <Stack.Screen name="PersonalInfoScreen" component={PersonalInfoScreen} />
+        <Stack.Screen name="AnalysisTabs" component={AnalysisTabs} />
       </Stack.Navigator>
     </NavigationContainer>
   );
