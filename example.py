@@ -57,10 +57,6 @@ root.title("Data Display")
 root.geometry("1080x720")
 
 #레이블 생성
-label = tk.Label(root, text="Reading data....", font=("Helvetica", 16))
-label.pack(pady=20)
-
-#레이블 생성
 label = tk.Label(root, text="Reading data....", font=("Georgia", 40))
 label.pack(pady=20)
 
@@ -68,18 +64,13 @@ label.pack(pady=20)
 #조건생성
 def check_info(accel_value, brake_value):
     if accel_value > 100 and brake_value <= 50:
-         #급가속 조건
-        label.config(text="Rapid Acceleration(급가속)")
+        drive_state = "Rapid Acceleration(급가속)"
     elif brake_value > 100 and accel_value <= 50:
-         #급정거 조건
-        label.config(text="Rapid Braking(급정거)")
+        drive_state = "Rapid Braking(급정거)"
     elif accel_value > 50 and brake_value > 50:
-         #양발운전 조건
-        label.config(text="Both Feet Driving(양발운전)")
+        drive_state = "Both Feet Driving(양발운전)"
     else:
-         #노 프라블람
-        label.config(text="Normal Driving(정상주행중)")
-
+        drive_state = "Normal Driving(정상주행중)"
 
 
 print("Tare done! Add weight now...")
@@ -117,7 +108,7 @@ def run_code():
             #requests.post(url, json=data)
             client.publish('pedal', json.dumps(data), 0, retain=False)
 
-            root.after(0, update_label,val_accelerator, val_brake)
+            root.after(0, check_info, val_accelerator, val_brake)
 
             time.sleep(1)
 
