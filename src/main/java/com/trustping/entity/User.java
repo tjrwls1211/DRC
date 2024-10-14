@@ -13,7 +13,6 @@ public class User {
 	private String pw;
 	private String nickname;
 	private LocalDateTime birthDate;
-	@Column(name="carId",unique = true)
 	private Long carId;
 	
 	public String getId() {

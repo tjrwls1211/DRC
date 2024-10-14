@@ -32,6 +32,7 @@ public class MqttSubscriberService implements MqttCallback {
             e.printStackTrace();
         }
     }
+    
 
     @Override
     public void connectionLost(Throwable cause) {

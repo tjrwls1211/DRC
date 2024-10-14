@@ -13,7 +13,7 @@ public class AbnormalDataServiceImpl implements AbnormalDataService{
 	@Autowired
 	private AbnormalDataRepository abnormalDataRepository;
 	
-	public int findSACLByCarIdAndCreatedAt(Long carId, LocalDateTime createdAt) {
+	public Long findSACLByCarIdAndCreatedAt(Long carId, LocalDateTime createdAt) {
 		return abnormalDataRepository.findSACLByCarIdAndCreatedAt(carId, createdAt);
 	}
 }

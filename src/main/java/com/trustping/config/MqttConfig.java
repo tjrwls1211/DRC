@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MqttConfig {
 
-    private static final String MQTT_BROKER_URL = "tcp://(IP추가):1883"; // Mosquitto 브로커 URL
+    private static final String MQTT_BROKER_URL = "tcp://182.231.176.133:1222"; // Mosquitto 브로커 URL
     private static final String CLIENT_ID = "DRC_client"; // 클라이언트 ID
     //private static final String USERNAME = "your-username"; // 필요 시 사용
     //private static final String PASSWORD = "your-password"; // 필요 시 사용

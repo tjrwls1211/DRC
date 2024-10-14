@@ -27,7 +27,5 @@ public class PedalLogServiceImpl implements PedalLogService {
 		System.out.println("Deletion complete.");
 	}
 	
-	public long countByCarIdAndCreatedAtAndDriveState(int carId, LocalDateTime createdAt, String driveState) {
-		return pedalLogRepository.countByCarIdAndCreatedAtAndDriveState(carId, createdAt, driveState);
-	}
+
 }

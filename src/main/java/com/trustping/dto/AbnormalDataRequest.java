@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 
 public class AbnormalDataRequest {
     private Long carId;
-
-
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt; 
 
 
     public AbnormalDataRequest() {
