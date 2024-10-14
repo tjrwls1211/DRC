@@ -33,12 +33,21 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
+  darkModeContainer: {
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginVertical: 20,
+    height: "60%",
+    //backgroundColor: "black",
+  },
   buttonContainer: {
     flex: 1,
-    justifyContent: 'flex-end', // 화면 하단 정렬
+    justifyContent: 'center', // 화면 하단 정렬
     padding: 16,
-    // flexDirection: 'row', // 가로 방향으로 배치
-    // justifyContent: 'center',
+    flexDirection: 'row', // 수평 정렬
+    alignItems: 'center', // 수직 가운데
   },
   title: {
     fontSize: 24,
@@ -49,12 +58,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBootm: 5,
     color: 'gray',
-  },
-  darkModeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 20,
   },
 });
 
