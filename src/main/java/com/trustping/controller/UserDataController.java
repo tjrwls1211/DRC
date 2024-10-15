@@ -19,14 +19,13 @@ public class UserDataController {
 	// ID 중복 확인
 	@PostMapping("/user/check")
 	public ResponseEntity<Boolean> idDuplicateCheck(@RequestParam(name = "id") String id) {
-		boolean isDuplicate = userDataService.isUserIdDuplicate(id);
+		boolean isDuplicate = userDataService.duplicateCheckUser(id);
 		return ResponseEntity.ok(isDuplicate);
 	}
 
-	// 10.15일 확인 예정
-	@PostMapping("/user/signUp")
-	public void signUp(@RequestBody UserData userData) {
-		userDataService.signUpUser(userData);
-	}
-
+	 // 회원 가입
+    @PostMapping("/user/signUp")
+    public ResponseEntity<String> signUp(@RequestBody UserData userData) {
+        return userDataService.registerUser(userData);
+    }
 }
