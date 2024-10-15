@@ -72,6 +72,9 @@ def check_info(accel_value, brake_value):
     else:
         drive_state = "Normal Driving(정상주행중)"
 
+    label.config(text=drive_state)
+
+    data["driveState"] = drive_state
 
 print("Tare done! Add weight now...")
 
@@ -104,7 +107,7 @@ def run_code():
             data["brkPedal"]=int(val_brake)
             now = datetime.now()
             now_format = now.strftime('%Y-%m-%dT%H:%M:%S')
-            data["createdAt"]=str(now_format)
+            data["createdAt"]=str(drive_state)
             #requests.post(url, json=data)
             client.publish('pedal', json.dumps(data), 0, retain=False)
 
@@ -115,5 +118,6 @@ def run_code():
         except Exception as error:
             print(error)
             continue
+
 threading.Thread(target=run_code, daemon=True).start()
 root.mainloop()
