@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trustping.DTO.BothPedalDTO;
 import com.trustping.DTO.SAclDTO;
 import com.trustping.DTO.SBrkDTO;
 import com.trustping.service.AbnormalDataService;
@@ -31,6 +32,14 @@ public class AbnormalDataController {
 			@RequestParam(name = "date") String date) {
 		LocalDateTime dateTime = LocalDateTime.parse(date + "T00:00:00");
 		return abnormalDataService.getSbrkByCarIdAndDate(carId, dateTime);
+	}
+
+	// 양발 운전 날짜로 조회
+	@GetMapping("/abnormal/bothPedal")
+	public Optional<BothPedalDTO> getBothPedal(@RequestParam(name = "carId") int carId,
+			@RequestParam(name = "date") String date) {
+		LocalDateTime dateTime = LocalDateTime.parse(date + "T00:00:00");
+		return abnormalDataService.getBothPedalByCarIdAndDate(carId, dateTime);
 	}
 
 }

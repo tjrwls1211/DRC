@@ -6,11 +6,6 @@ public class AbnormalDataRequestDTO {
     private Long carId;
     private LocalDateTime createdAt; 
 
-
-    public AbnormalDataRequestDTO() {
-    	super();
-    }
-
     public Long getCarId() {
         return carId;
     }
