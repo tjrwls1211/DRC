@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.trustping.entity.UserData;
+import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.service.UserDataService;
 
 @RestController
@@ -25,7 +25,7 @@ public class UserDataController {
 
 	 // 회원 가입
     @PostMapping("/user/signUp")
-    public ResponseEntity<String> signUp(@RequestBody UserData userData) {
-        return userDataService.registerUser(userData);
+    public ResponseEntity<String> signUp(@RequestBody SignUpRequestDTO signUpRequestDTO) {
+        return userDataService.signUpUser(signUpRequestDTO);
     }
 }

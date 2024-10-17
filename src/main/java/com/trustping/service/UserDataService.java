@@ -2,9 +2,9 @@ package com.trustping.service;
 
 import org.springframework.http.ResponseEntity;
 
-import com.trustping.entity.UserData;
+import com.trustping.DTO.SignUpRequestDTO;
 
 public interface UserDataService {
 	public boolean duplicateCheckUser(String id);
-	public ResponseEntity<String> registerUser(UserData userData);
+	public ResponseEntity<String> signUpUser(SignUpRequestDTO signUpRequestDTO);
 }
