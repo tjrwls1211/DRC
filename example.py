@@ -8,14 +8,18 @@ import paho.mqtt.client as mqtt
 import json
 import tkinter as tk
 import threading
+import pygame
 
-ip = 
-port = 
+# IP 및 포트 정보 설정
+ip = "your_ip_here"  # 여기에 IP 주소 입력
+port = "your_port_here"  # 여기에 포트 번호 입력
 
+# 서버 URL 설정
 url = f'http://{ip}:{port}/data'
 
+# 데이터 구조 정의
 data = {
-    "carId": 0,
+    "carId": 1234,  # 차량 ID 설정
     "aclPedal": 0,
     "brkPedal": 0,
     "createdAt": 0,
@@ -27,8 +31,6 @@ def cleanAndExit():
     GPIO.cleanup()  # GPIO 핀 해제
     print("Bye!")
     sys.exit()
-data["carId"]=1234
-
 
 # 첫 번째 HX711 - 엑셀(Accelerator)
 hx1 = HX711(20, 16)
@@ -52,12 +54,33 @@ hx2.tare()
 
 # Tkinter 창생성
 root = tk.Tk()
-root.title("Data Display")
+root.title("Car Driving Display")
 root.geometry("1080x720")
+root.configure(bg="black")
 
-# 레이블 생성
-label = tk.Label(root, text="Reading data....", font=("Georgia", 40))
-label.pack(pady=20)
+# 폰트 설정
+font_large = ("Arial", 40, "bold")
+font_medium = ("Arial", 30, "bold")
+font_small = ("Arial", 20)
+
+# 상태에 따라 색상을 변경하는 함수
+def set_display_state(state):
+    if state == "Rapid Acceleration":
+        label.config(text="Rapid Acceleration (급가속)", fg="red")
+        root.configure(bg="black")
+    elif state == "Rapid Braking":
+        label.config(text="Rapid Braking (급정거)", fg="blue")
+        root.configure(bg="black")
+    elif state == "Both Feet Driving":
+        label.config(text="Both Feet Driving (양발운전)", fg="yellow")
+        root.configure(bg="black")
+    else:
+        label.config(text="Normal Driving (정상주행중)", fg="green")
+        root.configure(bg="black")
+
+# 메인 레이블
+label = tk.Label(root, text="Normal Driving (정상주행중)", font=font_large, fg="green", bg="black")
+label.pack(pady=60)
 
 # pygame 초기화
 pygame.mixer.init()
@@ -66,44 +89,44 @@ pygame.mixer.init()
 last_accel_time = 0
 is_accelerating = False
 
-# 조건 생성 및 음성 재생
-def check_info(accel_value, brake_value):
-    global last_accel_time, is_accelerating
-    
-    if accel_value > 100 and brake_value <= 50:
-        # 급가속 조건
-        label.config(text="Rapid Acceleration(급가속)")
-        
-        if not is_accelerating:
-            last_accel_time = time.time()  # 현재 시간 기록
-            is_accelerating = True
-        else:
-            elapsed_time = time.time() - last_accel_time  # 경과 시간 계산
-            if elapsed_time >= 3:  # 3초 이상 유지될 경우
-                pygame.mixer.music.load("rapid_acceleration.wav")
-                pygame.mixer.music.play()
-                last_accel_time = time.time()  # 시간 업데이트
-
-    elif brake_value > 100 and accel_value <= 50:
-        # 급정거 조건
-        label.config(text="Rapid Braking(급정거)")
-        is_accelerating = False  # 급가속 상태 초기화
-
-    elif accel_value > 50 and brake_value > 50:
-        # 양발운전 조건
-        label.config(text="Both Feet Driving(양발운전)")
-        is_accelerating = False  # 급가속 상태 초기화
-
-    else:
-        # 정상 주행 중
-        label.config(text="Normal Driving(정상주행중)")
-        is_accelerating = False  # 급가속 상태 초기화
-
-print("Tare done! Add weight now...")
-
+# MQTT 설정
 client = mqtt.Client()
 client.connect(ip, 1222, 60)
 
+# 로드셀 데이터와 상태를 업데이트하는 함수
+def check_info(accel_value, brake_value):
+    global last_accel_time, is_accelerating
+
+    if accel_value > 100 and brake_value <= 50:
+        data["driveState"] = "Rapid Acceleration"
+        set_display_state("Rapid Acceleration")
+
+        if not is_accelerating:
+            last_accel_time = time.time()
+            is_accelerating = True
+        else:
+            elapsed_time = time.time() - last_accel_time
+            if elapsed_time >= 3:  # 3초 이상 급가속 상태일 경우
+                pygame.mixer.music.load("rapid_acceleration.mp3")
+                pygame.mixer.music.play()
+                last_accel_time = time.time()
+
+    elif brake_value > 100 and accel_value <= 50:
+        data["driveState"] = "Rapid Braking"
+        set_display_state("Rapid Braking")
+        is_accelerating = False
+
+    elif accel_value > 50 and brake_value > 50:
+        data["driveState"] = "Both Feet Driving"
+        set_display_state("Both Feet Driving")
+        is_accelerating = False
+
+    else:
+        data["driveState"] = "Normal Driving"
+        set_display_state("Normal Driving")
+        is_accelerating = False
+
+# 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
 def run_code():
     while True:
         try:
@@ -129,7 +152,8 @@ def run_code():
             data["createdAt"] = str(now_format)
             client.publish('pedal', json.dumps(data), 0, retain=False)
 
-            root.after(0, check_info, val_accelerator, val_brake)
+            # Tkinter UI 업데이트
+            check_info(val_accelerator, val_brake)  # root.after 대신 바로 호출
 
             time.sleep(1)
 
@@ -137,5 +161,8 @@ def run_code():
             print(error)
             continue
 
+# 쓰레드로 run_code 실행
 threading.Thread(target=run_code, daemon=True).start()
+
+# Tkinter 창 실행
 root.mainloop()
