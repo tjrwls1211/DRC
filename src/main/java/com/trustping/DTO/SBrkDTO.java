@@ -1,13 +1,14 @@
 package com.trustping.DTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SBrkDTO {
-    private int sBrk;
-
-    public int getSBrk() {
-        return sBrk;
-    }
-
-    public void setSBrk(int sBrk) {
-        this.sBrk = sBrk;
-    }
+    private int sBrk;  
 }

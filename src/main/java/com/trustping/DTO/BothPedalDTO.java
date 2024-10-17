@@ -1,14 +1,14 @@
 package com.trustping.DTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BothPedalDTO {
     private int bothPedal;
-
-	public int getBothPedal() {
-		return bothPedal;
-	}
-
-	public void setBothPedal(int bothPedal) {
-		this.bothPedal = bothPedal;
-	}
-
 }

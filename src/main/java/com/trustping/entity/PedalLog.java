@@ -1,9 +1,18 @@
 package com.trustping.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PedalLog {
 	
 	@Id
@@ -15,57 +24,5 @@ public class PedalLog {
 	@Column(name = "createdAt", columnDefinition = "TIMESTAMP")
 	private LocalDateTime createdAt;
 	private String driveState;
-	
-	public PedalLog() {
-		super();
-	}
-
-	public Long getLogId() {
-		return logId;
-	}
-
-	public void setLogId(Long logId) {
-		this.logId = logId;
-	}
-
-	public int getCarId() {
-		return carId;
-	}
-
-	public void setCarId(int carId) {
-		this.carId = carId;
-	}
-
-	public int getAclPedal() {
-		return aclPedal;
-	}
-
-	public void setAclPedal(int aclPedal) {
-		this.aclPedal = aclPedal;
-	}
-
-	public int getBrkPedal() {
-		return brkPedal;
-	}
-
-	public void setBrkPedal(int brkPedal) {
-		this.brkPedal = brkPedal;
-	}
-
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public String getDriveState() {
-		return driveState;
-	}
-
-	public void setDriveState(String driveState) {
-		this.driveState = driveState;
-	}
 	
 }
