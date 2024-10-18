@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trustping.DTO.MfaRequestDTO;
 import com.trustping.DTO.OtpDTO;
 import com.trustping.DTO.SignInRequestDTO;
 import com.trustping.DTO.SignUpRequestDTO;
@@ -46,9 +47,16 @@ public class UserDataController {
     }
     
     // Google OTP 인증키, QRLink 생성
-    @PostMapping("user/mfa")
-    public ResponseEntity<OtpDTO> mfa(@RequestParam(name = "id") String id) {
+    @PostMapping("user/otp")
+    public ResponseEntity<OtpDTO> otp(@RequestParam(name = "id") String id) {
     	OtpDTO otpDTO = userDataService.generateGoogleMFA(id);
     	return ResponseEntity.ok(otpDTO);
+    }
+    
+    // Google OTP 인증
+    @PostMapping("user/mfa")
+    public ResponseEntity<Boolean> mfa(@RequestBody MfaRequestDTO mfaRequestDTO) {
+    	boolean test = userDataService.verifyGoogleMFA(mfaRequestDTO);
+    	return ResponseEntity.ok(test);
     }
 }

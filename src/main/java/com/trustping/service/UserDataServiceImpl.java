@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.trustping.DTO.MfaRequestDTO;
 import com.trustping.DTO.OtpDTO;
 import com.trustping.DTO.SignInRequestDTO;
 import com.trustping.DTO.SignUpRequestDTO;
@@ -30,6 +31,12 @@ public class UserDataServiceImpl implements UserDataService {
 	// 비밀번호 조회
 	public String getPasswordById(String id) {
 		return userDataRepository.findById(id).map(UserData::getPw)
+				.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + id));
+	}
+
+	// otpKey 조회
+	public String getOtpKeyById(String id) {
+		return userDataRepository.findById(id).map(UserData::getOtpKey)
 				.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + id));
 	}
 
@@ -58,14 +65,16 @@ public class UserDataServiceImpl implements UserDataService {
 
 	// 로그인
 	public boolean signInUser(SignInRequestDTO signInRequestDTO) {
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	  
+	    UserData userData = userDataRepository.findById(signInRequestDTO.getId())
+	            .orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + signInRequestDTO.getId()));
 
-		if (!duplicateCheckUser(signInRequestDTO.getId())) {
-			return false;
-		} else {
-			String storedPassword = getPasswordById(signInRequestDTO.getId());
-			return passwordEncoder.matches(signInRequestDTO.getPw(), storedPassword);
-		}
+	    if (passwordEncoder.matches(signInRequestDTO.getPw(), userData.getPw())) {
+	        return true; 
+	    } else {
+	        return false; 
+	    }
 	}
 
 	// Google OTP 생성
@@ -77,13 +86,21 @@ public class UserDataServiceImpl implements UserDataService {
 		String otpKey = googleAuthenticatorKey.getKey();
 		String QRUrl = GoogleAuthenticatorQRGenerator.getOtpAuthURL("server", id, googleAuthenticatorKey);
 		OtpDTO otpDTO = new OtpDTO(otpKey, QRUrl);
-		
+
 		UserData userData = userDataRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-		
+
 		userData.setOtpKey(otpKey);
 		userDataRepository.save(userData);
-		
-		return otpDTO;	
+
+		return otpDTO;
+	}
+	
+	// Google OTP 인증
+	public boolean verifyGoogleMFA(MfaRequestDTO mfaRequestDTO) {
+		GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
+		String otpKey = getOtpKeyById(mfaRequestDTO.getId());
+		boolean verify = googleAuthenticator.authorize(otpKey, mfaRequestDTO.getKey());
+		return verify;
 	}
 
 }
