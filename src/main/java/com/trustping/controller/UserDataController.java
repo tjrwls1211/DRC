@@ -56,7 +56,7 @@ public class UserDataController {
     // Google OTP 인증
     @PostMapping("user/mfa")
     public ResponseEntity<Boolean> mfa(@RequestBody MfaRequestDTO mfaRequestDTO) {
-    	boolean test = userDataService.verifyGoogleMFA(mfaRequestDTO);
-    	return ResponseEntity.ok(test);
+    	boolean isVerified = userDataService.verifyGoogleMFA(mfaRequestDTO);
+    	return ResponseEntity.ok(isVerified);
     }
 }
