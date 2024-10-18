@@ -21,8 +21,8 @@ public class MqttConfig {
     public MqttClient mqttClient() throws MqttException {
     	String mqttBrokerUrl = envConfig.getMqttBrokerUrl();
     	String mqttClientId = envConfig.getMqttClientId();
-    	String userName = envConfig.getMqttUserName();
-    	String userPassword = envConfig.getMqttUserPassword();
+    	//String userName = envConfig.getMqttUserName();
+    	//String userPassword = envConfig.getMqttUserPassword();
     	MqttClient mqttClient = new MqttClient(mqttBrokerUrl, mqttClientId, new MemoryPersistence());
         MqttConnectOptions options = new MqttConnectOptions();
         options.setCleanSession(true);

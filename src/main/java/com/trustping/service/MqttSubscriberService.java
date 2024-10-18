@@ -18,6 +18,8 @@ public class MqttSubscriberService implements MqttCallback {
 
     @Autowired
     private MqttClient mqttClient; // 구성에서 mqttclient 받아옴
+    
+    @Autowired
     private EnvConfig envConfig; // 구독 토픽도 가져옴
     
     @Autowired
