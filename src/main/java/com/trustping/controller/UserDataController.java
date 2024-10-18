@@ -1,14 +1,18 @@
 package com.trustping.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trustping.DTO.SignInRequestDTO;
 import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.service.UserDataService;
+
+import jakarta.validation.Valid;
 
 @RestController
 public class UserDataController {
@@ -18,14 +22,25 @@ public class UserDataController {
 
 	// ID 중복 확인
 	@PostMapping("/user/check")
-	public ResponseEntity<Boolean> idDuplicateCheck(@RequestParam(name = "id") String id) {
+	public ResponseEntity<Boolean> idDuplicateCheck(@Valid @RequestParam(name = "id") String id) {
 		boolean isDuplicate = userDataService.duplicateCheckUser(id);
 		return ResponseEntity.ok(isDuplicate);
 	}
 
 	 // 회원 가입
     @PostMapping("/user/signUp")
-    public ResponseEntity<String> signUp(@RequestBody SignUpRequestDTO signUpRequestDTO) {
+    public ResponseEntity<String> signUp(@Valid @RequestBody SignUpRequestDTO signUpRequestDTO) {
         return userDataService.signUpUser(signUpRequestDTO);
+    }
+
+    // 로그인
+    @PostMapping("/user/login")
+    public ResponseEntity<String> signIn(@Valid @RequestBody SignInRequestDTO signInRequestDTO){
+    	boolean isSignedIn =  userDataService.signInUser(signInRequestDTO);
+    	 if (isSignedIn) {
+             return ResponseEntity.ok("로그인 성공");
+         } else {
+             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: 아이디 또는 비밀번호가 올바르지 않습니다.");
+         }
     }
 }

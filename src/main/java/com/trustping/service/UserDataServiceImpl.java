@@ -1,12 +1,15 @@
 package com.trustping.service;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.trustping.DTO.SignInRequestDTO;
 import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.entity.UserData;
 import com.trustping.repository.UserDataRepository;
@@ -17,10 +20,19 @@ public class UserDataServiceImpl implements UserDataService {
 	@Autowired
 	private UserDataRepository userDataRepository;
 
+	// 아이디 조회
 	public boolean duplicateCheckUser(String id) {
 		return userDataRepository.existsById(id);
 	}
 	
+	// 비밀번호 조회
+	public String getPasswordById(String id) {
+		return userDataRepository.findById(id)
+				.map(UserData::getPw) 
+				.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + id));
+	}
+	
+	// 회원가입
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseEntity<String> signUpUser(SignUpRequestDTO signUpRequestDTO) {
 	   
@@ -47,4 +59,19 @@ public class UserDataServiceImpl implements UserDataService {
 			throw new RuntimeException(e.getMessage());
 		}
 	}
+	
+	// 로그인
+	public boolean signInUser(SignInRequestDTO signInRequestDTO) {
+		BCryptPasswordEncoder passwordEncoder = new  BCryptPasswordEncoder();
+		
+		if (!duplicateCheckUser(signInRequestDTO.getId())) {
+			return false;
+		} 
+		else {
+			String storedPassword = getPasswordById(signInRequestDTO.getId());
+			return passwordEncoder.matches(signInRequestDTO.getPw(), storedPassword);
+		}
+		
+	}
+	
 }
