@@ -21,4 +21,5 @@ public class UserData {
 	private String nickname;
 	private LocalDate birthDate;
 	private Long carId;
+	private String otpKey;
 }
