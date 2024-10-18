@@ -32,5 +32,17 @@ public class EnvConfig {
     public String getMqttClientId() {
     	return dotenv.get("MQTT_CLIENT_ID");
     }
+    
+	public String getMqttUserName() {
+		return dotenv.get("MQTT_USER_NAME");
+	}
+	
+	public String getMqttUserPassword() {
+		return dotenv.get("MQTT_USER_PASSWORD");
+	}
+	
+	public String getMqttTopic() {
+		return dotenv.get("MQTT_TOPIC");
+	}
 }
 

@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PedalLog {
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long logId;

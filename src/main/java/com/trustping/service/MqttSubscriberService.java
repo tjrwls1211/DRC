@@ -9,25 +9,27 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.trustping.config.EnvConfig;
+
 import jakarta.annotation.PostConstruct;
 
 @Service
 public class MqttSubscriberService implements MqttCallback {
 
-    private static final String MQTT_TOPIC = "pedal"; // 구독할 MQTT 주제
-
     @Autowired
     private MqttClient mqttClient; // 구성에서 mqttclient 받아옴
+    private EnvConfig envConfig; // 구독 토픽도 가져옴
     
     @Autowired
     private PedalLogSaveService pedalLogService; // 메시지 전달을 위해 연결함
     
     @PostConstruct
     public void subscribeToTopic() {
+    	String mqttTopic = envConfig.getMqttTopic();
         try {
             mqttClient.setCallback(this);
-            mqttClient.subscribe(MQTT_TOPIC);
-            System.out.println("Subscribed to topic: " + MQTT_TOPIC);
+            mqttClient.subscribe(mqttTopic);
+            System.out.println("Subscribed to topic: " + mqttTopic);
         } catch (Exception e) {
             e.printStackTrace();
         }

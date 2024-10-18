@@ -33,9 +33,9 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310' // JACKSON 의존성 - TIMESTAMP 변환 위해 필요
 	implementation 'org.springframework.boot:spring-boot-starter-validation' // JAKARTA validation 의존성
 	implementation 'org.springframework.boot:spring-boot-starter-security' // spring-security 의존성
+	implementation 'io.github.cdimascio:java-dotenv:5.2.2' // dotenv 의존성
 	compileOnly 'org.projectlombok:lombok' // lombok 의존성
 	annotationProcessor 'org.projectlombok:lombok' // lombok 의존성 2
-	implementation 'io.github.cdimascio:java-dotenv:5.2.2' // dotenv 의존성
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
