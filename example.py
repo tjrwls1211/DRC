@@ -7,6 +7,7 @@ from hx711 import HX711
 import paho.mqtt.client as mqtt
 import json
 import tkinter as tk
+from PIL import Image, ImageTk
 import threading
 import pygame
 
@@ -63,24 +64,23 @@ font_large = ("Arial", 40, "bold")
 font_medium = ("Arial", 30, "bold")
 font_small = ("Arial", 20)
 
-# 상태에 따라 색상을 변경하는 함수
-def set_display_state(state):
-    if state == "Rapid Acceleration":
-        label.config(text="Rapid Acceleration (급가속)", fg="red")
-        root.configure(bg="black")
-    elif state == "Rapid Braking":
-        label.config(text="Rapid Braking (급정거)", fg="blue")
-        root.configure(bg="black")
-    elif state == "Both Feet Driving":
-        label.config(text="Both Feet Driving (양발운전)", fg="yellow")
-        root.configure(bg="black")
-    else:
-        label.config(text="Normal Driving (정상주행중)", fg="green")
-        root.configure(bg="black")
+# 이미지 로드
+accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((300, 300)))
+accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((300, 300)))
+brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((300, 300)))
+brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((300, 300)))
 
-# 메인 레이블
-label = tk.Label(root, text="Normal Driving (정상주행중)", font=font_large, fg="green", bg="black")
-label.pack(pady=60)
+
+# 이미지 레이블 생성
+accel_label = tk.Label(root, image=accel_img_dark, bg="black")
+accel_label.pack(side="left", padx=50, pady=20)
+
+brake_label = tk.Label(root, image=brake_img_dark, bg="black")
+brake_label.pack(side="right", padx=50, pady=20)
+
+# 상태 텍스트 레이블
+status_label = tk.Label(root, text="Normal Driving (정상주행중)", font=font_large, fg="green", bg="black")
+status_label.pack(pady=20)
 
 # pygame 초기화
 pygame.mixer.init()
@@ -93,13 +93,36 @@ is_accelerating = False
 client = mqtt.Client()
 client.connect(ip, 1222, 60)
 
+# 상태 업데이트 및 이미지 전환 함수
+def update_display_state(accel_value, brake_value, state):
+    if state == "Rapid Acceleration":
+        status_label.config(text="Rapid Acceleration (급가속)", fg="red")
+        accel_label.config(image=accel_img_normal)
+    elif state == "Rapid Braking":
+        status_label.config(text="Rapid Braking (급정거)", fg="blue")
+        brake_label.config(image=brake_img_normal)
+    elif state == "Both Feet Driving":
+        status_label.config(text="Both Feet Driving (양발운전)", fg="yellow")
+    elif accel_value < 5:
+        accel_label.config(image=accel_img_dark)
+    else:
+        accel_label.config(image=accel_img_normal)
+
+    if brake_value < 5:
+        brake_label.config(image=brake_img_dark)
+    else:
+        brake_label.config(image=brake_img_normal)
+
+    if state == "Normal Driving":
+        status_label.config(text="Normal Driving (정상주행중)", fg="green")
+
 # 로드셀 데이터와 상태를 업데이트하는 함수
 def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating
 
     if accel_value > 100 and brake_value <= 50:
         data["driveState"] = "Rapid Acceleration"
-        set_display_state("Rapid Acceleration")
+        update_display_state(accel_value, brake_value, "Rapid Acceleration")
 
         if not is_accelerating:
             last_accel_time = time.time()
@@ -113,17 +136,17 @@ def check_info(accel_value, brake_value):
 
     elif brake_value > 100 and accel_value <= 50:
         data["driveState"] = "Rapid Braking"
-        set_display_state("Rapid Braking")
+        update_display_state(accel_value, brake_value, "Rapid Braking")
         is_accelerating = False
 
     elif accel_value > 50 and brake_value > 50:
         data["driveState"] = "Both Feet Driving"
-        set_display_state("Both Feet Driving")
+        update_display_state(accel_value, brake_value, "Both Feet Driving")
         is_accelerating = False
 
     else:
         data["driveState"] = "Normal Driving"
-        set_display_state("Normal Driving")
+        update_display_state(accel_value, brake_value, "Normal Driving")
         is_accelerating = False
 
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
@@ -153,7 +176,7 @@ def run_code():
             client.publish('pedal', json.dumps(data), 0, retain=False)
 
             # Tkinter UI 업데이트
-            check_info(val_accelerator, val_brake)  # root.after 대신 바로 호출
+            check_info(val_accelerator, val_brake)
 
             time.sleep(1)
 
