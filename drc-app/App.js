@@ -9,21 +9,29 @@ import SuddenBraking from './src/screens/Analysis/SuddenBraking';
 import SamePedal from './src/screens/Analysis/SamePedal';
 import PersonalInfoScreen from './src/screens/PersonalInfoScreen';
 import AnalysisTabs from './src/screens/Analysis/AnalysisTabs';
+import LoginScreen from '.src/screens/LoginScreen';
+import SingUpScreen from '.src/screens/SingUpScreen';
+
 
 const Stack = createStackNavigator(); // 스택 내비게이션 생성
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="HomeScreen">
-        <Stack.Screen name="MainScreen" component={MainScreen} />
-        <Stack.Screen name="MypageScreen" component={MypageScreen} />
-        <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
-        <Stack.Screen name="SuddenAcceleration" component={SuddenAcceleration} />
-        <Stack.Screen name="SuddenBraking" component={SuddenBraking} />
-        <Stack.Screen name="SamePedal" component={SamePedal} />
-        <Stack.Screen name="PersonalInfoScreen" component={PersonalInfoScreen} />
+      <Stack.Navigator
+      initialRouteName="LoginScreen"
+      screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen name="MainScreen" component={MainScreen}  />
+        <Stack.Screen name="MypageScreen" component={MypageScreen} options={{ headerTitle: 'MY 페이지' ,headerShown: true , headerTitleAlign: 'center'}}  />
+        <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ headerTitle: '설정', headerShown: true , headerTitleAlign: 'center'}}  />
+        <Stack.Screen name="SuddenAcceleration" component={SuddenAcceleration}  />
+        <Stack.Screen name="SuddenBraking" component={SuddenBraking}  />
+        <Stack.Screen name="SamePedal" component={SamePedal}  />
+        <Stack.Screen name="PersonalInfoScreen" component={PersonalInfoScreen} options={{ headerTitle: '개인정보' ,headerShown: true , headerTitleAlign: 'center'}} />
         <Stack.Screen name="AnalysisTabs" component={AnalysisTabs} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="SingUpScreen" component={SingUpScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

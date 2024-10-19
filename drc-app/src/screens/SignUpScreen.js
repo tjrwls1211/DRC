@@ -12,6 +12,7 @@ const SingUpScreen = () => {
       setUseCheck(false)
     }
   };
+  
   return (
     <View style={Styles.container}>      
       <Text style={Styles.LogoText}>DRC</Text>
@@ -54,21 +55,25 @@ const SingUpScreen = () => {
         />
 
         <TouchableOpacity 
-          style={Styles.RegisterBtn}
-          onPress = {
-          ()=>{
-            props.navigation.navigate("Home")
-          }
-        }
-        >
-          <Text style={Styles.BtnText}>Register</Text>
+          style={Styles.SingUpBtn}
+          onPress={() => navigation.navigate("LoginScreen", { screen: 'LoginScreen' })}>
+          <Text style={Styles.BtnText}>SingUp</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={{marginTop: 20}}
+          onPress={() => navigation.navigate("LoginScreen", { screen: 'LoginScreen' })}>
+        <Text style={Styles.LoginText}>로그인하러가기</Text>
+        </TouchableOpacity>
+
+
+
       </View>
     </View>
   )
 }
 
-export default RegisterScreen;
+export default SingUpScreen;
 
 const Styles = StyleSheet.create({
   container: {
@@ -99,7 +104,7 @@ const Styles = StyleSheet.create({
     borderColor: '#D9D9D9',
     borderWidth: 1
   },
-  RegisterBtn: {
+  SingUpBtn: {
     margin: 10,
     backgroundColor: "black",
     padding: 10,
@@ -111,5 +116,10 @@ const Styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color:'white',
-  }  
+  },
+  LoginText: {
+    fontSize: 14,
+    textAlign: 'center',
+    color:'#cccccc',
+  } 
 })

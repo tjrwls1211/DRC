@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen = () => {
@@ -25,16 +25,17 @@ const LoginScreen = () => {
         />
         
         <TouchableOpacity 
-          style={Styles.RegisterBtn}
-          onPress = {
-          ()=>{
-            props.navigation.navigate("Home")
-          }
-        }>
-        <Text style={Styles.BtnText}>Register</Text>
+          style={Styles.LoginBtn}
+          onPress={() => navigation.navigate("MainScreen", { screen: 'MainScreen' })}>
+        <Text style={Styles.BtnText}>Login</Text>
         </TouchableOpacity>
-        
-        
+
+        <TouchableOpacity 
+          style={{marginTop: 20}}
+          onPress={() => navigation.navigate("SingUpScreen", { screen: 'SignUpScreen' })}>
+        <Text style={Styles.SignUpText}>회원가입하러가기</Text>
+        </TouchableOpacity>
+              
 
 
       </View>
@@ -73,7 +74,7 @@ const Styles = StyleSheet.create({
     borderColor: '#D9D9D9',
     borderWidth: 1
   },
-  RegisterBtn: {
+  LoginBtn: {
     margin: 10,
     backgroundColor: "black",
     padding: 10,
@@ -85,5 +86,10 @@ const Styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color:'white',
+  },
+  SignUpText: {
+    fontSize: 14,
+    textAlign: 'center',
+    color:'#cccccc',
   }
 })
