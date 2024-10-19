@@ -1,6 +1,6 @@
 package com.trustping.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,7 +23,7 @@ public class AbnormalData {
 	private Long logId;
 	private int carId;
 	@Column(columnDefinition = "TIMESTAMP")
-	private LocalDateTime dateTime;
+	private LocalDate date;
 	private int sAcl;
 	private int sBrk;
 	private int bothPedal;

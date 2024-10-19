@@ -48,14 +48,14 @@ public class UserDataController {
     }
     
     // Google OTP 인증키, QRLink 생성
-    @PostMapping("user/otp")
+    @PostMapping("/otp")
     public ResponseEntity<OtpDTO> otp(@RequestParam(name = "id") String id) {
     	OtpDTO otpDTO = userDataService.generateGoogleMFA(id);
     	return ResponseEntity.ok(otpDTO);
     }
     
     // Google OTP 인증
-    @PostMapping("user/mfa")
+    @PostMapping("/mfa")
     public ResponseEntity<Boolean> mfa(@RequestBody MfaRequestDTO mfaRequestDTO) {
     	boolean isVerified = userDataService.verifyGoogleMFA(mfaRequestDTO);
     	return ResponseEntity.ok(isVerified);

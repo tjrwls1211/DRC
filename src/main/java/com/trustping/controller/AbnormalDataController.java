@@ -19,7 +19,7 @@ import com.trustping.service.AbnormalDataService;
 public class AbnormalDataController {
 	@Autowired
 	private AbnormalDataService abnormalDataService;
-
+	/*
 	// 급가속 날짜로 조회
 	@GetMapping("/sacl")
 	public Optional<SAclDTO> getSacl(@RequestParam(name = "carId") int carId,
@@ -43,5 +43,6 @@ public class AbnormalDataController {
 		LocalDateTime dateTime = LocalDateTime.parse(date + "T00:00:00");
 		return abnormalDataService.getBothPedalByCarIdAndDate(carId, dateTime);
 	}
+	*/
 
 }

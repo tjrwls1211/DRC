@@ -1,6 +1,6 @@
 package com.trustping.DTO;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 public class AbnormalDataRequestDTO {
     private Long carId;
-    private LocalDateTime createdAt; 
+    private LocalDate createdAt; 
 
 }
