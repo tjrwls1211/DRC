@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button } from "rea
 import { useNavigation } from "@react-navigation/native";
 import {useState, useEffect}  from 'react';
 
-const SingUpScreen = () => {
+const SignUpScreen = () => {
   const navigation = useNavigation();
   const [useCheck, setUseCheck] = useState(false);
   const useBtnEvent =()=>{
@@ -55,9 +55,9 @@ const SingUpScreen = () => {
         />
 
         <TouchableOpacity 
-          style={Styles.SingUpBtn}
+          style={Styles.SignUpBtn}
           onPress={() => navigation.navigate("LoginScreen", { screen: 'LoginScreen' })}>
-          <Text style={Styles.BtnText}>SingUp</Text>
+          <Text style={Styles.BtnText}>SignUp</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -73,7 +73,7 @@ const SingUpScreen = () => {
   )
 }
 
-export default SingUpScreen;
+export default SignUpScreen;
 
 const Styles = StyleSheet.create({
   container: {
@@ -104,7 +104,7 @@ const Styles = StyleSheet.create({
     borderColor: '#D9D9D9',
     borderWidth: 1
   },
-  SingUpBtn: {
+  SignUpBtn: {
     margin: 10,
     backgroundColor: "black",
     padding: 10,

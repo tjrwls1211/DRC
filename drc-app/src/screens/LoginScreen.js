@@ -1,47 +1,46 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+
   return (
     <View style={Styles.container}>      
       <Text style={Styles.LogoText}>DRC</Text>
-      <View style = {Styles.LoginView}>
+      <View style={Styles.LoginView}>
 
         <Text>ID (Email)</Text>
         <TextInput 
           style={Styles.TextInput} 
-          onChangeText={(text) => {this.setState({inputText: text})}}
+          onChangeText={setEmail}
           placeholder="ID (Email)"
           placeholderTextColor="#D9D9D9"
         />
         <Text>Password</Text>
         <TextInput 
           style={Styles.TextInput} 
-          onChangeText={(text) => {this.setState({inputText: text})}}
+          onChangeText={setPassword}
           placeholder="password"
           placeholderTextColor="#D9D9D9"
+          secureTextEntry={true}
         />
         
         <TouchableOpacity 
           style={Styles.LoginBtn}
-          onPress={() => navigation.navigate("MainScreen", { screen: 'MainScreen' })}>
-        <Text style={Styles.BtnText}>Login</Text>
+          onPress={handleLogin}>
+          <Text style={Styles.BtnText}>Login</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
           style={{marginTop: 20}}
-          onPress={() => navigation.navigate("SingUpScreen", { screen: 'SignUpScreen' })}>
-        <Text style={Styles.SignUpText}>회원가입하러가기</Text>
+          onPress={() => navigation.navigate("SignUpScreen", { screen: 'SignUpScreen' })}>
+          <Text style={Styles.SignUpText}>회원가입하러가기</Text>
         </TouchableOpacity>
-              
-
-
       </View>
     </View>
-  )
-}
+  );
+};
 
 export default LoginScreen;
 
@@ -50,9 +49,9 @@ const Styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  LoginView:{
+  LoginView: {
     flex: 1,
-    padding:20,
+    padding: 20,
     margin: 35,
     marginBottom: "50%",
     justifyContent: 'center',
@@ -62,7 +61,7 @@ const Styles = StyleSheet.create({
   },
   LogoText: {
     fontSize: 30,
-    marginTop:"30%",
+    marginTop: "30%",
     textAlign: "center",
   },
   TextInput: {
@@ -82,14 +81,19 @@ const Styles = StyleSheet.create({
     alignSelf: "center",
     borderRadius: 10
   },
-  BtnText:{
+  BtnText: {
     fontWeight: 'bold',
     textAlign: 'center',
-    color:'white',
+    color: 'white',
   },
   SignUpText: {
     fontSize: 14,
     textAlign: 'center',
-    color:'#cccccc',
+    color: '#cccccc',
+  },
+  ErrorMessage: {
+    color: 'red', 
+    marginBottom: 10,
+    textAlign: 'center', 
   }
-})
+});
