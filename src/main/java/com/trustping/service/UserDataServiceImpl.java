@@ -66,16 +66,20 @@ public class UserDataServiceImpl implements UserDataService {
 	// 로그인
 	public boolean signInUser(SignInRequestDTO signInRequestDTO) {
 	    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-	  
-	    UserData userData = userDataRepository.findById(signInRequestDTO.getId())
-	            .orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + signInRequestDTO.getId()));
-
-	    if (passwordEncoder.matches(signInRequestDTO.getPw(), userData.getPw())) {
-	        return true; 
-	    } else {
-	        return false; 
+	
+	    UserData userData = userDataRepository.findById(signInRequestDTO.getId()).orElse(null);
+	    if (userData == null) {
+	        return false;
 	    }
+	    
+	    if (!passwordEncoder.matches(signInRequestDTO.getPw(), userData.getPw())) {
+	        return false;
+	    } else {
+	    	return true;
+	    }
+	    
 	}
+
 
 	// Google OTP 생성
 	@Transactional(rollbackFor = Exception.class)
