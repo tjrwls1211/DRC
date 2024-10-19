@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,26 +18,26 @@ import com.trustping.service.UserDataService;
 import jakarta.validation.Valid;
 
 @RestController
+@RequestMapping("/api/user")
 public class UserDataController {
-
 	@Autowired
 	private UserDataService userDataService;
 
 	// ID 중복 확인
-	@PostMapping("/user/check")
+	@PostMapping("/check")
 	public ResponseEntity<Boolean> idDuplicateCheck(@Valid @RequestParam(name = "id") String id) {
 		boolean isDuplicate = userDataService.duplicateCheckUser(id);
 		return ResponseEntity.ok(isDuplicate);
 	}
 
 	 // 회원 가입
-    @PostMapping("/user/signUp")
+    @PostMapping("/signUp")
     public ResponseEntity<String> signUp(@Valid @RequestBody SignUpRequestDTO signUpRequestDTO) {
         return userDataService.signUpUser(signUpRequestDTO);
     }
 
     // 로그인
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     public ResponseEntity<String> signIn(@Valid @RequestBody SignInRequestDTO signInRequestDTO){
     	boolean isSignedIn =  userDataService.signInUser(signInRequestDTO);
     	 if (isSignedIn) {
