@@ -1,7 +1,6 @@
 import time
 import sys
 import RPi.GPIO as GPIO
-import requests
 from datetime import datetime
 from hx711 import HX711
 import paho.mqtt.client as mqtt
@@ -61,15 +60,12 @@ root.configure(bg="black")
 
 # 폰트 설정
 font_large = ("Arial", 40, "bold")
-font_medium = ("Arial", 30, "bold")
-font_small = ("Arial", 20)
 
 # 이미지 로드
 accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((300, 300)))
 accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((300, 300)))
 brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((300, 300)))
 brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((300, 300)))
-
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
@@ -95,26 +91,39 @@ client.connect(ip, 1222, 60)
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
+    # 이미지와 텍스트 상태 업데이트
+    if accel_value < 30:
+        accel_label.config(image=accel_img_dark)
+        accel_text_label.config(text="")
+    else:
+        accel_label.config(image=accel_img_normal)
+
+    if brake_value < 30:
+        brake_label.config(image=brake_img_dark)
+        brake_text_label.config(text="")
+    else:
+        brake_label.config(image=brake_img_normal)
+
+    # 상태에 따른 텍스트 업데이트
     if state == "Rapid Acceleration":
         status_label.config(text="Rapid Acceleration (급가속)", fg="red")
-        accel_label.config(image=accel_img_normal)
+        accel_text_label.config(text="과속", fg="red", bg="transparent")
     elif state == "Rapid Braking":
         status_label.config(text="Rapid Braking (급정거)", fg="blue")
-        brake_label.config(image=brake_img_normal)
+        brake_text_label.config(text="급브레이크", fg="blue", bg="transparent")
     elif state == "Both Feet Driving":
         status_label.config(text="Both Feet Driving (양발운전)", fg="yellow")
-    elif accel_value < 5:
-        accel_label.config(image=accel_img_dark)
+        accel_text_label.config(text="양발운전", fg="yellow", bg="transparent")
+        brake_text_label.config(text="양발운전", fg="yellow", bg="transparent")
     else:
-        accel_label.config(image=accel_img_normal)
-
-    if brake_value < 5:
-        brake_label.config(image=brake_img_dark)
-    else:
-        brake_label.config(image=brake_img_normal)
-
-    if state == "Normal Driving":
         status_label.config(text="Normal Driving (정상주행중)", fg="green")
+
+# 이미지 위에 텍스트 표시를 위한 레이블 생성
+accel_text_label = tk.Label(root, text="", font=font_large, bg="transparent", fg="red")
+accel_text_label.place(relx=0.25, rely=0.4, anchor='center')  # 중앙에 위치
+
+brake_text_label = tk.Label(root, text="", font=font_large, bg="transparent", fg="blue")
+brake_text_label.place(relx=0.75, rely=0.4, anchor='center')  # 중앙에 위치
 
 # 로드셀 데이터와 상태를 업데이트하는 함수
 def check_info(accel_value, brake_value):
@@ -129,13 +138,13 @@ def check_info(accel_value, brake_value):
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_accel_time
-            if elapsed_time >= 3:  # 3초 이상 급가속 상태일 경우
+            if elapsed_time >= 3 and not pygame.mixer.music.get_busy():  # 괄호 추가
                 pygame.mixer.music.load("rapid_acceleration.mp3")
                 pygame.mixer.music.play()
                 last_accel_time = time.time()
 
     elif brake_value > 100 and accel_value <= 50:
-        data["driveState"] = "Rapid Braking"
+        data["driveState"] = "Rapid Braking"  # 'Rapid Breaking' -> 'Rapid Braking'으로 수정
         update_display_state(accel_value, brake_value, "Rapid Braking")
         is_accelerating = False
 
@@ -144,10 +153,6 @@ def check_info(accel_value, brake_value):
         update_display_state(accel_value, brake_value, "Both Feet Driving")
         is_accelerating = False
 
-    else:
-        data["driveState"] = "Normal Driving"
-        update_display_state(accel_value, brake_value, "Normal Driving")
-        is_accelerating = False
 
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
 def run_code():
