@@ -1,9 +1,25 @@
-import React from 'react';
-import { View, Text, Button, Switch, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, Button, Switch, StyleSheet } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import NicknameChangeModal from '../components/Modal/NicknameChangeModal.js';
+import PasswordChangeModal from '../components/Modal/PasswordChangeModal.js';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
+  const [nicknameModalVisible, setNicknameModalVisible] = useState(false);
+  const [passwordModalVisible, setPasswordModalVisible] = useState(false);
+
+  const handleNicknameChange = (newNickname) => {
+    console.log('New nickname: ', newNickname);
+    setNicknameModalVisible(false);
+    // 닉네임 변경 로직 추가 - 추후 구현
+  }
+
+  const handlePasswordChange = (newPassword) => {
+    console.log('New password:', newPassword);
+    setPasswordModalVisible(false);
+    // 비밀번호 변경 로직 - 추후 구현
+  };
 
   return (
     <View style={styles.container}>
@@ -11,8 +27,8 @@ const SettingsScreen = () => {
 
       <Text style={styles.label}>계정</Text>
       <Button title="개인정보" onPress={() => navigation.navigate('PersonalInfoScreen') } />
-      <Button title="닉네임 수정" />
-      <Button title="비밀번호 수정" />
+      <Button title="닉네임 수정" onPress = {() => setNicknameModalVisible(true)} />
+      <Button title="비밀번호 수정" onPress = {() => setPasswordModalVisible(true)} />
 
       <Text style={styles.label}>앱 설정</Text>
       <View style={styles.darkModeContainer}>
@@ -24,6 +40,18 @@ const SettingsScreen = () => {
         <Button title = "로그아웃" color="gray"/>
         <Button title = "회원탈퇴" color="gray"/>
       </View>
+
+      <NicknameChangeModal
+        visible={nicknameModalVisible}
+        onClose={() => setNicknameModalVisible(false)}
+        onConfirm={handleNicknameChange}
+        currentNickname="현재 닉네임"
+      />
+      <PasswordChangeModal 
+        visible={passwordModalVisible} 
+        onClose={() => setPasswordModalVisible(false)} 
+        onConfirm={handlePasswordChange}
+      />
     </View>
   );
 };
