@@ -1,66 +1,143 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const MypageScreen = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date()); // 날짜 상태 관리
-  const [showPicker, setShowPicker] = useState(false); // DateTimePicker 표시 여부
+  // 상태: 날짜, DateTimePicker 표시 여부, 유저 정보 (닉네임과 이메일)
+  const [selectedDate, setSelectedDate] = useState(new Date()); 
+  const [showPicker, setShowPicker] = useState(false); 
+  const [nickname, setNickname] = useState('OOO'); // 유저 닉네임은 DB에서 받아올 예정
+  const [email, setEmail] = useState('asdf_1234@gmail.com'); // 유저 이메일은 DB에서 받아올 예정
 
+  // 날짜가 선택되었을 때 호출되는 함수
   const handleDateChange = (event, newDate) => {
     setShowPicker(false); // DateTimePicker 닫기
-    if (newDate && event.type !== 'dismissed') { // 날짜 선택될 때만 업데이트
-      setSelectedDate(new Date(newDate)); // Date 객체로 선택된 날짜 반환
+    if (newDate && event.type !== 'dismissed') { 
+      setSelectedDate(new Date(newDate)); // 선택된 날짜를 상태에 저장
     }
-    //setSelectedDate(new Date(newDate)); // 선택된 날짜 업데이트
   };
+
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>OOO님 안녕하세요!</Text>
-      <Text style={styles.email}>example1234@gmail.com</Text>
+      {/* 유저 정보 표시 */}
+      <Text style={styles.title}>{nickname}님 안녕하세요!</Text>
+      <Text style={styles.email}>{email}</Text>
 
-      <View style={styles.dateContainer}>
-        <Icon name="calendar" size={20} color="#000" />
-        <DateTimePicker
+      {/* 날짜 선택기 */}
+      <DateTimePicker
           value={selectedDate}
           mode="date"
           display="default"
           onChange={handleDateChange}
-        />
+      />
+
+
+      {/* 주행 기록 및 데이터 */}
+      <View style={styles.recordContainer}>
+        <View style={styles.recordBox}>
+          <Text style={styles.recordTitle}>급가속</Text>
+          <Text style={styles.recordValue}>4</Text> 
+        </View>
+        <View style={styles.recordBox}>
+          <Text style={styles.recordTitle}>급정거</Text>
+          <Text style={styles.recordValue}>5</Text>
+        </View>
+        <View style={styles.recordBox}>
+          <Text style={styles.recordTitle}>동시페달</Text>
+          <Text style={styles.recordValue}>7</Text>
+        </View>
       </View>
 
-      <Button title="주행 기록 조회하기" onPress={console.log(selectedDate.toDateString())}/>
-      <Button title="주행 기록 다운로드" />
+      {/* 버튼들 */}
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>주행 기록 조회하기</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.downloadButton}>
+        <Icon name="download" size={16} color="#007AFF" />
+        <Text style={styles.downloadButtonText}>주행 기록 다운로드</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
+// 스타일링
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    justifyContent: 'flex-end',
+    padding: 20,
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   email: {
     fontSize: 16,
     color: '#555',
     marginBottom: 20,
   },
-   calendarIcon: {
-    fontSize: 24,
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginBottom: 20,
+  },
+  dateText: {
     marginLeft: 10,
-  }
-})
+    fontSize: 16,
+    color: '#000',
+    backgroundColor: '#EEE',
+    padding: 5,
+    borderRadius: 5,
+  },
+  recordContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 20,
+    height: 150,
+    alignItems: 'center',
+  },
+  recordBox: {
+    alignItems: 'center',
+  },
+  recordTitle: {
+    fontSize: 16,
+    color: '#000',
+    marginBottom: 5,
+  },
+  recordValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  downloadButton: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#007AFF',
+    borderWidth: 1,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  downloadButtonText: {
+    color: '#007AFF',
+    fontSize: 16,
+    marginLeft: 5,
+  },
+});
 
 export default MypageScreen;
