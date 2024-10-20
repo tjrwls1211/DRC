@@ -1,6 +1,6 @@
 package com.trustping.controller;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,30 +19,28 @@ import com.trustping.service.AbnormalDataService;
 public class AbnormalDataController {
 	@Autowired
 	private AbnormalDataService abnormalDataService;
-	/*
+	
 	// 급가속 날짜로 조회
 	@GetMapping("/sacl")
 	public Optional<SAclDTO> getSacl(@RequestParam(name = "carId") int carId,
 			@RequestParam(name = "date") String date) {
-		LocalDateTime dateTime = LocalDateTime.parse(date + "T00:00:00");
-		return abnormalDataService.getSaclByCarIdAndDate(carId, dateTime);
+		LocalDate searchDate = LocalDate.parse(date);
+		return abnormalDataService.getSaclByCarIdAndDate(carId, searchDate);
 	}
 
 	// 급정거 날짜로 조회
 	@GetMapping("/sbrk")
 	public Optional<SBrkDTO> getSbrk(@RequestParam(name = "carId") int carId,
 			@RequestParam(name = "date") String date) {
-		LocalDateTime dateTime = LocalDateTime.parse(date + "T00:00:00");
-		return abnormalDataService.getSbrkByCarIdAndDate(carId, dateTime);
+		LocalDate searchDate = LocalDate.parse(date);
+		return abnormalDataService.getSbrkByCarIdAndDate(carId, searchDate);
 	}
 
 	// 양발 운전 날짜로 조회
 	@GetMapping("/bothPedal")
 	public Optional<BothPedalDTO> getBothPedal(@RequestParam(name = "carId") int carId,
 			@RequestParam(name = "date") String date) {
-		LocalDateTime dateTime = LocalDateTime.parse(date + "T00:00:00");
-		return abnormalDataService.getBothPedalByCarIdAndDate(carId, dateTime);
+		LocalDate searchDate = LocalDate.parse(date);
+		return abnormalDataService.getBothPedalByCarIdAndDate(carId, searchDate);
 	}
-	*/
-
 }
