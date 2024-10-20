@@ -1,9 +1,34 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { loginUser } from '../components/api'; // api.js에서 loginUser 함수 가져오기
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // 오류 메시지 상태 추가
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setErrorMessage("아이디(이메일)와 비밀번호를 입력해 주세요.");
+      return;
+    }
+
+    try {
+      const responseData = await loginUser(email, password);
+      console.log('Login successful:', responseData);
+      navigation.navigate("MainScreen", { screen: 'MainScreen' });
+      setErrorMessage(''); // 성공 시 오류 메시지 초기화
+    } catch (error) {
+      // 서버에서 반환된 오류 처리
+      if (error.response) {
+        setErrorMessage(error.response.data.message || "아이디나 비밀번호가 틀립니다.");
+      } else {
+        setErrorMessage("네트워크 오류가 발생했습니다.");
+      }
+    }
+  };
 
   return (
     <View style={Styles.container}>      
@@ -25,6 +50,11 @@ const LoginScreen = () => {
           placeholderTextColor="#D9D9D9"
           secureTextEntry={true}
         />
+
+        {/* 오류 메시지 표시 */}
+        {errorMessage ? (
+          <Text style={Styles.ErrorMessage}>{errorMessage}</Text>
+        ) : null}
         
         <TouchableOpacity 
           style={Styles.LoginBtn}
