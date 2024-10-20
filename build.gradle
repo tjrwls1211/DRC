@@ -35,6 +35,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation' // JAKARTA validation 의존성
 	implementation 'org.springframework.boot:spring-boot-starter-security' // spring-security 의존성
 	implementation 'com.warrenstrange:googleauth:1.4.0' // Google OTP 의존성
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5' // jwt 의존성
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5' // jwt 의존성
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5' // jwt 의존성
 	compileOnly 'org.projectlombok:lombok' // lombok 의존성
 	annotationProcessor 'org.projectlombok:lombok' // lombok 의존성 2
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

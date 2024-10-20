@@ -44,5 +44,9 @@ public class EnvConfig {
 	public String getMqttTopic() {
 		return dotenv.get("MQTT_TOPIC");
 	}
+	
+	public String getJwtSecretKey() {
+		return dotenv.get("JWT_SECRET_KEY");
+	}
 }
 

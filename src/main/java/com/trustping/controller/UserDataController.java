@@ -38,15 +38,15 @@ public class UserDataController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<String> signIn(@Valid @RequestBody SignInRequestDTO signInRequestDTO){
-    	boolean isSignedIn =  userDataService.signInUser(signInRequestDTO);
-    	 if (isSignedIn) {
-             return ResponseEntity.ok("로그인 성공");
-         } else {
-             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: 아이디 또는 비밀번호가 올바르지 않습니다.");
-         }
+    public ResponseEntity<Boolean> signIn(@Valid @RequestBody SignInRequestDTO signInRequestDTO) {
+        boolean isSignedIn = userDataService.signInUser(signInRequestDTO);
+        if (isSignedIn) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
     }
-    
+
     // Google OTP 인증키, QRLink 생성
     @PostMapping("/otp")
     public ResponseEntity<OtpDTO> otp(@RequestParam(name = "id") String id) {
