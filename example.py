@@ -9,13 +9,11 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import threading
 import pygame
+from server import ip, port
 
-# IP 및 포트 정보 설정
-ip = "your_ip_here"  # 여기에 IP 주소 입력
-port = "your_port_here"  # 여기에 포트 번호 입력
 
 # 서버 URL 설정
-url = f'http://{ip}:{port}/data'
+url = f'http://{ip()}:{port()}/data'
 
 # 데이터 구조 정의
 data = {
