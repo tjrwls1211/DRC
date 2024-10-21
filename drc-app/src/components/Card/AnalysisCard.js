@@ -33,10 +33,10 @@ const styles = StyleSheet.create({
         color: '#000', // 검정색
         textAlign: 'center',
     },
-    row: {
+    row: { // 컴포넌트들을 한 행에 정렬하기 위한 스타일
         flexDirection: 'row', // 수평 정렬
         alignItems: 'center', // 수직 가운데
-    }
+    },
 });
 
 export default AnalysisCard;

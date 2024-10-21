@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { loginUser } from '../components/api'; // api.js에서 loginUser 함수 가져오기
+import { loginUser } from '../api/authAPI'; // api.js에서 loginUser 함수 가져오기
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -16,57 +16,65 @@ const LoginScreen = () => {
     }
 
     try {
-      const responseData = await loginUser(email, password);
-      console.log('Login successful:', responseData);
-      navigation.navigate("MainScreen", { screen: 'MainScreen' });
-      setErrorMessage(''); // 성공 시 오류 메시지 초기화
-    } catch (error) {
-      // 서버에서 반환된 오류 처리
-      if (error.response) {
-        setErrorMessage(error.response.data.message || "아이디나 비밀번호가 틀립니다.");
+      // liginUser 함수로 서버에 로그인 요청 후 응답 대기
+      const success = await loginUser(email, password);
+      if (success) {
+        console.log('로그인 성공');
+        setErrorMessage('');
+        navigation.navigate("MainScreen", {screen: 'MainScreen'}); // 로그인 성공 시 메인화면 이동
       } else {
-        setErrorMessage("네트워크 오류가 발생했습니다.");
+        setErrorMessage('아이디나 비밀번호가 틀렸습니다. 다시 입력해 주세요.')
       }
+    } catch (error) {
+        console.log(error);
     }
   };
 
   return (
     <View style={Styles.container}>      
       <Text style={Styles.LogoText}>DRC</Text>
+
       <View style={Styles.LoginView}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+            keyboardVerticalOffset={100}
+          >
+          <ScrollView contentContainerStyle={Styles.scrollContent}>
+            <Text>ID (Email)</Text>
+            <TextInput 
+              style={Styles.TextInput} 
+              onChangeText={setEmail}
+              placeholder="ID (Email)"
+              placeholderTextColor="#D9D9D9"
+            />
+            <Text>Password</Text>
+            <TextInput 
+              style={Styles.TextInput} 
+              onChangeText={setPassword}
+              placeholder="password"
+              placeholderTextColor="#D9D9D9"
+              secureTextEntry={true}
+            />
 
-        <Text>ID (Email)</Text>
-        <TextInput 
-          style={Styles.TextInput} 
-          onChangeText={setEmail}
-          placeholder="ID (Email)"
-          placeholderTextColor="#D9D9D9"
-        />
-        <Text>Password</Text>
-        <TextInput 
-          style={Styles.TextInput} 
-          onChangeText={setPassword}
-          placeholder="password"
-          placeholderTextColor="#D9D9D9"
-          secureTextEntry={true}
-        />
+            {/* 오류 메시지 표시 */}
+            {errorMessage ? (
+              <Text style={Styles.ErrorMessage}>{errorMessage}</Text>
+            ) : null}
+            
+            <TouchableOpacity 
+              style={Styles.LoginBtn}
+              onPress={handleLogin}>
+              <Text style={Styles.BtnText}>Login</Text>
+            </TouchableOpacity>
 
-        {/* 오류 메시지 표시 */}
-        {errorMessage ? (
-          <Text style={Styles.ErrorMessage}>{errorMessage}</Text>
-        ) : null}
-        
-        <TouchableOpacity 
-          style={Styles.LoginBtn}
-          onPress={handleLogin}>
-          <Text style={Styles.BtnText}>Login</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={{marginTop: 20}}
-          onPress={() => navigation.navigate("SignUpScreen", { screen: 'SignUpScreen' })}>
-          <Text style={Styles.SignUpText}>회원가입하러가기</Text>
-        </TouchableOpacity>
+            <TouchableOpacity 
+              style={{marginTop: 20}}
+              onPress={() => navigation.navigate("SignUpScreen", { screen: 'SignUpScreen' })}>
+              <Text style={Styles.SignUpText}>회원가입하러가기</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
     </View>
   );
@@ -87,7 +95,15 @@ const Styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#D9D9D9',
-    borderRadius: 6
+    borderRadius: 6,
+  },
+  scrollContent: {
+    flexGrow: 1, // 스크롤뷰 내용이 밀릴 수 있도록 설정
+    justifyContent: 'center',
+  },
+  formContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
   LogoText: {
     fontSize: 30,
