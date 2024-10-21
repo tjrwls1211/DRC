@@ -133,7 +133,7 @@ accel_text_label.place(relx=0.25, rely=0.4, anchor='center')  # 중앙에 위치
 brake_text_label = tk.Label(root, text="", font=font_large, bg="transparent", fg="blue")
 brake_text_label.place(relx=0.75, rely=0.4, anchor='center')  # 중앙에 위치
 '''
-
+# TEST
 
 #미리 로드 만들어두기
 rapid_acceleration_sound = pygame.mixer_sound = pygame.mixer.Sound("rapid_acceleration.wav")
