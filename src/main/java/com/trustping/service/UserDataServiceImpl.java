@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.MfaRequestDTO;
 import com.trustping.DTO.OtpDTO;
+import com.trustping.DTO.OtpRequestDTO;
 import com.trustping.DTO.SignUpRequestDTO;
+import com.trustping.DTO.SignUpResponseDTO;
 import com.trustping.entity.UserData;
 import com.trustping.repository.UserDataRepository;
 import com.trustping.security.JwtUtil;
@@ -51,30 +53,34 @@ public class UserDataServiceImpl implements UserDataService {
 				.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + id));
 	}
 
-	// 회원가입 - *Boolean으로 반환 타입 수정
+	// 회원가입
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public ResponseEntity<String> signUpUser(SignUpRequestDTO signUpRequestDTO) {
-		// 비밀번호 해시 처리 부분임 - 정상 작동 확인 10.18
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		String hashedPassword = passwordEncoder.encode(signUpRequestDTO.getPw());
-		String otpKey = null;
-		String userRole = "ROLE_USER";
+	public ResponseEntity<SignUpResponseDTO> signUpUser(SignUpRequestDTO signUpRequestDTO) {
+	    // 비밀번호 해시 처리 부분
+	    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	    String hashedPassword = passwordEncoder.encode(signUpRequestDTO.getPw());
+	    String otpKey = null;
+	    String userRole = "ROLE_USER";
 
-		UserData userData = new UserData(signUpRequestDTO.getId(), hashedPassword, signUpRequestDTO.getNickname(),
-				signUpRequestDTO.getBirthDate(), signUpRequestDTO.getCarId(), otpKey, userRole);
+	    UserData userData = new UserData(signUpRequestDTO.getId(), hashedPassword, signUpRequestDTO.getNickname(),
+	            signUpRequestDTO.getBirthDate(), signUpRequestDTO.getCarId(), otpKey, userRole);
 
-		if (duplicateCheckUser(userData.getId())) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("회원 가입 실패: 아이디 중복");
-		}
+	    // 중복 체크
+	    if (duplicateCheckUser(userData.getId())) {
+	        return ResponseEntity.ok(new SignUpResponseDTO(false, "중복된 ID가 있습니다.")); // 중복된 ID가 있을 경우 false 반환
+	    }
 
-		try {
-			userDataRepository.save(userData);
-			return ResponseEntity.status(HttpStatus.CREATED).body("회원 가입 성공");
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage());
-		}
+	    try {
+	        userDataRepository.save(userData);
+	        return ResponseEntity.ok(new SignUpResponseDTO(true, "회원가입이 성공적으로 완료되었습니다.")); // 회원가입 성공 시 true 반환
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                             .body(new SignUpResponseDTO(false, "회원가입 중 오류가 발생했습니다."));
+	    }
 	}
+
+
 
 	 // 로그인
 	@Override
@@ -117,15 +123,15 @@ public class UserDataServiceImpl implements UserDataService {
 
 	// Google OTP 생성
 	@Transactional(rollbackFor = Exception.class)
-	public OtpDTO generateGoogleMFA(String id) {
+	public OtpDTO generateGoogleMFA(OtpRequestDTO otpRequestDTO) {
 		GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
 		GoogleAuthenticatorKey googleAuthenticatorKey = googleAuthenticator.createCredentials();
 
 		String otpKey = googleAuthenticatorKey.getKey();
-		String QRUrl = GoogleAuthenticatorQRGenerator.getOtpAuthURL("server", id, googleAuthenticatorKey);
+		String QRUrl = GoogleAuthenticatorQRGenerator.getOtpAuthURL("server", otpRequestDTO.getId(), googleAuthenticatorKey);
 		OtpDTO otpDTO = new OtpDTO(otpKey, QRUrl);
 
-		UserData userData = userDataRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+		UserData userData = userDataRepository.findById(otpRequestDTO.getId()).orElseThrow(() -> new RuntimeException("User not found"));
 
 		userData.setOtpKey(otpKey);
 		userDataRepository.save(userData);
