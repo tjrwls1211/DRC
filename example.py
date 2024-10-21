@@ -62,17 +62,17 @@ root.configure(bg="black")
 font_large = ("Arial", 40, "bold")
 
 # 이미지 로드
-accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((300, 300)))
-accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((300, 300)))
-brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((300, 300)))
-brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((300, 300)))
+accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((600, 600)))
+accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((600, 600)))
+brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((600, 600)))
+brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((600, 600)))
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
-accel_label.pack(side="left", padx=50, pady=20)
+accel_label.pack(side="left", padx=20, pady=20)
 
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
-brake_label.pack(side="right", padx=50, pady=20)
+brake_label.pack(side="right", padx=20, pady=20)
 
 # 상태 텍스트 레이블
 status_label = tk.Label(root, text="Normal Driving (정상주행중)", font=font_large, fg="green", bg="black")
