@@ -14,6 +14,7 @@ const SignUpScreen = () => {
   const [birthDate, setBirthDate] = useState(new Date()); // 초기값 Date 객체로 설정
   const [isDuplicateID, setIsDuplicateID] = useState(false); // ID 중복 여부
   const [isPasswordVisible, setIsPasswordVisible] = useState(false); // 비밀번호 보이기 상태
+
   
   // 각각 필드에 대한 에러 메시지 상태 관리
   const [emailError, setEmailError] = useState('');
@@ -31,13 +32,13 @@ const SignUpScreen = () => {
     try {
       const isDuplicate = await checkID(email);
         setEmailError(isDuplicateID);
-      if (isDuplicate) {
+      if (!isDuplicate) {
         setEmailError("중복된 ID입니다.");
       } else {
         setEmailError('');
       }
     } catch (error) {
-      setEmailError('ID 중복 확인 오류');
+      setEmailError('ID 중복 확인 오류(화면체크)');
       console.error(error);
     }
   };
@@ -86,10 +87,18 @@ const SignUpScreen = () => {
     if (hasError) {
       return;
     }
+    console.log(email);
+
+    // birthDate를 YYYY-MM-DD 형식으로 변환
+    const formattedBirthDate = birthDate.toISOString().split('T')[0];
+    console.log(formattedBirthDate);
 
     try {
       // 서버로 회원가입 데이터 전송 후 응답 대기
-      const success = await SignUpUser(email, password, nickname, birthDate);
+      
+      const success = await SignUpUser(email, password, nickname, formattedBirthDate);
+      console.log(success);
+
       if (success) {
         console.log('회원가입 성공');
         setEmailError('');
@@ -116,6 +125,8 @@ const SignUpScreen = () => {
     // 선택된 날짜를 YYYY-MM-DD 형식으로 출력
     const formattedDate = currentDate.toISOString().split('T')[0];
     console.log(formattedDate);
+    // setBirthDate(formattedDate);
+    // console.log(birthDate);
   }
   
   return (
