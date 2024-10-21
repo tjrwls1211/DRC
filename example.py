@@ -93,7 +93,7 @@ is_accelerating = False
 
 # MQTT 설정
 client = mqtt.Client()
-client.connect(ip, 1222, 60)
+client.connect(ip(), 1222, 60)
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
