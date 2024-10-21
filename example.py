@@ -32,6 +32,7 @@ def cleanAndExit():
     print("Bye!")
     sys.exit()
 
+
 # 첫 번째 HX711 - 엑셀(Accelerator)
 hx1 = HX711(20, 16)
 # 두 번째 HX711 - 브레이크(Brake)
