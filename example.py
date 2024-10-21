@@ -157,6 +157,8 @@ def check_info(accel_value, brake_value):
                 
                 rapid_acceleration_sound.play()
                 time.sleep(1.5)
+                
+                
                 '''
                 rapid_acceleration_sound.play()
                 time.sleep(1.5)
