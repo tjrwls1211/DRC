@@ -153,7 +153,32 @@ def check_info(accel_value, brake_value):
         else:
             elapsed_time = time.time() - last_accel_time
             if elapsed_time >= 4 and not pygame.mixer.music.get_busy(): 
-                rapid_acceleration_sound.play()  
+                rapid_acceleration_sound.play() 
+                
+                rapid_acceleration_sound.play()
+                time.sleep(1.5)
+                '''
+                rapid_acceleration_sound.play()
+                time.sleep(1.5)
+                rapid_acceleration_sound.play()
+                time.sleep(1.5)
+                rapid_acceleration_sound.play()
+                time.sleep(1.5)
+                rapid_acceleration_sound.play()
+                time.sleep(1.5)
+                rapid_acceleration_sound.play()
+                time.sleep(1.5)
+                rapid_acceleration_sound.play()
+                time.sleep(1.5)
+                rapid_acceleration_sound.play()
+                time.sleep(1.5)
+                rapid_acceleration_sound.play()
+                time.sleep(1.5)
+                rapid_acceleration_sound.play()
+                time.sleep(1.5)
+                rapid_acceleration_sound.play()
+                time.sleep(1.5)
+                '''
                 last_accel_time = time.time()
 
     elif brake_value > 200 and accel_value <= 30:
