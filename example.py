@@ -69,17 +69,24 @@ brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((600, 60
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
-accel_label.pack(side="left", padx=20, pady=20)
+accel_label.pack(side="right", padx=20, pady=20)
 
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
-brake_label.pack(side="right", padx=20, pady=20)
+brake_label.pack(side="left", padx=20, pady=20)
 
 # 상태 텍스트 레이블
-status_label = tk.Label(root, text="Normal Driving (정상주행중)", font=font_large, fg="green", bg="black")
+status_label = tk.Label(root, text="Normal Driving (정상주행중)", font=font_large, fg="green", bg="black", width=20)
 status_label.pack(pady=20)
 
 # pygame 초기화
-pygame.mixer.init()
+# pygame.mixer.init()
+
+#테스트 파일 
+try:
+    pygame.mixer.init()
+except pygame.error as e:
+    print(f"오디오 초기화 실패: {e}")
+
 
 # 음성 재생 시간 기록
 last_accel_time = 0
@@ -118,13 +125,19 @@ def update_display_state(accel_value, brake_value, state):
     else:
         status_label.config(text="Normal Driving (정상주행중)", fg="green")
 '''
-
+'''
 # 이미지 위에 텍스트 표시를 위한 레이블 생성
 accel_text_label = tk.Label(root, text="", font=font_large, bg="transparent", fg="red")
 accel_text_label.place(relx=0.25, rely=0.4, anchor='center')  # 중앙에 위치
 
 brake_text_label = tk.Label(root, text="", font=font_large, bg="transparent", fg="blue")
 brake_text_label.place(relx=0.75, rely=0.4, anchor='center')  # 중앙에 위치
+'''
+
+
+#미리 로드 만들어두기
+rapid_acceleration_sound = pygame.mixer_sound = pygame.mixer.Sound("rapid_acceleration.wav")
+
 
 # 로드셀 데이터와 상태를 업데이트하는 함수
 def check_info(accel_value, brake_value):
@@ -132,7 +145,7 @@ def check_info(accel_value, brake_value):
 
     if accel_value > 200 and brake_value <= 30:
         data["driveState"] = "Rapid Acceleration"
-        update_display_state(accel_value, brake_value, "Rapid Acceleration")
+        update_display_state(accel_value, brake_value, "Rapid Acceleration") 
 
         if not is_accelerating:
             last_accel_time = time.time()
@@ -140,8 +153,7 @@ def check_info(accel_value, brake_value):
         else:
             elapsed_time = time.time() - last_accel_time
             if elapsed_time >= 4 and not pygame.mixer.music.get_busy(): 
-                pygame.mixer.music.load("rapid_acceleration.mp3")
-                pygame.mixer.music.play()
+                rapid_acceleration_sound.play()  
                 last_accel_time = time.time()
 
     elif brake_value > 200 and accel_value <= 30:
