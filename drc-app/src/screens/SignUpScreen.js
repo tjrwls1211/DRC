@@ -2,6 +2,8 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Keyboa
 import { useNavigation } from "@react-navigation/native";
 import { useState }  from 'react';
 import { SignUpUser, checkID } from "../api/authAPI";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -9,8 +11,9 @@ const SignUpScreen = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [nickname, setNickname] = useState('');
-  const [birthDate, setBirthDate] = useState('');
+  const [birthDate, setBirthDate] = useState(new Date()); // 초기값 Date 객체로 설정
   const [isDuplicateID, setIsDuplicateID] = useState(false); // ID 중복 여부
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // 비밀번호 보이기 상태
   
   // 각각 필드에 대한 에러 메시지 상태 관리
   const [emailError, setEmailError] = useState('');
@@ -18,6 +21,11 @@ const SignUpScreen = () => {
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [formError, setFormError] = useState(''); // 전체 폼 오류 메시지 (필수 항목 누락 등)
   
+  // ID 유효성 검사 정규식
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  // 비밀번호 유효성 검사 정규식 (최소 8자, 하나 이상의 숫자, 대소문자 및 특수 문자 포함)
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
   // ID 중복 확인 버튼 핸들러
   const handleCheckDuplicate = async () => {
     try {
@@ -46,15 +54,36 @@ const SignUpScreen = () => {
 
   // 회원가입 버튼 핸들러
   const handleSignUp = async () => {
-    // 비밀번호 재확인
     if (!email || !password || !confirmPassword || !nickname || !birthDate) {
       setFormError("모든 항목을 입력해 주세요.");
       return;
     }
 
+    // 유효성 검사
+    let hasError = false; // 에러 상태 플러그
+    if (!emailRegex.test(email)) {
+      setEmailError("유효한 이메일 주소를 입력하세요.");
+      hasError = true; // 에러 발생
+    } else { 
+      setEmailError('');
+    }
+    if(!passwordRegex.test(password)) {
+      setPasswordError("비밀번호는 8자 이상, 하나 이상의 숫자, 대소문자, 특수 문자를 포함해야 합니다.");
+      hasError = true;
+    } else {
+      setPasswordError('');
+    }
+
     // 비밀번호 재확인
     if (password !== confirmPassword) {
       setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
+      hasError = true; // 에러 발생
+    } else {
+      setConfirmPasswordError('');
+    }
+
+    // 에러가 있으면 회원가입 처리 중단
+    if (hasError) {
       return;
     }
 
@@ -78,6 +107,16 @@ const SignUpScreen = () => {
       console.error(error);
     }
   };
+
+  // 날짜 선택기 핸들러
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || birthDate; // 선택된 날짜 또는 기존 날짜
+    setBirthDate(currentDate); // 생년월일 정보 업데이트
+
+    // 선택된 날짜를 YYYY-MM-DD 형식으로 출력
+    const formattedDate = currentDate.toISOString().split('T')[0];
+    console.log(formattedDate);
+  }
   
   return (
       <View style={Styles.container}>      
@@ -115,14 +154,20 @@ const SignUpScreen = () => {
               
 
               <Text>Password</Text>
-              <TextInput 
-                style={Styles.TextInput} 
-                onChangeText={setPassword}
-                placeholder="password"
-                placeholderTextColor="#D9D9D9"
-                secureTextEntry={true}
-                value={password}
-              />
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TextInput 
+                  style={[Styles.TextInput, {flex: 1}]} 
+                  onChangeText={setPassword}
+                  placeholder="password"
+                  placeholderTextColor="#D9D9D9"
+                  secureTextEntry={!isPasswordVisible}
+                  value={password}
+                />
+                <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={{ marginLeft: 10 }}>
+                  <Icon name={isPasswordVisible ? "eye" : "eye-slash"} size={20} color="#000" />
+                </TouchableOpacity>
+              </View>
+              
 
               {/* 비밀번호 오류 메시지 */}
               {passwordError ? <Text style={Styles.error}>{passwordError}</Text> : null}
@@ -151,12 +196,12 @@ const SignUpScreen = () => {
               />
 
               <Text>Birth Date</Text>
-              <TextInput 
-                style={Styles.TextInput} 
-                onChangeText={setBirthDate}
-                placeholder="Birth Date"
-                placeholderTextColor="#D9D9D9"
+              <DateTimePicker
                 value={birthDate}
+                mode="date"
+                display="default"
+                onChange={onChange}
+                style={{ width: '100%', alignItems: 'flex-start' }}
               />
 
               {/* 폼 오류 메시지(필수 항목 누락 등) */}
