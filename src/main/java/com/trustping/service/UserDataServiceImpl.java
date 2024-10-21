@@ -68,7 +68,7 @@ public class UserDataServiceImpl implements UserDataService {
 
 	    // 중복 체크
 	    if (duplicateCheckUser(userData.getId())) {
-	        return ResponseEntity.ok(new SignUpResponseDTO(false, "중복된 ID가 있습니다.")); // 중복된 ID가 있을 경우 false 반환
+	        return ResponseEntity.ok(new SignUpResponseDTO(false, "중복된 ID입니다.")); // 중복된 ID가 있을 경우 false 반환
 	    }
 
 	    try {
@@ -76,7 +76,7 @@ public class UserDataServiceImpl implements UserDataService {
 	        return ResponseEntity.ok(new SignUpResponseDTO(true, "회원가입이 성공적으로 완료되었습니다.")); // 회원가입 성공 시 true 반환
 	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                             .body(new SignUpResponseDTO(false, "회원가입 중 오류가 발생했습니다."));
+	                             .body(new SignUpResponseDTO(false, "회원가입 중 오류가 발생했습니다.")); // 오류 발생 시 false 반환
 	    }
 	}
 
