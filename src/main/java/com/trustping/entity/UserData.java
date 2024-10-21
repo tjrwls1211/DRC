@@ -2,6 +2,7 @@ package com.trustping.entity;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -15,11 +16,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserData {	
-	@Id
-	private String id;
-	private String pw;
-	private String nickname;
-	private LocalDate birthDate;
-	private Long carId;
-	private String otpKey;
+    @Id
+    private String id;
+    private String pw;
+    private String nickname;
+    private LocalDate birthDate;
+    private Long carId;
+    private String otpKey;
+    @Column(nullable = false) 
+    private String role; 
 }

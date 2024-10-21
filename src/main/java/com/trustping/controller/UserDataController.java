@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.trustping.DTO.MfaRequestDTO;
 import com.trustping.DTO.OtpDTO;
-import com.trustping.DTO.SignInRequestDTO;
+import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.service.UserDataService;
 
@@ -38,13 +38,8 @@ public class UserDataController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<Boolean> signIn(@Valid @RequestBody SignInRequestDTO signInRequestDTO) {
-        boolean isSignedIn = userDataService.signInUser(signInRequestDTO);
-        if (isSignedIn) {
-            return ResponseEntity.ok(true);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
-        }
+    public ResponseEntity<String> signIn(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+    	 return userDataService.LoginUser(loginRequestDTO);
     }
 
     // Google OTP 인증키, QRLink 생성

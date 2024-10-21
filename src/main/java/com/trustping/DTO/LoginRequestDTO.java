@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignInRequestDTO {	
+public class LoginRequestDTO {	
 	@NotBlank(message = "아이디(Email) 입력")
 	@Email(message = "올바른 이메일 형식이 아닙니다.")
 	private String id;
