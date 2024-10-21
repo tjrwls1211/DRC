@@ -80,8 +80,6 @@ public class UserDataServiceImpl implements UserDataService {
 	    }
 	}
 
-
-
 	 // 로그인
 	@Override
     public ResponseEntity<String> LoginUser(LoginRequestDTO signInRequestDTO) {
