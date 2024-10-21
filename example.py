@@ -103,7 +103,7 @@ def update_display_state(accel_value, brake_value, state):
         brake_text_label.config(text="")
     else:
         brake_label.config(image=brake_img_normal)
-
+'''
     # 상태에 따른 텍스트 업데이트
     if state == "Rapid Acceleration":
         status_label.config(text="Rapid Acceleration (급가속)", fg="red")
@@ -117,6 +117,7 @@ def update_display_state(accel_value, brake_value, state):
         brake_text_label.config(text="양발운전", fg="yellow", bg="transparent")
     else:
         status_label.config(text="Normal Driving (정상주행중)", fg="green")
+'''
 
 # 이미지 위에 텍스트 표시를 위한 레이블 생성
 accel_text_label = tk.Label(root, text="", font=font_large, bg="transparent", fg="red")
@@ -129,7 +130,7 @@ brake_text_label.place(relx=0.75, rely=0.4, anchor='center')  # 중앙에 위치
 def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating
 
-    if accel_value > 100 and brake_value <= 50:
+    if accel_value > 200 and brake_value <= 30:
         data["driveState"] = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, "Rapid Acceleration")
 
@@ -138,17 +139,17 @@ def check_info(accel_value, brake_value):
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_accel_time
-            if elapsed_time >= 3 and not pygame.mixer.music.get_busy():  # 괄호 추가
+            if elapsed_time >= 4 and not pygame.mixer.music.get_busy(): 
                 pygame.mixer.music.load("rapid_acceleration.mp3")
                 pygame.mixer.music.play()
                 last_accel_time = time.time()
 
-    elif brake_value > 100 and accel_value <= 50:
-        data["driveState"] = "Rapid Braking"  # 'Rapid Breaking' -> 'Rapid Braking'으로 수정
+    elif brake_value > 200 and accel_value <= 30:
+        data["driveState"] = "Rapid Braking" 
         update_display_state(accel_value, brake_value, "Rapid Braking")
         is_accelerating = False
 
-    elif accel_value > 50 and brake_value > 50:
+    elif accel_value > 100 and brake_value > 100:
         data["driveState"] = "Both Feet Driving"
         update_display_state(accel_value, brake_value, "Both Feet Driving")
         is_accelerating = False
