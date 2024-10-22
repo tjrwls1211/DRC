@@ -2,10 +2,12 @@ package com.trustping.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,19 +18,30 @@ import com.trustping.repository.AbnormalDataRepository;
 import com.trustping.repository.PedalLogRepository;
 
 @Service
-public class PedalLogSaveService {
+public class PedalLogProcessingService {
 
     @Autowired
     private PedalLogRepository pedalLogRepository;
 
     @Autowired
     private AbnormalDataRepository abnormalDataRepository;
+    
+    @Autowired
+    private PedalLogService pedalLogService;
 
     // 차량 ID를 키로 하는 카운트를 저장할 Map
     private Map<String, Integer> rapidAcceleratorCounts = new HashMap<>();
     private Map<String, Integer> rapidBrakeCounts = new HashMap<>();
     private Map<String, Integer> bothPedalCounts = new HashMap<>();
-
+    
+    // 정상 주행 데이터 삭제
+    @Scheduled(fixedRate = 10000)
+    public void deleteOldNormalLogs() {
+    	LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
+    	pedalLogService.deleteOldNormalLogs(targetTime);
+    }
+    
+    // 페달 로그와 비정상 주행 데이터 저장
     public void saveMessage(String message) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();

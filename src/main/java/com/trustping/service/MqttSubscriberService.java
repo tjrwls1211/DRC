@@ -1,6 +1,7 @@
 package com.trustping.service;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -23,7 +24,7 @@ public class MqttSubscriberService implements MqttCallback {
     private EnvConfig envConfig; // 구독 토픽도 가져옴
     
     @Autowired
-    private PedalLogSaveService pedalLogService; // 메시지 전달을 위해 연결함
+    private PedalLogProcessingService pedalLogService; // 메시지 전달을 위해 연결함
     
     @PostConstruct
     public void subscribeToTopic() {
