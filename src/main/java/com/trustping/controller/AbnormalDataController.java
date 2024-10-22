@@ -22,7 +22,7 @@ public class AbnormalDataController {
 	
 	// 급가속 날짜로 조회
 	@GetMapping("/sacl")
-	public Optional<SAclDTO> getSacl(@RequestParam(name = "carId") int carId,
+	public Optional<SAclDTO> getSacl(@RequestParam(name = "carId") String carId,
 			@RequestParam(name = "date") String date) {
 		LocalDate searchDate = LocalDate.parse(date);
 		return abnormalDataService.getSaclByCarIdAndDate(carId, searchDate);
@@ -30,7 +30,7 @@ public class AbnormalDataController {
 
 	// 급정거 날짜로 조회
 	@GetMapping("/sbrk")
-	public Optional<SBrkDTO> getSbrk(@RequestParam(name = "carId") int carId,
+	public Optional<SBrkDTO> getSbrk(@RequestParam(name = "carId") String carId,
 			@RequestParam(name = "date") String date) {
 		LocalDate searchDate = LocalDate.parse(date);
 		return abnormalDataService.getSbrkByCarIdAndDate(carId, searchDate);
@@ -38,7 +38,7 @@ public class AbnormalDataController {
 
 	// 양발 운전 날짜로 조회
 	@GetMapping("/bothPedal")
-	public Optional<BothPedalDTO> getBothPedal(@RequestParam(name = "carId") int carId,
+	public Optional<BothPedalDTO> getBothPedal(@RequestParam(name = "carId") String carId,
 			@RequestParam(name = "date") String date) {
 		LocalDate searchDate = LocalDate.parse(date);
 		return abnormalDataService.getBothPedalByCarIdAndDate(carId, searchDate);

@@ -20,14 +20,14 @@ public class PedalLogController {
 	
 	// READ(차량 번호 입력)
 	@GetMapping("/sel/{carId}")
-	public ResponseEntity<List<PedalLog>> findPedalLogsByData(@PathVariable("carId") int carId) {
+	public ResponseEntity<List<PedalLog>> findPedalLogsByData(@PathVariable("carId") String carId) {
 	    List<PedalLog> pedalLogs = pedalLogService.findByCarId(carId);
 	    return ResponseEntity.ok(pedalLogs);
 	}
 	
 	// DELETE(차량 번호 입력)
 	@GetMapping("/del/{carId}")
-	public void delPedalLogsByData(@PathVariable("carId") int carId) {
+	public void delPedalLogsByData(@PathVariable("carId") String carId) {
 	    pedalLogService.deleteByCarId(carId);
 	}
 
