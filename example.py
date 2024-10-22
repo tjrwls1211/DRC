@@ -75,7 +75,7 @@ brake_label.pack(side="left", padx=20, pady=20)
 
 # 상태 텍스트 레이블
 driveState = data["driveState"]
-status_label = tk.Label(root, text=driveState, font=font_large, fg="green", bg="black", width=20)
+status_label = tk.Label(root, text=driveState, font=font_large, fg="green", bg="black", padx=10, pady=10, width=30)
 status_label.pack(pady=20)
 
 # pygame 초기화
