@@ -29,7 +29,7 @@ export const loginUser = async (email, password) => {
     return response.data; // 서버 반환 성공 여부
   } catch (error) {
     if (error.response) {
-      console.error('로그인 오류:', error.response.data);
+      console.error('로그인 실패 이유:', error.response.data);
    } else {
         console.error('로그인 데이터 전송 오류:', error);
     }
@@ -65,8 +65,10 @@ export const SignUpUser = async (email, password, nickname, birthDate) => { //ni
   console.log(data);
 
   try {
-    const response = await axios.post("비밀", data);
-    console.log('회원가입 데이터 전송 성공:', response.data);
+    const response = await axios.post("http://비밀", data);
+    console.log(response);
+    console.log('회원가입 데이터 전송 성공:', response.data.success);
+    console.log('회원가입 실패 이유: ', response.data.message);
     return response.data; // 서버 반환 성공 여부
   } catch (error) {
       console.error('회원가입 데이터 전송 오류:', error);

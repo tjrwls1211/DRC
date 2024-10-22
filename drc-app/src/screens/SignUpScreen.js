@@ -95,11 +95,10 @@ const SignUpScreen = () => {
 
     try {
       // 서버로 회원가입 데이터 전송 후 응답 대기
-      
-      const success = await SignUpUser(email, password, nickname, formattedBirthDate);
-      console.log(success);
+      const response = await SignUpUser(email, password, nickname, formattedBirthDate);
+      console.log(response.success);
 
-      if (success) {
+      if (response.success) {
         console.log('회원가입 성공');
         setEmailError('');
         setPasswordError('');
@@ -108,11 +107,15 @@ const SignUpScreen = () => {
         // 로그인 화면 이동
         navigation.navigate("LoginScreen", {screen: 'LoginScreen'});
       } else {
-        setFormError('회원가입에 실패했습니다. 다시 시도해 주세요.');
+        console.log(response.message);
+        if(response.success === false) {
+          // 서버에서 받은 실패 메시지를 formError에 저장
+          setFormError(response.message);
+        } else setFormError('회원가입에 실패했습니다. 다시 시도해 주세요.');
       }
     } catch (error) {
       // 오류 발생시 에러 메시지 출력
-      setFormError('API 통신 오류');
+      setFormError('회원가입 처리 중 오류가 발생했습니다.');
       console.error(error);
     }
   };

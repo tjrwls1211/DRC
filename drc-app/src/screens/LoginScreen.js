@@ -26,7 +26,13 @@ const LoginScreen = () => {
         setErrorMessage('아이디나 비밀번호가 틀렸습니다. 다시 입력해 주세요.')
       }
     } catch (error) {
-        console.log(error);
+        if (error.response && error.response.data) {
+          // 서버에서 받은 로그인 실패 이유 오류 메시지 화면에 출력
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
+          console.error('로그인 오류:', error);
+        }
     }
   };
 
