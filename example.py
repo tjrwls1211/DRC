@@ -61,10 +61,10 @@ root.configure(bg="black")
 font_large = ("Arial", 40, "bold")
 
 # 이미지 로드
-accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((450, 450)))
-accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((450, 450)))
-brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((450, 450)))
-brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((450, 450)))
+accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((350, 400)))
+accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((350, 400)))
+brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((350, 400)))
+brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((350, 400)))
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
@@ -100,13 +100,13 @@ def update_display_state(accel_value, brake_value, state):
     # 이미지와 텍스트 상태 업데이트
     if accel_value < 30:
         accel_label.config(image=accel_img_dark)
-        accel_text_label.config(text="")
+        #accel_text_label.config(text="")
     else:
         accel_label.config(image=accel_img_normal)
 
     if brake_value < 30:
         brake_label.config(image=brake_img_dark)
-        brake_text_label.config(text="")
+        #brake_text_label.config(text="")
     else:
         brake_label.config(image=brake_img_normal)
 '''
@@ -152,8 +152,6 @@ def check_info(accel_value, brake_value):
         else:
             elapsed_time = time.time() - last_accel_time
             if elapsed_time >= 4 and not pygame.mixer.music.get_busy(): 
-                rapid_acceleration_sound.play() 
-                
                 rapid_acceleration_sound.play()
                 time.sleep(1.5)
                 
