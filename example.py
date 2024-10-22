@@ -74,7 +74,8 @@ brake_label = tk.Label(root, image=brake_img_dark, bg="black")
 brake_label.pack(side="left", padx=20, pady=20)
 
 # 상태 텍스트 레이블
-status_label = tk.Label(root, text="Normal Driving (정상주행중)", font=font_large, fg="green", bg="black", width=20)
+driveState = data["driveState"]
+status_label = tk.Label(root, text=driveState, font=font_large, fg="green", bg="black", width=20)
 status_label.pack(pady=20)
 
 # pygame 초기화
@@ -97,18 +98,27 @@ client.connect(ip(), 1222, 60)
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
-    # 이미지와 텍스트 상태 업데이트
-    if accel_value < 30:
-        accel_label.config(image=accel_img_dark)
-        #accel_text_label.config(text="")
+    global data # driveState를 초기화하려면 필요한 코드
+    # 엑셀 이미지 상태 업데이트
+    if accel_value <= 30:
+        if accel_label.cget("image") != str(accel_img_dark):  # 같은 이미지라면 업데이트 안함
+            accel_label.config(image=accel_img_dark)
+            #accel_text_label.config(text="")
     else:
-        accel_label.config(image=accel_img_normal)
+        if accel_label.cget("image") != str(accel_img_normal):
+            accel_label.config(image=accel_img_normal)
 
-    if brake_value < 30:
-        brake_label.config(image=brake_img_dark)
-        #brake_text_label.config(text="")
+    # 브레이크 이미지 상태 업데이트
+    if brake_value <= 30:
+        if brake_label.cget("image") != str(brake_img_dark):
+            brake_label.config(image=brake_img_dark)
+            #brake_text_label.config(text="")
     else:
-        brake_label.config(image=brake_img_normal)
+        if brake_label.cget("image") != str(brake_img_normal):
+            brake_label.config(image=brake_img_normal)
+            
+    data["driveState"] = state
+    status_label.config(text=data["driveState"])
 '''
     # 상태에 따른 텍스트 업데이트
     if state == "Rapid Acceleration":
@@ -144,7 +154,7 @@ def check_info(accel_value, brake_value):
 
     if accel_value > 200 and brake_value <= 30:
         data["driveState"] = "Rapid Acceleration"
-        update_display_state(accel_value, brake_value, "Rapid Acceleration") 
+        update_display_state(accel_value, brake_value, state) 
 
         if not is_accelerating:
             last_accel_time = time.time()
@@ -182,12 +192,12 @@ def check_info(accel_value, brake_value):
 
     elif brake_value > 200 and accel_value <= 30:
         data["driveState"] = "Rapid Braking" 
-        update_display_state(accel_value, brake_value, "Rapid Braking")
+        update_display_state(accel_value, brake_value, state)
         is_accelerating = False
 
     elif accel_value > 100 and brake_value > 100:
         data["driveState"] = "Both Feet Driving"
-        update_display_state(accel_value, brake_value, "Both Feet Driving")
+        update_display_state(accel_value, brake_value, state)
         is_accelerating = False
 
 
