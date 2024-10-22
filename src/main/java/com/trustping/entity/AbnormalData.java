@@ -21,7 +21,7 @@ public class AbnormalData {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long logId;
-	private int carId;
+	private String carId;
 	@Column(columnDefinition = "TIMESTAMP")
 	private LocalDate date;
 	private int sAcl;

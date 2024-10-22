@@ -17,7 +17,7 @@ public class PedalLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long logId;
-	private int carId;
+	private String carId;
 	private int aclPedal;
 	private int brkPedal;
 	@Column(name = "createdAt", columnDefinition = "TIMESTAMP")

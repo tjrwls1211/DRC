@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AbnormalDataRequestDTO {
-    private Long carId;
+    private String carId;
     private LocalDate createdAt; 
 
 }

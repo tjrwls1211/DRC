@@ -15,12 +15,12 @@ public class PedalLogServiceImpl implements PedalLogService {
 	@Autowired
 	private PedalLogRepository pedalLogRepository;
 	
-	public List<PedalLog> findByCarId(int carId) {
+	public List<PedalLog> findByCarId(String carId) {
 		return pedalLogRepository.findByCarId(carId);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void deleteByCarId(int carId) {
+	public void deleteByCarId(String carId) {
 		System.out.println("Deleting logs for car ID: " + carId);
 		pedalLogRepository.deleteByCarId(carId);
 		System.out.println("Deletion complete.");

@@ -16,15 +16,15 @@ public class AbnormalDataServiceImpl implements AbnormalDataService{
 	@Autowired
 	private AbnormalDataRepository abnormalDataRepository;
 	
-	public Optional<SAclDTO> getSaclByCarIdAndDate(int carId, LocalDate date) {
+	public Optional<SAclDTO> getSaclByCarIdAndDate(String carId, LocalDate date) {
         return abnormalDataRepository.findSAclByCarIdAndDate(carId, date);
     }
 	
-	public Optional<SBrkDTO> getSbrkByCarIdAndDate(int carId, LocalDate date) {
+	public Optional<SBrkDTO> getSbrkByCarIdAndDate(String carId, LocalDate date) {
 		return abnormalDataRepository.findSBrkByCarIdAndDate(carId, date);
 	}
 	
-	public Optional<BothPedalDTO> getBothPedalByCarIdAndDate(int carId, LocalDate date) {
+	public Optional<BothPedalDTO> getBothPedalByCarIdAndDate(String carId, LocalDate date) {
 		return abnormalDataRepository.findBothPedalByCarIdAndDate(carId, date);
 	}
 	

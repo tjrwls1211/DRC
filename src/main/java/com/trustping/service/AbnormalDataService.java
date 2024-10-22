@@ -9,10 +9,10 @@ import com.trustping.DTO.SBrkDTO;
 
 public interface AbnormalDataService {
 	
-	public Optional<SAclDTO> getSaclByCarIdAndDate(int carId, LocalDate date);
+	public Optional<SAclDTO> getSaclByCarIdAndDate(String carId, LocalDate date);
 
-	public Optional<SBrkDTO> getSbrkByCarIdAndDate(int carId, LocalDate date);
+	public Optional<SBrkDTO> getSbrkByCarIdAndDate(String carId, LocalDate date);
 
-	public Optional<BothPedalDTO> getBothPedalByCarIdAndDate(int carId, LocalDate date);
+	public Optional<BothPedalDTO> getBothPedalByCarIdAndDate(String carId, LocalDate date);
 	
 }
