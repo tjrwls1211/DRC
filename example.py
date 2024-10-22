@@ -153,7 +153,7 @@ def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating
 
     if accel_value > 200 and brake_value <= 30:
-        data["driveState"] = "Rapid Acceleration"
+        state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state) 
 
         if not is_accelerating:
@@ -191,12 +191,12 @@ def check_info(accel_value, brake_value):
                 last_accel_time = time.time()
 
     elif brake_value > 200 and accel_value <= 30:
-        data["driveState"] = "Rapid Braking" 
+        state = "Rapid Braking" 
         update_display_state(accel_value, brake_value, state)
         is_accelerating = False
 
     elif accel_value > 100 and brake_value > 100:
-        data["driveState"] = "Both Feet Driving"
+        state = "Both Feet Driving"
         update_display_state(accel_value, brake_value, state)
         is_accelerating = False
 
