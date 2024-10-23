@@ -38,7 +38,7 @@ const SignUpScreen = () => {
         setEmailError('');
       }
     } catch (error) {
-      setEmailError('ID 중복 확인 오류(화면체크)');
+      setEmailError('ID 중복 확인 오류');
       console.error(error);
     }
   };

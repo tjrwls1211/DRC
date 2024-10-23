@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { loginUser } from '../api/authAPI'; // api.js에서 loginUser 함수 가져오기
+import { loginUser, checkTokenValidity } from '../api/authAPI'; // api.js에서 loginUser 함수 가져오기
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -9,6 +9,20 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(''); // 오류 메시지 상태 추가
 
+  // 앱 시작 시 토큰 유효성 검사
+  useEffect(() => {
+    const checkToken = async () => {
+      const isValid = await checkTokenValidity();
+      if (isValid) {
+        navigation.navigate('MainScreen');
+      } else {
+        console.log("토큰 검증 중 오류(아마 API 연결안됨)");
+      }
+    };
+    checkToken();
+  }, []);
+
+  // 로그인 처리 핸들러
   const handleLogin = async () => {
     if (!email || !password) {
       setErrorMessage("아이디(이메일)와 비밀번호를 입력해 주세요.");

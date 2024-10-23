@@ -1,6 +1,7 @@
 // 서버로 회원가입, 로그인 요청 통신 코드
 import axios from 'axios';
 import {API_KEY} from "@env";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // C:\DRC\drc-app\babel.config.js 파일에서 모듈네임을 @env로 설정했기 때문에 @env에서 불러온다
 // 모듈네임 설정 않은 경우 - import { API_KEY } from 'react-native-dotenv;
 
@@ -26,6 +27,11 @@ export const loginUser = async (email, password) => {
   try {
     const response = await axios.post("비밀", data);
     console.log('로그인 데이터 전송 성공:', response.data);
+    
+    // 로그인 성공 시 JWT 토큰 저장
+    const {token} = response.data;
+    await AsyncStorage.setItem('token',  token);
+
     return response.data; // 서버 반환 성공 여부
   } catch (error) {
     if (error.response) {
@@ -36,6 +42,23 @@ export const loginUser = async (email, password) => {
     throw error; 
     }
 };
+
+// JWT 토큰 유효성 검사
+export const checkTokenValidity  = async () => {
+  try {
+    const token = await AsyncStorage.getItem('token'); // 저장된 토큰 가져오기
+    if (!token) return false;
+
+    // 토큰 존재 시, 토큰 유효 확인 - 서버에 get 요청 보냄
+    // ? Authorization 헤더에 Bearer ${token} 형식으로 토큰 포함 - 이 방식은 서버가 클라이언트 인증 확인 할 수 있도록 함
+    const response = await axios.get("비밀 url", {headers: {Authorization: `Bearer ${token}`}
+    });
+    return response.data;
+  } catch (error) {
+    console.log("토큰 유효성 검사 오류", error);
+    return false;
+  }
+}
 
 // 회원가입 ID 중복 확인
 export const checkID = async (email) => {
