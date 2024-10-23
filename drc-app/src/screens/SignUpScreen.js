@@ -54,8 +54,10 @@ const SignUpScreen = () => {
     }
   };
 
+  
   // 회원가입 버튼 핸들러
   const handleSignUp = async () => {
+    console.log("차량번호", carNumber);
     if (!email || !password || !confirmPassword || !carNumber || !nickname || !birthDate) {
       setFormError("모든 항목을 입력해 주세요.");
       return;
@@ -96,7 +98,7 @@ const SignUpScreen = () => {
 
     try {
       // 서버로 회원가입 데이터 전송 후 응답 대기
-      const response = await SignUpUser(email, password, carNumber, nickname, formattedBirthDate);
+      const response = await SignUpUser(email, password, nickname, formattedBirthDate, carNumber);
       console.log(response.success);
 
       if (response.success) {
@@ -204,7 +206,7 @@ const SignUpScreen = () => {
               <Text>Vehicle Number</Text>
               <TextInput
                 style={Styles.TextInput}
-                onChange={setCarNumber}
+                onChangeText={setCarNumber}
                 placeholder="차량번호"
                 placeholderTextColor="#D9D9D9"
                 value={carNumber}

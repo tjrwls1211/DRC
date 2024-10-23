@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { loginUser, checkTokenValidity } from '../api/authAPI'; // api.js에서 loginUser 함수 가져오기
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -9,18 +12,45 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(''); // 오류 메시지 상태 추가
 
-  // 앱 시작 시 토큰 유효성 검사
-  useEffect(() => {
-    const checkToken = async () => {
-      const isValid = await checkTokenValidity();
-      if (isValid) {
-        navigation.navigate('MainScreen');
-      } else {
-        console.log("토큰 검증 중 오류(아마 API 연결안됨)");
-      }
-    };
-    checkToken();
-  }, []);
+  // // 앱 시작 시 토큰 유효성 검사
+  // useEffect(() => {
+  //   const checkToken = async () => {
+  //     const isValid = await checkTokenValidity();
+  //     if (isValid) {
+  //       navigation.navigate('MainScreen');
+  //     } else {
+  //       console.log("토큰 검증 중 오류(아마 API 연결안됨)");
+  //     }
+  //   };
+  //   checkToken();
+  // }, []);
+
+  // // (테스트 코드) 토큰을 사용하여 차량 정보 조회
+  // useEffect(() => {
+  //   const fetchCarData = async () => {
+  //     try {
+  //       // AsyncStorage에서 토큰 가져오기
+  //       const token = await AsyncStorage.getItem('token');
+        
+  //       if (token) {
+  //         // 차량 정보 조회 API 호출
+  //         const response = await axios.get('http:/비밀/api/pedalLog/sel/CAR789', {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`, // Bearer 토큰 방식으로 헤더 설정
+  //           },
+  //         });
+          
+  //         console.log('차량 정보:', response.data);
+  //       } else {
+  //         console.log('토큰이 없습니다.');
+  //       }
+  //     } catch (error) {
+  //       console.error('차량 정보 조회 오류:', error);
+  //     }
+  //   };
+
+  //   fetchCarData(); // 컴포넌트가 마운트될 때 차량 정보 조회 실행
+  // }, []);
 
   // 로그인 처리 핸들러
   const handleLogin = async () => {
