@@ -76,13 +76,13 @@ export const checkID = async (email) => {
 }
 
 // 회원가입 가입 요청
-export const SignUpUser = async (email, password, nickname, birthDate) => { //nickname, birthDate 수정 필요
+export const SignUpUser = async (email, password, carNumber, nickname, birthDate) => { //carnum을 carId로 넘겨줌
   const data = {
     id: email,
     pw: password,
     nickname: nickname,
     birthDate: birthDate,
-    carId: 1,
+    carId: carNumber,
   }
 
   console.log(data);
