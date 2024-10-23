@@ -80,7 +80,7 @@ brake_label.pack(side="left", padx=20, pady=10)
 data = {"driveState": "Drive Ready"}
 
 status_label = tk.Label(root, text=data["driveState"], font=font_large, bg="black", fg="white", padx=10, pady=10, width=30)
-status_label.place(relx=0.5, rely=0.5, anchor='center')
+status_label.pack(side="top", pady=10)
 
 # pygame 초기화
 # pygame.mixer.init()
