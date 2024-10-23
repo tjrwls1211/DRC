@@ -68,10 +68,10 @@ brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((500, 40
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
-accel_label.pack(side="right", padx=20, pady=20)
+accel_label.pack(side="right", padx=20, pady=10)
 
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
-brake_label.pack(side="left", padx=20, pady=20)
+brake_label.pack(side="left", padx=20, pady=10)
 
 # 상태 텍스트 레이블
 driveState = data["driveState"]#[::-1] 이걸 활성화하면 글씨가 좌우반전으로 출력 
