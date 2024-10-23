@@ -54,17 +54,17 @@ hx2.tare()
 # Tkinter 창생성
 root = tk.Tk()
 root.title("Car Driving Display")
-root.geometry("720x480+100+100")
+root.geometry("1000×600")
 root.configure(bg="black")
 
 # 폰트 설정
 font_large = ("Arial", 40, "bold")
 
 # 이미지 로드
-accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((300, 300)))
-accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((300, 300)))
-brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((300, 300)))
-brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((300, 300)))
+accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((500, 400)))
+accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((500, 400)))
+brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((500, 400)))
+brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((500, 400)))
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
