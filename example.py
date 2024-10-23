@@ -74,9 +74,12 @@ brake_label = tk.Label(root, image=brake_img_dark, bg="black")
 brake_label.pack(side="left", padx=20, pady=10)
 
 # 상태 텍스트 레이블
-driveState = data["driveState"]#[::-1] 이걸 활성화하면 글씨가 좌우반전으로 출력 
+#driveState = data["driveState"]#[::-1] 이걸 활성화하면 글씨가 좌우반전으로 출력 
 
-status_label = tk.Label(root, text=driveState, font=font_large, bg="black", padx=10, pady=10, width=30)
+#테스트 
+data = {"driveState": "Drive Ready"}
+
+status_label = tk.Label(root, text=data["driveState"], font=font_large, bg="black", padx=10, pady=10, width=30)
 status_label.pack(pady=20)
 
 # pygame 초기화
@@ -117,9 +120,15 @@ def update_display_state(accel_value, brake_value, state):
     else:
         if brake_label.cget("image") != str(brake_img_normal):
             brake_label.config(image=brake_img_normal)
-            
-    data["driveState"] = state
-    status_label.config(text=data["driveState"])
+    
+    #상태업데이트 : 이전 상태와 비교하여 변화가 있을 때만 업데이트 테스트 텍스트 
+    if data["driveState"] != state:
+        data["driveState"] = state
+        status_label.config(text=data["driveState"])
+    
+         
+    #data["driveState"] = state
+    #status_label.config(text=data["driveState"])
 '''
     # 상태에 따른 텍스트 업데이트
     if state == "Rapid Acceleration":
@@ -226,9 +235,6 @@ def run_code():
             # 두 번째 로드셀 (브레이크)
             val_brake = hx2.get_weight(5)
             print(f"현재상태 : 브레이크(Brake) 무게: {val_brake} g")
-
-            #test여서 삭제 가능
-            print(data)
             
             hx1.power_down()
             hx2.power_down()
