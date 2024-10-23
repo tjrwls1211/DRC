@@ -54,7 +54,7 @@ hx2.tare()
 # Tkinter 창생성
 root = tk.Tk()
 root.title("Car Driving Display")
-root.geometry("720×480")
+root.geometry("720x480+100+100")
 root.configure(bg="black")
 
 # 폰트 설정
