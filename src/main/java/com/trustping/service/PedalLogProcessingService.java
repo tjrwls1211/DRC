@@ -37,7 +37,7 @@ public class PedalLogProcessingService {
     // 정상 주행 데이터 삭제
     @Scheduled(fixedRate = 10000)
     public void deleteOldNormalLogs() {
-    	LocalDateTime targetTime = LocalDateTime.now().minusMinutes(10);
+    	LocalDateTime targetTime = LocalDateTime.now().minusMinutes(5);
     	pedalLogService.deleteOldNormalLogs(targetTime);
     }
     
