@@ -54,17 +54,17 @@ hx2.tare()
 # Tkinter 창생성
 root = tk.Tk()
 root.title("Car Driving Display")
-root.geometry("1080x720")
+root.geometry("1024×600")
 root.configure(bg="black")
 
 # 폰트 설정
 font_large = ("Arial", 40, "bold")
 
 # 이미지 로드
-accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((350, 400)))
-accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((350, 400)))
-brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((350, 400)))
-brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((350, 400)))
+accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((500, 400)))
+accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((500, 400)))
+brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((500, 400)))
+brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((500, 400)))
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
@@ -74,8 +74,8 @@ brake_label = tk.Label(root, image=brake_img_dark, bg="black")
 brake_label.pack(side="left", padx=20, pady=20)
 
 # 상태 텍스트 레이블
-driveState = data["driveState"]
-status_label = tk.Label(root, text=driveState, font=font_large, fg="green", bg="black", padx=10, pady=10, width=30)
+driveState = data["driveState"]#[::-1] 이걸 활성화하면 글씨가 좌우반전으로 출력 
+status_label = tk.Label(root, text=driveState, font=font_large, bg="black", padx=10, pady=10, width=100)
 status_label.pack(pady=20)
 
 # pygame 초기화
