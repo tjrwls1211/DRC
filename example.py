@@ -6,7 +6,7 @@ from hx711 import HX711
 import paho.mqtt.client as mqtt
 import json
 import tkinter as tk
-from PIL import Image, ImageTk
+from PIL import Image, ImageDraw, ImageFont, ImageTk
 import threading
 import pygame
 from server import ip, port
@@ -75,6 +75,7 @@ brake_label.pack(side="left", padx=20, pady=20)
 
 # 상태 텍스트 레이블
 driveState = data["driveState"]#[::-1] 이걸 활성화하면 글씨가 좌우반전으로 출력 
+
 status_label = tk.Label(root, text=driveState, font=font_large, bg="black", padx=10, pady=10, width=100)
 status_label.pack(pady=20)
 
