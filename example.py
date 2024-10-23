@@ -146,7 +146,17 @@ brake_text_label.place(relx=0.75, rely=0.4, anchor='center')  # 중앙에 위치
 # TEST
 
 #미리 로드 만들어두기
-rapid_acceleration_sound = pygame.mixer_sound = pygame.mixer.Sound("rapid_acceleration.wav")
+rapid_acceleration_sound = pygame.mixer.Sound("rapid_acceleration.wav")
+# ?_sound = pygame.mixer.Sound("?")
+# ?_sound = pygame.mixer.Sound("?")
+# ?_sound = pygame.mixer.Sound("?")
+# ?_sound = pygame.mixer.Sound("?")
+# ?_sound = pygame.mixer.Sound("?")
+# ?_sound = pygame.mixer.Sound("?")
+# ?_sound = pygame.mixer.Sound("?")
+# ?_sound = pygame.mixer.Sound("?")
+# ?_sound = pygame.mixer.Sound("?")
+# ?_sound = pygame.mixer.Sound("?")
 
 
 # 로드셀 데이터와 상태를 업데이트하는 함수
@@ -165,8 +175,6 @@ def check_info(accel_value, brake_value):
             if elapsed_time >= 4 and not pygame.mixer.music.get_busy(): 
                 rapid_acceleration_sound.play()
                 time.sleep(1.5)
-                
-                
                 '''
                 rapid_acceleration_sound.play()
                 time.sleep(1.5)
@@ -219,6 +227,9 @@ def run_code():
             val_brake = hx2.get_weight(5)
             print(f"현재상태 : 브레이크(Brake) 무게: {val_brake} g")
 
+            #test여서 삭제 가능
+            print(data)
+            
             hx1.power_down()
             hx2.power_down()
             hx1.power_up()
