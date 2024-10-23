@@ -200,6 +200,11 @@ def check_info(accel_value, brake_value):
         state = "Both Feet Driving"
         update_display_state(accel_value, brake_value, state)
         is_accelerating = False
+        
+    else:
+        state = "Normal Drivng"
+        update_display_state(accel_value, brake_value, state)
+        is_accelerating = False
 
 
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
