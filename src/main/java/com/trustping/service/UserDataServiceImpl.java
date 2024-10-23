@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.MfaRequestDTO;
+import com.trustping.DTO.MyDataResponse;
 import com.trustping.DTO.OtpDTO;
 import com.trustping.DTO.OtpRequestDTO;
 import com.trustping.DTO.SignUpRequestDTO;
@@ -144,5 +145,20 @@ public class UserDataServiceImpl implements UserDataService {
 		boolean verify = googleAuthenticator.authorize(otpKey, mfaRequestDTO.getKey());
 		return verify;
 	}
+	
+	// 마이페이지 데이터 확인
+	public MyDataResponse getMyDataByToken(String jwtToken) {
+		String userId = jwtUtil.extractUsername(jwtToken);
+		
+	    UserData userData = userDataRepository.findById(userId)
+	            .orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + userId));
 
+	    return new MyDataResponse(
+	            userData.getId(),
+	            userData.getNickname(),
+	            userData.getBirthDate(),
+	            userData.getCarId()
+	    );
+	}
+	
 }

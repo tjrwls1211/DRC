@@ -34,6 +34,6 @@ public class SignUpRequestDTO {
 	private LocalDate birthDate;
 	
 	@NotNull(message = "차 고유번호 입력")
-	private Long carId;
+	private String carId;
 	
 }

@@ -1,10 +1,9 @@
 package com.trustping.entity;
 
-import java.time.LocalDate;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,14 +14,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserData {	
+public class DriveScore {	
     @Id
     private String id;
-    private String pw;
-    private String nickname;
-    private LocalDate birthDate;
-    private String carId;
-    private String otpKey;
-    @Column(nullable = false) 
-    private String role; 
+    @Min(0)
+    @Max(100)
+    private int Score;
 }
