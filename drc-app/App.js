@@ -11,6 +11,7 @@ import PersonalInfoScreen from './src/screens/PersonalInfoScreen';
 import AnalysisTabs from './src/screens/Analysis/AnalysisTabs';
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
+import ChatbotScreen from './src/screens/ChatbotScreen';
 
 
 const Stack = createStackNavigator(); // 스택 내비게이션 생성
@@ -25,12 +26,12 @@ export default function App() {
         <Stack.Screen
           name="MainScreen"
           component={MainScreen}
-          options={{ headerShown: true, headerTitle: '메인 화면', headerTitleAlign: 'center' }}
+          options={{ headerShown: false, headerTitle: '메인 화면', headerTitleAlign: 'center' }}
         />
         <Stack.Screen
           name="MypageScreen"
           component={MypageScreen}
-          options={{ headerTitle: 'MY 페이지' ,headerShown: true , headerTitleAlign: 'center'}} 
+          options={{ headerShown: true, headerTitle: 'MY 페이지', headerTitleAlign: 'center'}} 
         />
         <Stack.Screen 
           name="SettingsScreen" 
@@ -60,6 +61,11 @@ export default function App() {
         <Stack.Screen
           name="AnalysisTabs"
           component={AnalysisTabs}
+          options={{ headerShown: true, headerTitle: '', headerTitleAlign: 'center'}}
+        />
+        <Stack.Screen
+          name="ChatbotScreen"
+          component={ChatbotScreen} 
           options={{ headerShown: true, headerTitle: '', headerTitleAlign: 'center'}}
         />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
