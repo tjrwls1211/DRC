@@ -6,12 +6,14 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.trustping.DTO.BothPedalDTO;
 import com.trustping.DTO.SAclDTO;
 import com.trustping.DTO.SBrkDTO;
 import com.trustping.entity.AbnormalData;
 
+@Repository
 public interface AbnormalDataRepository extends JpaRepository<AbnormalData, Long> {
 	
 	@Query("SELECT new com.trustping.DTO.SAclDTO(a.sAcl) FROM AbnormalData a WHERE a.carId = :carId AND a.date = :date")
