@@ -25,5 +25,3 @@ export const extractDateAndKeyword = (input) => {
 
   return { date, keyword };
 };
-
-
