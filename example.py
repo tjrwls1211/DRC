@@ -156,16 +156,17 @@ brake_text_label.place(relx=0.75, rely=0.4, anchor='center')  # 중앙에 위치
 
 #미리 로드 만들어두기
 rapid_acceleration_sound = pygame.mixer.Sound("rapid_acceleration.wav")
-# ?_sound = pygame.mixer.Sound("?")
-# ?_sound = pygame.mixer.Sound("?")
-# ?_sound = pygame.mixer.Sound("?")
-# ?_sound = pygame.mixer.Sound("?")
-# ?_sound = pygame.mixer.Sound("?")
-# ?_sound = pygame.mixer.Sound("?")
-# ?_sound = pygame.mixer.Sound("?")
-# ?_sound = pygame.mixer.Sound("?")
-# ?_sound = pygame.mixer.Sound("?")
-# ?_sound = pygame.mixer.Sound("?")
+rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1_wav")
+rapidspeed_2_sound = pygame.mixer.Sound("rapidspeed_2_wav")
+rapidspeed_3_sound = pygame.mixer.Sound("rapidspeed_3_wav")
+nobrake_1_sound = pygame.mixer.Sound("nobrake_1_wav")
+nobrake_2_sound = pygame.mixer.Sound("nobrake_2_wav")
+nobrake_3_sound = pygame.mixer.Sound("nobrake_3_wav")
+
+speedless_1_sound = pygame.mixer.Sound("speedless_1_wav")
+speedless_2_sound = pygame.mixer.Sound("speedless_2_wav")
+carstop_1_sound = pygame.mixer.Sound("carstop_1_wav")
+carstop_2_sound = pygame.mixer.Sound("carstop_2_wav")
 
 
 # 로드셀 데이터와 상태를 업데이트하는 함수
@@ -184,28 +185,28 @@ def check_info(accel_value, brake_value):
             if elapsed_time >= 4 and not pygame.mixer.music.get_busy(): 
                 rapid_acceleration_sound.play()
                 time.sleep(1.5)
-                '''
-                rapid_acceleration_sound.play()
+                
+                rapidspeed_1_sound.play()
                 time.sleep(1.5)
-                rapid_acceleration_sound.play()
+                rapidspeed_2_sound.play()
                 time.sleep(1.5)
-                rapid_acceleration_sound.play()
+                rapidspeed_3_sound.play()
                 time.sleep(1.5)
-                rapid_acceleration_sound.play()
+                nobrake_1_sound.play()
                 time.sleep(1.5)
-                rapid_acceleration_sound.play()
+                nobrake_2_sound.play()
                 time.sleep(1.5)
-                rapid_acceleration_sound.play()
+                nobrake_3_sound.play()
                 time.sleep(1.5)
-                rapid_acceleration_sound.play()
+                speedless_1_sound.play()
                 time.sleep(1.5)
-                rapid_acceleration_sound.play()
+                speedless_2_sound.play()
                 time.sleep(1.5)
-                rapid_acceleration_sound.play()
+                carstop_1_sound.play()
                 time.sleep(1.5)
-                rapid_acceleration_sound.play()
-                time.sleep(1.5)
-                '''
+                carstop_2_sound.play()
+                time.sleep(1.5)           
+                
                 last_accel_time = time.time()
 
     elif brake_value > 200 and accel_value <= 30:
