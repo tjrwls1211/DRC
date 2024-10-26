@@ -1,13 +1,41 @@
 import React, {useState} from 'react';
-import {View, Text, Button, Switch, StyleSheet } from 'react-native';
+import {View, Text, Button, Switch, StyleSheet, Alert } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker'; // DropDownPicker 가져오기
+import { enableTwoFactorAuth, disableTwoFactorAuth } from '../api/authAPI'; // 2FA 관련 서버 통신 함수 가져오기
 import {useNavigation} from '@react-navigation/native';
 import NicknameChangeModal from '../components/Modal/NicknameChangeModal.js';
 import PasswordChangeModal from '../components/Modal/PasswordChangeModal.js';
+import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차인증 필요 상태 Context import
+import QRCode from 'react-native-qrcode-svg'; // QR 코드 생성을 위한 라이브러리 추가
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
   const [nicknameModalVisible, setNicknameModalVisible] = useState(false);
   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
+  const [qrUrl, setQrUrl] = useState(null); // QR URL 상태
+  
+  const { is2FAEnabled, setIs2FAEnabled } = useTwoFA(); // Context에서 2차인증 필요 상태 가져오기
+  const [open, setOpen] = useState(false); // DropDownPicker 열림/닫힘 상태
+  const [items, setItems] = useState([
+    { label: '비활성', value: false }, 
+    { label: '활성', value: true }, 
+  ]);
+
+  // 2차 인증 활성화/비활성 상태 변경 핸들러
+  const handle2FAChange = async (value) => {
+    if (value) {
+      console.log("2차인증 활성");
+      const qrUrl = await enableTwoFactorAuth(); // 2차 인증 활성화 함수 호출 (QR URL 요청)
+      setQrUrl(qrUrl); // QR URL을 상태에 저장
+      Alert.alert("QR 코드가 생성되었습니다.", "QR 코드를 스캔하여 OTP를 설정하세요."); // 알림 표시
+      // ☆ OR URL을 사용자에게 보여주는 로직 필요
+    } else {
+      console.log("2차인증 비활성");
+      await disableTwoFactorAuth(); // 비활성화 함수 호출
+      setQrUrl(null);
+    }
+    setIs2FAEnabled(value); // Context를 통해 2차 인증 상태 업데이트
+  };
 
   const handleNicknameChange = (newNickname) => {
     console.log('New nickname: ', newNickname);
@@ -29,6 +57,28 @@ const SettingsScreen = () => {
       <Button title="개인정보" onPress={() => navigation.navigate('PersonalInfoScreen') } />
       <Button title="닉네임 수정" onPress = {() => setNicknameModalVisible(true)} />
       <Button title="비밀번호 수정" onPress = {() => setPasswordModalVisible(true)} />
+
+      {/* 2차 인증 드롭다운 */}
+      <Text style={styles.label}>2차 인증 설정</Text>
+      <DropDownPicker
+        open={open}
+        value={is2FAEnabled}
+        items={items} // 드롭다운 항목들
+        setOpen={setOpen} // 드롭다운 열림 상태 업데이트 함수
+        setValue={setIs2FAEnabled} // 선택된 값 업데이트 함수
+        setItems={setItems} // 드롭다운 항목들 업데이트 함수
+        onChangeValue={handle2FAChange} // 선택 값 변경 시 호출되는 함수
+        style={styles.dropdown} // 드롭다운 스타일
+        dropDownContainerStyle={styles.dropdownContainer} // 드롭다운 컨테이너 스타일
+      />
+
+      {/* QR 코드 표시 부분 ☆ */}
+      {qrUrl && (
+        <View style={styles.qrContainer}>
+          <Text style={styles.label}>QR 코드</Text>
+          <QRCode value={qrUrl} size={200} /> {/* QR 코드 생성 */}
+        </View>
+      )}
 
       <Text style={styles.label}>앱 설정</Text>
       <View style={styles.darkModeContainer}>
@@ -86,6 +136,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBootm: 5,
     color: 'gray',
+  },
+  dropdown: {
+    marginVertical: 10,
+    borderColor: 'gray',
+  },
+  dropdownContainer: {
+    borderColor: 'gray',
+  },
+  qrContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
   },
 });
 

@@ -45,22 +45,17 @@ export const loginUser = async (email, password) => {
     }
 };
 
-// // (수정 예정) JWT 토큰 유효성 검사
-// export const checkTokenValidity  = async () => {
-//   try {
-//     const token = await AsyncStorage.getItem('token'); // 저장된 토큰 가져오기
-//     if (!token) return false;
+// 서버로 JWT 유효성 검사 요청 통신 코드
+export const checkTokenValidity = async (token) => {
+  try {
+    const response = await axios.post("http://비밀/api/user/checkToken", { token });
+    return response.data.isValid; // JWT 유효성 여부 반환
+  } catch (error) {
+    console.error('JWT 유효성 검사 오류:', error);
+    return false; // 오류 발생 시 false 반환
+  }
+};
 
-//     // 토큰 존재 시, 토큰 유효 확인 - 서버에 get 요청 보냄
-//     // ? Authorization 헤더에 Bearer ${token} 형식으로 토큰 포함 - 이 방식은 서버가 클라이언트 인증 확인 할 수 있도록 함
-//     const response = await axios.get("http://비밀/api/pedalLog/sel/CAR789", {headers: {Authorization: `Bearer ${token}`}
-//     });
-//     return response.data;
-//   } catch (error) {
-//     console.log("토큰 유효성 검사 오류", error);
-//     return false;
-//   }
-// }
 
 // 회원가입 ID 중복 확인
 export const checkID = async (email) => {
@@ -75,7 +70,7 @@ export const checkID = async (email) => {
     console.error('ID 중복 확인 오류:', error);
     throw error;
   }
-}
+};
 
 // 회원가입 가입 요청
 export const SignUpUser = async (email, password, nickname, birthDate, carNumber) => { //carnum을 carId로 넘겨줌
@@ -98,5 +93,42 @@ export const SignUpUser = async (email, password, nickname, birthDate, carNumber
   } catch (error) {
       console.error('회원가입 데이터 전송 오류:', error);
       throw error;
+  }
+};
+
+// 2차 인증 활성화 요청
+export const enableTwoFactorAuth = async () => {
+  try {
+    // 서버에 2차 인증 활성화 요청
+    const response = await axios.post("/api/2fa/enable");
+    const qrUrl = response.data.qrUrl; // 응답에서 OR 코드 URL 추출
+    // QR URL을 사용자에게 전달하여 설정할 수 있도록 처리
+    return qrUrl;
+  } catch (error) {
+    console.error("2차 인증 활성화 오류:", error);
+    throw error;
+  }
+};
+
+// 2차 인증 비활성화 요청
+export const disableTwoFactorAuth = async () => {
+  try {
+    // 서버에 2차 인증 비활성화 요청
+    await axios.post("/api/2fa/disable");
+  } catch (error) {
+    console.error("2차 인증 비활성화 오류:", error);
+    throw error;
+  }
+};
+
+// OTP 검증 요청
+export const verifyOTP = async (email, otp) => {
+  try {
+    // 서버에 OTP 검증 요청 (이메일, OTP코드 전송)
+    const response = await axios.post("/api/2fa/verify", { email, otp });
+    return response.data.success; // 검증 성공 여부 반환
+  } catch (error) {
+    console.error("OTP 인증 실패:", error);
+    throw error;
   }
 };
