@@ -15,7 +15,7 @@ const SignUpScreen = () => {
   const [birthDate, setBirthDate] = useState(new Date()); // 초기값 Date 객체로 설정
   const [isDuplicateID, setIsDuplicateID] = useState(false); // ID 중복 여부
   const [isPasswordVisible, setIsPasswordVisible] = useState(false); // 비밀번호 보이기 상태
-
+  const [isIDChecked, setIsIDChecked] = useState(false); // ID 중복 확인 버튼 클릭 여부
   
   // 각각 필드에 대한 에러 메시지 상태 관리
   const [emailError, setEmailError] = useState('');
@@ -32,7 +32,10 @@ const SignUpScreen = () => {
   const handleCheckDuplicate = async () => {
     try {
       const isDuplicate = await checkID(email);
-        setEmailError(isDuplicateID);
+      setIsIDChecked(true); // 중복 확인 버튼이 클릭되었음을 표시
+      setIsDuplicateID(isDuplicate); // 중복 여부 상태 업데이트
+      setEmailError(isDuplicateID);
+      
       if (!isDuplicate) {
         setEmailError("중복된 ID입니다.");
       } else {
@@ -58,6 +61,7 @@ const SignUpScreen = () => {
   // 회원가입 버튼 핸들러
   const handleSignUp = async () => {
     console.log("차량번호", carNumber);
+
     if (!email || !password || !confirmPassword || !carNumber || !nickname || !birthDate) {
       setFormError("모든 항목을 입력해 주세요.");
       return;
@@ -84,6 +88,17 @@ const SignUpScreen = () => {
       hasError = true; // 에러 발생
     } else {
       setConfirmPasswordError('');
+    }
+
+    // ID 중복 확인 여부 체크
+    if (!isIDChecked) {
+      setEmailError("ID 중복 확인을 해주세요."); // 중복 확인을 클릭하지 않은 경우 메시지 표시
+      return;
+    }
+    // ID 중복된 경우 회원가입 불가
+    if (isDuplicateID) {
+      setEmailError("중복된 ID입니다. 다른 ID를 입력하세요."); // 중복된 ID일 경우 메시지 표시
+      return;
     }
 
     // 에러가 있으면 회원가입 처리 중단
