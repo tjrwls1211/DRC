@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OtpDTO {
+public class OtpResponseDTO {
+	private boolean success;
 	private String otpKey;
 	private String QRUrl;
 }

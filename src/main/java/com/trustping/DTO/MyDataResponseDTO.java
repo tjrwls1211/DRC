@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MyDataResponse {
+public class MyDataResponseDTO {
 	    private String id;
 	    private String nickname;
 	    private LocalDate birthDate;

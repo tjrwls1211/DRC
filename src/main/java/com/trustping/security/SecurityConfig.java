@@ -27,7 +27,7 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/user/**").permitAll()  // 인증 없이 접근 가능
-                .requestMatchers("/api/abnormal/**").hasRole("USER")  // 인증 없이 접근 가능
+                .requestMatchers("/api/abnormal/**").permitAll()
                 .anyRequest().authenticated()  // 그 외 요청은 인증 필요
             )
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);  // JWT 필터 추가

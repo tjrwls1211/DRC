@@ -11,11 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trustping.DTO.DeleteUserDTO;
 import com.trustping.DTO.LoginRequestDTO;
+import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
-import com.trustping.DTO.MyDataResponse;
-import com.trustping.DTO.OtpDTO;
+import com.trustping.DTO.MfaResponseDTO;
+import com.trustping.DTO.MyDataResponseDTO;
 import com.trustping.DTO.OtpRequestDTO;
+import com.trustping.DTO.OtpResponseDTO;
 import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.DTO.SignUpResponseDTO;
 import com.trustping.service.UserDataService;
@@ -30,47 +33,72 @@ public class UserDataController {
 
 	// ID 중복 확인
 	@GetMapping("/check")
-	public ResponseEntity<Boolean> idDuplicateCheck(@Valid @RequestParam(name = "id") String id) {
+	public ResponseEntity<Boolean> idDuplicateCheck(@RequestParam("id") String id) {
 		boolean isDuplicate = userDataService.duplicateCheckUser(id);
 		return ResponseEntity.ok(isDuplicate);
 	}
 
-	 // 회원 가입
-    @PostMapping("/signUp")
-    public ResponseEntity<SignUpResponseDTO> signUp(@Valid @RequestBody SignUpRequestDTO signUpRequestDTO) {
-        return userDataService.signUpUser(signUpRequestDTO);
-    }
+	// 회원 가입
+	@PostMapping("/signUp")
+	public ResponseEntity<SignUpResponseDTO> signUp(@Valid @RequestBody SignUpRequestDTO request) {
+		boolean success = userDataService.registerUser(request);
+		if (success) {
+			return ResponseEntity.ok(new SignUpResponseDTO(true, "회원가입이 성공적으로 완료되었습니다."));
+		}
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(new SignUpResponseDTO(false, "중복된 ID입니다."));
+	}
 
-    // 로그인
-    @PostMapping("/login")
-    public ResponseEntity<String> Login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-    	 return userDataService.LoginUser(loginRequestDTO);
-    }
+	// 로그인
+	@PostMapping("/login")
+	public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+		LoginResponseDTO response = userDataService.loginUser(loginRequestDTO);
+		return ResponseEntity.status(response.getStatus()).body(response);
+	}
 
-    // Google OTP 인증키, QRLink 생성
-    @PostMapping("/otp")
-    public ResponseEntity<OtpDTO> generateOtp(@RequestBody OtpRequestDTO otpRequestDTO) {
-    	OtpDTO otpDTO = userDataService.generateGoogleMFA(otpRequestDTO);
-    	return ResponseEntity.ok(otpDTO);
-    }
-    
-    // Google OTP 인증
-    @PostMapping("/mfa")
-    public ResponseEntity<Boolean> verifiedMfa(@RequestBody MfaRequestDTO mfaRequestDTO) {
-    	boolean isVerified = userDataService.verifyGoogleMFA(mfaRequestDTO);
-    	return ResponseEntity.ok(isVerified);
-    }
-    
-    // 내 정보 확인
-    @GetMapping("/myData")
-    public ResponseEntity<MyDataResponse> getMydata(@RequestHeader("Authorization") String token){
-        try {
-            String jwtToken = token.substring(7);  
+	// Google OTP 인증키, QRLink 생성
+	@PostMapping("/otp")
+	public ResponseEntity<OtpResponseDTO> generateOtp(@RequestBody OtpRequestDTO otpRequestDTO) {
+	    try {
+	        OtpResponseDTO otpResponse = userDataService.generateGoogleMFA(otpRequestDTO);
+	        if (otpResponse.isSuccess()) {
+	            return ResponseEntity.ok(otpResponse);
+	        } else {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR) 
+	                    .body(otpResponse);
+	        }
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR) 
+	                .body(new OtpResponseDTO(false, null, null)); // 실패 응답 반환
+	    }
+	}
 
-            MyDataResponse response = userDataService.getMyDataByToken(jwtToken);
-            return ResponseEntity.ok(response); 
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
-        }
-    }
+	// Google OTP 인증
+	@PostMapping("/mfa")
+	public ResponseEntity<MfaResponseDTO> verifiedMfa(@RequestBody MfaRequestDTO mfaRequestDTO) {
+		boolean success = userDataService.verifyGoogleMFA(mfaRequestDTO);
+		if (success) {
+			return ResponseEntity.ok(new MfaResponseDTO(true, "2차 인증에 성공했습니다."));
+		}
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(new MfaResponseDTO(false, "2차 인증에 실패했습니다."));
+	}
+
+	// 내 정보 확인
+	@GetMapping("/myData")
+	public ResponseEntity<MyDataResponseDTO> getMydata(@RequestHeader("Authorization") String token) {
+		try {
+			String jwtToken = token.substring(7);
+			MyDataResponseDTO data = userDataService.getMyDataByToken(jwtToken);
+			return ResponseEntity.ok(data);
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+	}
+	
+	// 회원 탈퇴
+	@PostMapping("/deleteUser")
+	public ResponseEntity<DeleteUserDTO> deleteUser(@RequestBody LoginRequestDTO loginRequestDTO){
+		DeleteUserDTO response = userDataService.deleteUser(loginRequestDTO);
+		return ResponseEntity.status(response.getStatus()).body(response);
+	}
+	
 }
