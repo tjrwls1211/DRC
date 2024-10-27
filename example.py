@@ -84,7 +84,7 @@ status_label.place(relx=0.5, rely=0.05, anchor='center')
 
 
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
-text_label = tk.Label(root, text=f"현재 : ", font=font_large, bg="black", fg="white", padx=10, pady=10, width=10)
+text_label = tk.Label(root, text=f"현재 : ", font=font_large, bg="black", fg="white", padx=3, pady=10, width=14)
 text_label.place(relx=0.95, rely=0.05, anchor='ne')
 
 
