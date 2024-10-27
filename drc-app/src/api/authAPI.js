@@ -1,4 +1,4 @@
-// 서버로 회원가입, 로그인 요청 통신 코드
+// 인증 관련 API 파일 (회원가입, 로그인 요청 통신 등)
 import axios from 'axios';
 import {API_KEY} from "@env";
 import AsyncStorage from '@react-native-async-storage/async-storage';
