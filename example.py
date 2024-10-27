@@ -156,17 +156,18 @@ brake_text_label.place(relx=0.75, rely=0.4, anchor='center')  # 중앙에 위치
 
 #미리 로드 만들어두기
 rapid_acceleration_sound = pygame.mixer.Sound("rapid_acceleration.wav")
-rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1_wav")
-rapidspeed_2_sound = pygame.mixer.Sound("rapidspeed_2_wav")
-rapidspeed_3_sound = pygame.mixer.Sound("rapidspeed_3_wav")
-nobrake_1_sound = pygame.mixer.Sound("nobrake_1_wav")
-nobrake_2_sound = pygame.mixer.Sound("nobrake_2_wav")
-nobrake_3_sound = pygame.mixer.Sound("nobrake_3_wav")
 
-speedless_1_sound = pygame.mixer.Sound("speedless_1_wav")
-speedless_2_sound = pygame.mixer.Sound("speedless_2_wav")
-carstop_1_sound = pygame.mixer.Sound("carstop_1_wav")
-carstop_2_sound = pygame.mixer.Sound("carstop_2_wav")
+rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1.wav")
+rapidspeed_2_sound = pygame.mixer.Sound("rapidspeed_2.wav")
+rapidspeed_3_sound = pygame.mixer.Sound("rapidspeed_3.wav")
+nobrake_1_sound = pygame.mixer.Sound("nobrake_1.wav")
+nobrake_2_sound = pygame.mixer.Sound("nobrake_2.wav")
+nobrake_3_sound = pygame.mixer.Sound("nobrake_3.wav")
+
+speedless_1_sound = pygame.mixer.Sound("speedless_1.wav")
+speedless_2_sound = pygame.mixer.Sound("speedless_2.wav")
+carstop_1_sound = pygame.mixer.Sound("carstop_1.wav")
+carstop_2_sound = pygame.mixer.Sound("carstop_2.wav")
 
 
 # 로드셀 데이터와 상태를 업데이트하는 함수
