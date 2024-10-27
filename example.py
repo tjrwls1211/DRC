@@ -82,6 +82,13 @@ data = {"driveState": "Drive Ready"}
 status_label = tk.Label(root, text=data["driveState"], font=font_large, bg="black", fg="white", padx=10, pady=10, width=30)
 status_label.place(relx=0.5, rely=0.05, anchor='center')
 
+
+#data부분을 나중에 속도 데이터로 넣으면될꺼같음 
+text_label = tk.Label(root, text=f"현재 : {data['aclPedal']}", font=font_large, bg="black", fg="white", padx=10, pady=10, width=10)
+text_label.place(relx=0.95, rely=0.05, anchor='ne')
+
+
+
 # pygame 초기화
 # pygame.mixer.init()
 
@@ -155,7 +162,7 @@ brake_text_label.place(relx=0.75, rely=0.4, anchor='center')  # 중앙에 위치
 # TEST
 
 #미리 로드 만들어두기
-rapid_acceleration_sound = pygame.mixer.Sound("rapid_acceleration.wav")
+#rapid_acceleration_sound = pygame.mixer.Sound("rapid_acceleration.wav")
 
 rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1.wav")
 rapidspeed_2_sound = pygame.mixer.Sound("rapidspeed_2.wav")
@@ -184,8 +191,8 @@ def check_info(accel_value, brake_value):
         else:
             elapsed_time = time.time() - last_accel_time
             if elapsed_time >= 4 and not pygame.mixer.music.get_busy(): 
-                rapid_acceleration_sound.play()
-                time.sleep(4)
+                #rapid_acceleration_sound.play()
+                #time.sleep(4)
                 
                 rapidspeed_1_sound.play()
                 time.sleep(4)
