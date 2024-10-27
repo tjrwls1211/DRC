@@ -9,6 +9,7 @@ import AccountDeletionModal from '../components/Modal/AccountDeletionModal.js';
 import LogoutModal from '../components/Modal/LogoutModal.js';
 import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차인증 필요 상태 Context import
 import QRCode from 'react-native-qrcode-svg'; // QR 코드 생성을 위한 라이브러리 추가
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -58,11 +59,21 @@ const SettingsScreen = () => {
     // 회원탈퇴 로직 (추후 구현)
   };
 
-  const handleLogout = () => {
-    console.log('Logged out');
-    setLogoutModalVisible(false);
-    // 로그아웃 로직 (추후 구현)
+  const handleLogout = async () => {
+    try {
+      // AsyncStorage에서 토큰 삭제
+      await AsyncStorage.removeItem('token'); 
+      console.log('로그아웃 처리 완료');
+      Alert.alert("로그아웃", "정상적으로 로그아웃되었습니다."); // 로그아웃 완료 메시지
+      navigation.navigate('LoginScreen'); // 로그인 화면으로 리디렉션
+    } catch (error) {
+      console.error('로그아웃 중 오류:', error);
+      Alert.alert("오류", "로그아웃 중 문제가 발생했습니다.");
+    } finally {
+      setLogoutModalVisible(false); // 로그아웃 모달 닫기
+    }
   };
+
 
   return (
     <View style={styles.container}>
