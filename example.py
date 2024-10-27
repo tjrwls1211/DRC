@@ -80,12 +80,12 @@ brake_label.pack(side="left", padx=20, pady=10)
 data = {"driveState": "Drive Ready"}
 
 status_label = tk.Label(root, text=data["driveState"], font=font_large, bg="black", fg="white", padx=10, pady=10, width=25)
-status_label.place(relx=0.45, rely=0.05, anchor='center')
+status_label.place(relx=0.44, rely=0.05, anchor='center')
 
 
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
-text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="white", padx=3, pady=10, width=9)
-text_label.place(relx=0.96, rely=0.05, anchor='ne')
+text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
+text_label.place(relx=0.97, rely=0.05, anchor='ne')
 
 
 
