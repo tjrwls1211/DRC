@@ -84,7 +84,7 @@ status_label.place(relx=0.5, rely=0.05, anchor='center')
 
 
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
-text_label = tk.Label(root, text=f"현재 : {data['aclPedal']}", font=font_large, bg="black", fg="white", padx=10, pady=10, width=10)
+text_label = tk.Label(root, text=f"현재 : ", font=font_large, bg="black", fg="white", padx=10, pady=10, width=10)
 text_label.place(relx=0.95, rely=0.05, anchor='ne')
 
 
@@ -133,6 +133,9 @@ def update_display_state(accel_value, brake_value, state):
         data["driveState"] = state
         status_label.config(text=data["driveState"])
     
+    # accel_value 레이블 업데이트 (정수 형식)
+    text_label.config(text=f"현재 : {int(accel_value)}")
+
          
     #data["driveState"] = state
     #status_label.config(text=data["driveState"])
