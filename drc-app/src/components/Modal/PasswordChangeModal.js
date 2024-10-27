@@ -63,13 +63,14 @@ const PasswordChangeModal = ({ visible, onClose, onConfirm }) => {
 const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#2ECC40', // 에메랄드 그린
     padding: 10,
-    marginBottom: 10,
+    marginBottom: 15,
     borderRadius: 5,
+    fontSize: 16,
   },
   verifyButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#2ECC40', // 에메랄드 그린
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,

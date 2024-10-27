@@ -31,10 +31,11 @@ const NicknameChangeModal = ({ visible, onClose, onConfirm, currentNickname }) =
 const styles = StyleSheet.create({
     input: {
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: '#2ECC40', // 에메랄드 그린
         padding: 10,
-        marginBottom: 10,
-        borderColor: 5,
+        marginBottom: 15,
+        borderRadius: 5,
+        fontSize: 16,
     },
 });
 

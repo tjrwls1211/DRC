@@ -45,6 +45,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#2F4F4F', // 다크 슬레이트 그레이
+    textAlign: 'center', // 텍스트 가운데 정렬
   },
   content: {
     marginBottom: 20,
@@ -54,22 +56,28 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   cancelButton: {
-    backgroundColor: 'gray',
+    backgroundColor: '#ccc', // 기존 잘 보이지 않는 색
     padding: 10,
     borderRadius: 5,
+    flex: 1,
+    marginRight: 5, // 버튼 간격
   },
   cancelText: {
-    color: 'white',
+    color: 'black', // 취소 버튼 텍스트 색상
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   confirmButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#2F4F4F', // 다크 슬레이트 그레이
     padding: 10,
     borderRadius: 5,
+    flex: 1,
+    marginLeft: 5, // 버튼 간격
   },
   confirmText: {
-    color: 'white',
+    color: 'white', // 확인 버튼 텍스트 색상
     fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

@@ -5,6 +5,8 @@ import { enableTwoFactorAuth, disableTwoFactorAuth } from '../api/authAPI'; // 2
 import {useNavigation} from '@react-navigation/native';
 import NicknameChangeModal from '../components/Modal/NicknameChangeModal.js';
 import PasswordChangeModal from '../components/Modal/PasswordChangeModal.js';
+import AccountDeletionModal from '../components/Modal/AccountDeletionModal.js';
+import LogoutModal from '../components/Modal/LogoutModal.js';
 import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차인증 필요 상태 Context import
 import QRCode from 'react-native-qrcode-svg'; // QR 코드 생성을 위한 라이브러리 추가
 
@@ -12,6 +14,8 @@ const SettingsScreen = () => {
   const navigation = useNavigation();
   const [nicknameModalVisible, setNicknameModalVisible] = useState(false);
   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [qrUrl, setQrUrl] = useState(null); // QR URL 상태
   
   const { is2FAEnabled, setIs2FAEnabled } = useTwoFA(); // Context에서 2차인증 필요 상태 가져오기
@@ -28,7 +32,6 @@ const SettingsScreen = () => {
       const qrUrl = await enableTwoFactorAuth(); // 2차 인증 활성화 함수 호출 (QR URL 요청)
       setQrUrl(qrUrl); // QR URL을 상태에 저장
       Alert.alert("QR 코드가 생성되었습니다.", "QR 코드를 스캔하여 OTP를 설정하세요."); // 알림 표시
-      // ☆ OR URL을 사용자에게 보여주는 로직 필요
     } else {
       console.log("2차인증 비활성");
       await disableTwoFactorAuth(); // 비활성화 함수 호출
@@ -47,6 +50,18 @@ const SettingsScreen = () => {
     console.log('New password:', newPassword);
     setPasswordModalVisible(false);
     // 비밀번호 변경 로직 - 추후 구현
+  };
+
+  const handleAccountDeletion = () => {
+    console.log('Account deleted');
+    setDeleteModalVisible(false);
+    // 회원탈퇴 로직 (추후 구현)
+  };
+
+  const handleLogout = () => {
+    console.log('Logged out');
+    setLogoutModalVisible(false);
+    // 로그아웃 로직 (추후 구현)
   };
 
   return (
@@ -87,9 +102,18 @@ const SettingsScreen = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button title = "로그아웃" color="gray"/>
-        <Button title = "회원탈퇴" color="gray"/>
+        <Button 
+          title="로그아웃" 
+          color="gray" 
+          onPress={() => setLogoutModalVisible(true)} // 로그아웃 모달 표시
+        />
+        <Button 
+          title="회원탈퇴" 
+          color="gray" 
+          onPress={() => setDeleteModalVisible(true)} // 회원탈퇴 모달 표시
+        />
       </View>
+
 
       <NicknameChangeModal
         visible={nicknameModalVisible}
@@ -101,6 +125,16 @@ const SettingsScreen = () => {
         visible={passwordModalVisible} 
         onClose={() => setPasswordModalVisible(false)} 
         onConfirm={handlePasswordChange}
+      />
+      <AccountDeletionModal 
+        visible={deleteModalVisible} 
+        onClose={() => setDeleteModalVisible(false)} 
+        onConfirm={handleAccountDeletion}
+      />
+      <LogoutModal 
+        visible={logoutModalVisible} 
+        onClose={() => setLogoutModalVisible(false)} 
+        onConfirm={handleLogout}
       />
     </View>
   );
@@ -117,7 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     marginVertical: 20,
-    height: "60%",
+    height: "40%",
     //backgroundColor: "black",
   },
   buttonContainer: {
