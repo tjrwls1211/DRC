@@ -10,6 +10,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 import threading
 import pygame
 from server import ip, port
+import obd
 
 
 # 서버 URL 설정
@@ -99,6 +100,14 @@ except pygame.error as e:
     print(f"오디오 초기화 실패: {e}")
 
 
+#OBD 연결 및 데이터 요청 
+#connection = obd.OBD()
+
+
+
+#print("Speed:", speed_response.value)  # km/h 단위
+#print("RPM:", rpm_response.value)      # RPM 단위
+
 # 음성 재생 시간 기록
 last_accel_time = 0
 is_accelerating = False
@@ -114,7 +123,7 @@ def update_display_state(accel_value, brake_value, state):
     if accel_value <= 30:
         if accel_label.cget("image") != str(accel_img_dark):  # 같은 이미지라면 업데이트 안함
             accel_label.config(image=accel_img_dark)
-            #accel_text_label.config(text="")
+
     else:
         if accel_label.cget("image") != str(accel_img_normal):
             accel_label.config(image=accel_img_normal)
@@ -123,7 +132,7 @@ def update_display_state(accel_value, brake_value, state):
     if brake_value <= 30:
         if brake_label.cget("image") != str(brake_img_dark):
             brake_label.config(image=brake_img_dark)
-            #brake_text_label.config(text="")
+
     else:
         if brake_label.cget("image") != str(brake_img_normal):
             brake_label.config(image=brake_img_normal)
@@ -135,7 +144,7 @@ def update_display_state(accel_value, brake_value, state):
     
     # accel_value 레이블 업데이트 (정수 형식)
     text_label.config(text=f"현재 : {int(accel_value)}")
-
+    #나중에 obd스피드 입력넣을때 accel_value대신에 speed_response.value 로 교체
          
     #data["driveState"] = state
     #status_label.config(text=data["driveState"])
@@ -248,6 +257,13 @@ def run_code():
             val_brake = hx2.get_weight(5)
             print(f"현재상태 : 브레이크(Brake) 무게: {val_brake} g")
             
+            #speed_cmd = obd.commands.speed
+            #rpm_cmd = obd.commands.RPM
+
+            #데이터 요청 및 출력
+            #speed_response = connection.query(speed_cmd)
+            #rpm_response = connection.query(rpm_cmd)
+            
             hx1.power_down()
             hx2.power_down()
             hx1.power_up()
@@ -255,6 +271,15 @@ def run_code():
 
             data["aclPedal"] = int(val_accelerator)
             data["brkPedal"] = int(val_brake)
+
+             # 속도 및 RPM 데이터 추가
+           # if speed_response.value is not None:
+                #speed_kmh = speed_response.value.to("km/h")
+                #data["speed"] = float(speed_kmh)
+                #text_label.config(text=f"현재 속도: {int(speed_kmh)} km/h") #이거 쓰면 될꺼같네 
+            #if rpm_response.value is not None:
+                #data["rpm"] = int(rpm_response.value)
+
 
             # 현재 시간 추가
             now = datetime.now()
