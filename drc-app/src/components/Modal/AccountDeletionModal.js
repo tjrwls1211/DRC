@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { TextInput, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BasicModal from './BasicModal';
-import { checkPassword, deleteUserAccount } from '../../api/userAPI';
+import { checkPassword, deleteUserAccount } from '../../api/accountAPI';
 
 const AccountDeletionModal = ({ visible, onClose}) => {
   const navigation = useNavigation();

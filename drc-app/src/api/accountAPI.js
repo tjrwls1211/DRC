@@ -1,6 +1,6 @@
-// 사용자 관련 API (비밀번호 확인, 닉네임 수정 등)
+// 계정 관련 API (로그아웃, 회원탈퇴, 닉네임 수정 등)
 import axios from 'axios';
-import { API_KEY as API_URL } from "@env";
+import { API_URL } from "@env";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const apiClient = axios.create({
