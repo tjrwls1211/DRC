@@ -57,9 +57,11 @@ public class UserDataController {
 
 	// Google OTP 인증키, QRLink 생성
 	@PostMapping("/otp")
-	public ResponseEntity<OtpResponseDTO> generateOtp(@RequestBody OtpRequestDTO otpRequestDTO) {
+	public ResponseEntity<OtpResponseDTO> generateOtp(@RequestHeader("Authorization") String token) {
 	    try {
-	        OtpResponseDTO otpResponse = userDataService.generateGoogleMFA(otpRequestDTO);
+	    	System.out.println(token);
+	    	String jwtToken = token.substring(7);
+			OtpResponseDTO otpResponse = userDataService.generateGoogleMFA(jwtToken);
 	        if (otpResponse.isSuccess()) {
 	            return ResponseEntity.ok(otpResponse);
 	        } else {

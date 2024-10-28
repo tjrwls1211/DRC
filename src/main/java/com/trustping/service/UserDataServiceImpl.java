@@ -87,20 +87,20 @@ public class UserDataServiceImpl implements UserDataService {
 		UserData userData = userDataRepository.findById(id).orElse(null);
 
 		if (userData == null) {
-			return new LoginResponseDTO(null, "ID가 존재하지 않습니다.", HttpStatus.UNAUTHORIZED);
+			return new LoginResponseDTO(null, 0, "ID가 존재하지 않습니다.", HttpStatus.UNAUTHORIZED);
 		}
 
 		if (!passwordEncoder.matches(pw, userData.getPw())) {
-			return new LoginResponseDTO(null, "비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
+			return new LoginResponseDTO(null, 0, "비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
 		}
 
 		if (userData.getOtpKey() != null) {
-			return new LoginResponseDTO(null, "OTP 인증 필요", HttpStatus.OK);
+			return new LoginResponseDTO(null, 1,"OTP 인증 필요", HttpStatus.OK);
 		}
 
 		// JWT 토큰 생성
 		String jwtToken = jwtUtil.generateToken(userData.getId());
-		return new LoginResponseDTO(jwtToken, "로그인 성공", HttpStatus.OK);
+		return new LoginResponseDTO(jwtToken, 2,"로그인 성공", HttpStatus.OK);
 	}
 
 	// 유저 필터 추가
@@ -120,7 +120,11 @@ public class UserDataServiceImpl implements UserDataService {
 
 	// Google OTP 생성
 	@Transactional(rollbackFor = Exception.class)
-	public OtpResponseDTO generateGoogleMFA(OtpRequestDTO otpRequestDTO) {
+	public OtpResponseDTO generateGoogleMFA(String jwtToken) {
+		String userId = jwtUtil.extractUsername(jwtToken);
+
+		UserData userData = userDataRepository.findById(userId)
+				.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + userId));
 	    OtpResponseDTO otpDTO = new OtpResponseDTO();
 
 	    try {
@@ -128,11 +132,8 @@ public class UserDataServiceImpl implements UserDataService {
 	        GoogleAuthenticatorKey googleAuthenticatorKey = googleAuthenticator.createCredentials();
 
 	        String otpKey = googleAuthenticatorKey.getKey();
-	        String QRUrl = GoogleAuthenticatorQRGenerator.getOtpAuthURL("DRC", otpRequestDTO.getId(),
+	        String QRUrl = GoogleAuthenticatorQRGenerator.getOtpAuthURL("DRC", userData.getId(),
 	                googleAuthenticatorKey);
-
-	        UserData userData = userDataRepository.findById(otpRequestDTO.getId())
-	                .orElseThrow(() -> new RuntimeException("User not found"));
 
 	        userData.setOtpKey(otpKey);
 	        userDataRepository.save(userData);

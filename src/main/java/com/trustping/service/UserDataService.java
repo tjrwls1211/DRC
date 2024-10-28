@@ -15,7 +15,7 @@ public interface UserDataService {
 	public boolean duplicateCheckUser(String id);
 	public boolean registerUser(SignUpRequestDTO signUpRequestDTO);
 	public LoginResponseDTO loginUser(LoginRequestDTO loginRequestDTO);
-	public OtpResponseDTO generateGoogleMFA(OtpRequestDTO otpRequestDTO);
+	public OtpResponseDTO generateGoogleMFA(String jwtToken);
 	public boolean verifyGoogleMFA(MfaRequestDTO mfaRequestDTO);
 	public UserDetails loadUserByUsername(String username);
 	public MyDataResponseDTO getMyDataByToken(String jwtToken);
