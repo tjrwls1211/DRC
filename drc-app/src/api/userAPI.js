@@ -1,10 +1,10 @@
 // 사용자 관련 API (비밀번호 확인, 닉네임 수정 등)
 import axios from 'axios';
-import { API_KEY } from "@env";
+import { API_KEY as API_URL } from "@env";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const apiClient = axios.create({
-    baseURL: API_KEY,
+    baseURL: API_URL,
     headers: {
       "Content-Type": "application/json",
     }
@@ -14,7 +14,7 @@ const apiClient = axios.create({
 export const fetchCurrentNickname = async () => {
     try {
         const token = await AsyncStorage.getItem('token'); // AsyncStorage에서 JWT 토큰 가져오기
-        const response = await axios.get(`${API_KEY}/api/user/nickname`, {
+        const response = await axios.get(`${API_URL}/api/user/nickname`, {
             headers: {
                 Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
                 "Content-Type": "application/json",
@@ -31,7 +31,7 @@ export const fetchCurrentNickname = async () => {
 export const changeNickname = async (newNickname) => {
     try {
         const token = await AsyncStorage.getItem('token'); // AsyncStorage에서 JWT 토큰 가져오기
-        const response = await axios.post(`${API_KEY}/api/user/nickname`, 
+        const response = await axios.post(`${API_URL}/api/user/nickname`, 
             { nickname: newNickname }, 
             {
                 headers: {
@@ -47,4 +47,24 @@ export const changeNickname = async (newNickname) => {
     }
 };
   
- 
+// 비밀번호 확인 API
+export const checkPassword = async (password) => {
+  try {
+    const response = await axios.post("/api/user/checkPassword", { password });
+    return response.data.isValid;
+  } catch (error) {
+    console.error('비밀번호 확인 오류:', error);
+    throw error;
+  }
+};
+
+// 회원 탈퇴 API
+export const deleteUserAccount = async () => {
+  try {
+    const response = await axios.delete("/api/user/delete");
+    return response.data;
+  } catch (error) {
+    console.error('회원 탈퇴 오류:', error);
+    throw error;
+  }
+};

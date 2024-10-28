@@ -1,26 +1,51 @@
-// src/components/AccountDeletionModal.js
+// 회원 탈퇴
 import React, { useState } from 'react';
-import { TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { TextInput, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import BasicModal from './BasicModal';
+import { checkPassword, deleteUserAccount } from '../../api/userAPI';
 
-const AccountDeletionModal = ({ visible, onClose, onConfirm }) => {
+const AccountDeletionModal = ({ visible, onClose}) => {
+  const navigation = useNavigation();
   const [password, setPassword] = useState('');
   const [isVerified, setIsVerified] = useState(false);
   const [verificationMessage, setVerificationMessage] = useState('');
 
-  const verifyPassword = () => {
-    // 비밀번호 검증 로직 (추후 구현)
-    const isCorrect = true;  // 임시로 true로 설정
-    setIsVerified(isCorrect);
-    setVerificationMessage(isCorrect ? "인증되었습니다." : "비밀번호가 틀렸습니다.");
+  // 비밀번호 검증 함수
+  const handleCheckPassword = async () => {
+    try {
+      const isCorrect = await checkPassword(password); // 비밀번호 검증 API 호출
+      if (isCorrect) {
+        setVerificationMessage("인증되었습니다.");
+        handleAccountDeletion(); // 비밀번호가 맞으면 회원 탈퇴 처리
+      } else {
+        setVerificationMessage("비밀번호가 틀렸습니다.");
+      }
+    } catch (error) {
+      console.error('비밀번호 검증 중 오류 발생:', error);
+      setVerificationMessage("비밀번호 검증 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 회원 탈퇴 함수
+  const handleAccountDeletion = async () => {
+    try {
+      await deleteUserAccount(); // 회원 탈퇴 API 호출
+      Alert.alert("회원 탈퇴 완료", "계정이 성공적으로 삭제되었습니다.");
+      navigation.navigate('LoginScreen'); // 로그인 화면으로 이동
+      onClose(); // 모달 닫기
+    } catch (error) {
+      console.error('회원 탈퇴 과정에서 오류 발생:', error);
+      setVerificationMessage("회원 탈퇴 중 오류가 발생했습니다.");
+    }
   };
 
   return (
     <BasicModal 
       visible={visible} 
       onClose={onClose} 
-      onConfirm={onConfirm}
       title="회원탈퇴"
+      onConfirm={handleCheckPassword} // 확인 버튼 클릭 시 비밀번호 검증
     >
       <Text style={styles.warningText}>
         탈퇴 시, 계정은 삭제되며 복구되지 않습니다.
@@ -32,11 +57,16 @@ const AccountDeletionModal = ({ visible, onClose, onConfirm }) => {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <TouchableOpacity onPress={verifyPassword} style={styles.verifyButton}>
-        <Text style={styles.verifyButtonText}>인증</Text>
+      <TouchableOpacity onPress={handleCheckPassword} style={styles.checkButton}>
+        <Text style={styles.checkButtonText}>인증</Text>
       </TouchableOpacity>
       {verificationMessage ? (
-        <Text style={[styles.verificationText, isVerified ? styles.success : styles.error]}>
+        <Text style={[
+          styles.verificationText, 
+          verificationMessage.includes("틀렸습니다.") ? styles.error : 
+          verificationMessage.includes("인증되었습니다.") ? styles.success : 
+          styles.default
+        ]}>
           {verificationMessage}
         </Text>
       ) : null}
@@ -45,41 +75,43 @@ const AccountDeletionModal = ({ visible, onClose, onConfirm }) => {
 };
 
 const styles = StyleSheet.create({
-    warningText: {
-      color: 'red',
-      marginBottom: 20,
-      fontWeight: 'bold',
-      textAlign: 'center',
-    },
-    input: {
-      borderWidth: 1,
-      borderColor: '#2ECC40', // 에메랄드 그린
-      padding: 10,
-      marginBottom: 15,
-      borderRadius: 5,
-      fontSize: 16,
-    },
-    verifyButton: {
-      backgroundColor: '#2ECC40', // 에메랄드 그린
-      padding: 10,
-      borderRadius: 5,
-      marginBottom: 10,
-    },
-    verifyButtonText: {
-      color: 'white',
-      fontWeight: 'bold',
-      textAlign: 'center',
-    },
-    verificationText: {
-      marginBottom: 10,
-      fontWeight: 'bold',
-    },
-    success: {
-      color: 'green',
-    },
-    error: {
-      color: 'red',
-    },
-  });
-  
-  export default AccountDeletionModal;
+  warningText: {
+    color: 'red',
+    marginBottom: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#2ECC40', // 에메랄드 그린
+    padding: 10,
+    marginBottom: 15,
+    borderRadius: 5,
+    fontSize: 16,
+  },
+  checkButton: {
+    backgroundColor: '#2ECC40', // 에메랄드 그린
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  checkButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  verificationText: {
+    marginBottom: 10,
+  },
+  success: {
+    color: 'green',
+  },
+  error: {
+    color: 'red',
+  },
+  default: {
+    color: 'black',
+  },
+});
+
+export default AccountDeletionModal;
