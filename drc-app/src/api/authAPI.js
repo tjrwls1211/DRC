@@ -31,7 +31,7 @@ export const loginUser = async (email, password) => {
     console.log('반환response: ', response);
     
     // 로그인 성공 시 JWT 토큰 저장
-    const token = response.data;
+    const token = response.data.token;
     await AsyncStorage.setItem('token',  token);
     console.log("로컬 저장 토큰:", token);
 
@@ -61,11 +61,11 @@ export const checkTokenValidity = async (token) => {
 // 회원가입 ID 중복 확인
 export const checkID = async (email) => {
 
-  console.log(data);
+  
 
   try {
     const response = await apiClient.get("/api/user/check", { params: { id: email }});
-    console.log(response.data);
+    console.log("ID중복 여부: ", response.data);
     return response.data; // 서버에서 boolean(?)값 반환
   } catch (error) {
     console.error('ID 중복 확인 오류:', error);
@@ -100,9 +100,20 @@ export const SignUpUser = async (email, password, nickname, birthDate, carNumber
 // 2차 인증 활성화 요청
 export const enableTwoFactorAuth = async () => {
   try {
+    // 로컬 스토리지에서 토큰 가져오기
+    const token = await AsyncStorage.getItem('token');
+    console.log(token);
+    
     // 서버에 2차 인증 활성화 요청
-    const response = await apiClient.post("/api/2fa/enable");
-    const qrUrl = response.data.qrUrl; // 응답에서 OR 코드 URL 추출
+    const response = await apiClient.post("/api/user/otp", null, {
+      headers: {
+        Authorization: `Bearer ${token}`, // JWT 토큰을 Authorization 헤더에 추가
+      },
+    });
+    
+    console.log(response.data);
+    const qrUrl = response.data.qrurl; // 응답에서 OR 코드 URL 추출
+    console.log("OTP QR_URL: ", qrUrl);
     // QR URL을 사용자에게 전달하여 설정할 수 있도록 처리
     return qrUrl;
   } catch (error) {
@@ -126,7 +137,7 @@ export const disableTwoFactorAuth = async () => {
 export const checkOTP = async (email, otp) => {
   try {
     // 서버에 OTP 검증 요청 (이메일, OTP코드 전송)
-    const response = await apiClient.post("/api/2fa/check", { email, otp });
+    const response = await apiClient.post("/api/user/mfa", { email, otp }); // 맞는 url
     return response.data.success; // 검증 성공 여부 반환
   } catch (error) {
     console.error("OTP 인증 실패:", error);

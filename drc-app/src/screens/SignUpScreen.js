@@ -36,9 +36,11 @@ const SignUpScreen = () => {
       setIsDuplicateID(isDuplicate); // 중복 여부 상태 업데이트
       setEmailError(isDuplicateID);
       
-      if (!isDuplicate) {
+      if (isDuplicate) {
         setEmailError("중복된 ID입니다.");
-      } else {
+      } else if(!isDuplicate){
+        setEmailError("중복되지 않은 ID입니다."); // (수정) 나중에 초록색으로 출력
+      }else {
         setEmailError('');
       }
     } catch (error) {

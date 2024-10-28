@@ -89,20 +89,20 @@ const SettingsScreen = () => {
       <DropDownPicker
         open={open}
         value={is2FAEnabled}
-        items={items} // 드롭다운 항목들
-        setOpen={setOpen} // 드롭다운 열림 상태 업데이트 함수
-        setValue={setIs2FAEnabled} // 선택된 값 업데이트 함수
-        setItems={setItems} // 드롭다운 항목들 업데이트 함수
-        onChangeValue={handle2FAChange} // 선택 값 변경 시 호출되는 함수
-        style={styles.dropdown} // 드롭다운 스타일
-        dropDownContainerStyle={styles.dropdownContainer} // 드롭다운 컨테이너 스타일
+        items={items} 
+        setOpen={setOpen} 
+        setValue={setIs2FAEnabled} 
+        setItems={setItems} 
+        onChangeValue={handle2FAChange} 
+        style={styles.dropdown} 
+        dropDownContainerStyle={styles.dropdownContainer}
       />
 
       {/* QR 코드 표시 부분 ☆ */}
       {qrUrl && (
         <View style={styles.qrContainer}>
           <Text style={styles.label}>QR 코드</Text>
-          <QRCode value={qrUrl} size={200} /> {/* QR 코드 생성 */}
+          <QRCode value={qrUrl} size={200} /> 
         </View>
       )}
 
