@@ -9,7 +9,7 @@ const PasswordChangeModal = ({ visible, onClose, onConfirm }) => {
   const [isVerified, setIsVerified] = useState(false);
   const [verificationMessage, setVerificationMessage] = useState('');
 
-  const verifyPassword = () => {
+  const checkPassword = () => {
     // 비밀번호 검증 로직 (추후 구현)
     const isCorrect = true;  // 임시로 true로 설정
     setIsVerified(isCorrect);
@@ -30,8 +30,8 @@ const PasswordChangeModal = ({ visible, onClose, onConfirm }) => {
         onChangeText={setCurrentPassword}
         secureTextEntry
       />
-      <TouchableOpacity onPress={verifyPassword} style={styles.verifyButton}>
-        <Text style={styles.verifyButtonText}>인증</Text>
+      <TouchableOpacity onPress={checkPassword} style={styles.checkButton}>
+        <Text style={styles.checkButtonText}>인증</Text>
       </TouchableOpacity>
       {verificationMessage ? (
         <Text style={[styles.verificationText, isVerified ? styles.success : styles.error]}>
@@ -69,13 +69,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontSize: 16,
   },
-  verifyButton: {
+  checkButton: {
     backgroundColor: '#2ECC40', // 에메랄드 그린
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
   },
-  verifyButtonText: {
+  checkButtonText: {
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',

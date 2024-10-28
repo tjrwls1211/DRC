@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { loginUser, checkTokenValidity, verifyOTP } from '../api/authAPI'; // api.js에서 loginUser 함수 가져오기
+import { loginUser, checkTokenValidity, checkOTP } from '../api/authAPI'; // api.js에서 loginUser 함수 가져오기
 import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차 인증 필요 상태 Context import
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -122,8 +122,8 @@ const LoginScreen = () => {
   // OTP 검증 핸들러
   const handleOTPVerification = async () => {
     try {
-      // verifyOTP 함수로 서버에 OTP 검증 요청
-      const isVerified = await verifyOTP(email, otp);
+      // checkOTP 함수로 서버에 OTP 검증 요청
+      const isVerified = await checkOTP(email, otp);
 
       if (isVerified) {
         Alert.alert("OTP 확인 성공", "메인 화면으로 이동합니다.");

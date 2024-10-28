@@ -123,10 +123,10 @@ export const disableTwoFactorAuth = async () => {
 };
 
 // OTP 검증 요청
-export const verifyOTP = async (email, otp) => {
+export const checkOTP = async (email, otp) => {
   try {
     // 서버에 OTP 검증 요청 (이메일, OTP코드 전송)
-    const response = await apiClient.post("/api/2fa/verify", { email, otp });
+    const response = await apiClient.post("/api/2fa/check", { email, otp });
     return response.data.success; // 검증 성공 여부 반환
   } catch (error) {
     console.error("OTP 인증 실패:", error);
