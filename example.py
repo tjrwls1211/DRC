@@ -154,10 +154,15 @@ speedless_2_sound = pygame.mixer.Sound("speedless_2.wav")
 carstop_1_sound = pygame.mixer.Sound("carstop_1.wav")
 carstop_2_sound = pygame.mixer.Sound("carstop_2.wav")
 
+# 전역 변수
+stop_sounds = False
+is_playing_sounds = False  # 음성 재생 중 여부 확인 플래그
+
 # 음성을 비차단 방식으로 재생하는 함수
 def play_sounds_in_sequence(sounds):
-    global stop_sounds
-    stop_sounds = False  # 스레드 시작 시 중단 플래그 초기화
+    global stop_sounds, is_playing_sounds
+    stop_sounds = False
+    is_playing_sounds = True  # 재생 시작 플래그 설정
 
     for sound in sounds:
         # 조건이 변경되면 음성 재생 중단
@@ -170,28 +175,31 @@ def play_sounds_in_sequence(sounds):
             if stop_sounds:  # 중단 플래그 확인
                 pygame.mixer.music.stop()  # 현재 재생 중인 음성도 중단
                 print("음성 재생 중단")
+                is_playing_sounds = False  # 재생 상태 플래그 해제
                 return
-            time.sleep(1)  # 비차단 대기
-        time.sleep(3)  # 음성 간 간격
+            time.sleep(0.1)  # 비차단 대기
+        time.sleep(3)  # 음성 간 3초 간격
+
+    is_playing_sounds = False  # 모든 음성 재생 완료 후 플래그 해제
 
 # 로드셀 데이터와 상태를 업데이트하는 함수
 def check_info(accel_value, brake_value):
-    global last_accel_time, is_accelerating, stop_sounds
+    global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds
 
     if accel_value > 200 and brake_value <= 30:
         state = "Rapid Acceleration"
-        update_display_state(accel_value, brake_value, state) 
+        update_display_state(accel_value, brake_value, state)
 
         if not is_accelerating:
             last_accel_time = time.time()
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_accel_time
-            if elapsed_time >= 4:
-                # 재생 중인 음성을 중단
+            # 음성이 이미 재생 중이 아닐 때만 새로운 스레드를 시작
+            if elapsed_time >= 4 and not is_playing_sounds:
                 stop_sounds = True  
-                time.sleep(1)  # 이전 스레드 종료 대기
-
+                time.sleep(0.2)  # 이전 스레드 종료 대기
+                
                 # 음성 리스트 설정
                 sounds = [
                     rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound,
@@ -199,7 +207,7 @@ def check_info(accel_value, brake_value):
                     speedless_1_sound, speedless_2_sound,
                     carstop_1_sound, carstop_2_sound
                 ]
-                
+
                 # 새로운 스레드에서 음성 재생 시작
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 
