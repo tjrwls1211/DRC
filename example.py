@@ -155,17 +155,24 @@ carstop_1_sound = pygame.mixer.Sound("carstop_1.wav")
 carstop_2_sound = pygame.mixer.Sound("carstop_2.wav")
 
 # 음성을 비차단 방식으로 재생하는 함수
-def play_sounds_in_sequence(sounds, accel_value, brake_value):
+def play_sounds_in_sequence(sounds):
+    global stop_sounds
+    stop_sounds = False  # 스레드 시작 시 중단 플래그 초기화
+
     for sound in sounds:
-        # 조건 불충족 시 음성 재생 중단
-        if accel_value <= 200 or brake_value > 30:
-            print("가속 페달 값 조건 불충족으로 음성 재생 중단")
+        # 조건이 변경되면 음성 재생 중단
+        if stop_sounds:
+            print("음성 재생 중단")
             break
 
         sound.play()
         while pygame.mixer.music.get_busy():  # 현재 음성이 재생 중일 때 대기
-            time.sleep(0.1)  # 다른 작업을 수행할 수 있는 비차단 대기
-        time.sleep(2)  # 음성 간 1초 간격
+            if stop_sounds:  # 중단 플래그 확인
+                pygame.mixer.music.stop()  # 현재 재생 중인 음성도 중단
+                print("음성 재생 중단")
+                return
+            time.sleep(0.1)  # 비차단 대기
+        time.sleep(2)  # 음성 간 간격
         
 # 로드셀 데이터와 상태를 업데이트하는 함수
 def check_info(accel_value, brake_value):
@@ -181,7 +188,10 @@ def check_info(accel_value, brake_value):
         else:
             elapsed_time = time.time() - last_accel_time
             if elapsed_time >= 4:
-                  
+                
+                stop_sounds = True  # 재생 중이던 스레드를 중단
+                time.sleep(0.1)  # 이전 스레드 종료 대기
+                                
                 sounds = [
                     rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound,
                     nobrake_1_sound, nobrake_2_sound, nobrake_3_sound,
