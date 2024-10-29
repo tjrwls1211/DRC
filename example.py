@@ -173,10 +173,10 @@ def play_sounds_in_sequence(sounds):
                 return
             time.sleep(0.1)  # 비차단 대기
         time.sleep(2)  # 음성 간 간격
-        
+
 # 로드셀 데이터와 상태를 업데이트하는 함수
 def check_info(accel_value, brake_value):
-    global last_accel_time, is_accelerating
+    global last_accel_time, is_accelerating, stop_sounds
 
     if accel_value > 200 and brake_value <= 30:
         state = "Rapid Acceleration"
@@ -188,18 +188,20 @@ def check_info(accel_value, brake_value):
         else:
             elapsed_time = time.time() - last_accel_time
             if elapsed_time >= 4:
-                
-                stop_sounds = True  # 재생 중이던 스레드를 중단
+                # 재생 중인 음성을 중단
+                stop_sounds = True  
                 time.sleep(0.1)  # 이전 스레드 종료 대기
-                                
+
+                # 음성 리스트 설정
                 sounds = [
                     rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound,
                     nobrake_1_sound, nobrake_2_sound, nobrake_3_sound,
                     speedless_1_sound, speedless_2_sound,
                     carstop_1_sound, carstop_2_sound
-                ]          
-                # 별도의 스레드에서 음성 재생 시작
-                threading.Thread(target=play_sounds_in_sequence, args=(sounds, accel_value, brake_value), daemon=True).start()
+                ]
+                
+                # 새로운 스레드에서 음성 재생 시작
+                threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 
                 # 마지막 가속 시간 업데이트
                 last_accel_time = time.time()
@@ -208,16 +210,19 @@ def check_info(accel_value, brake_value):
         state = "Rapid Braking" 
         update_display_state(accel_value, brake_value, state)
         is_accelerating = False
+        stop_sounds = True  # 브레이크가 작동하면 음성 재생 중단
 
     elif accel_value > 100 and brake_value > 100:
         state = "Both Feet Driving"
         update_display_state(accel_value, brake_value, state)
         is_accelerating = False
-        
+        stop_sounds = True  # 양발 운전 상태에서도 음성 중단
+
     else:
         state = "Normal Driving"
         update_display_state(accel_value, brake_value, state)
         is_accelerating = False
+        stop_sounds = True  # 일반 주행일 때 음성 중단
 
 
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
