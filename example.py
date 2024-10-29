@@ -231,10 +231,17 @@ def run_code():
             hx2.power_down()
             hx1.power_up()
             hx2.power_up()
-
-            data["aclPedal"] = int(val_accelerator)
-            data["brkPedal"] = int(val_brake)
-
+            #원래 코드
+            #data["aclPedal"] = int(val_accelerator)
+            #data["brkPedal"] = int(val_brake)
+            
+            data.update({
+                "carId": 1234,  # 차량 ID 유지
+                "aclPedal": int(val_accelerator),
+                "brkPedal": int(val_brake),
+                "createdAt": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+                "driveState": data["driveState"],  # 기존 driveState 유지
+            })            
              # 속도 및 RPM 데이터 추가
            # if speed_response.value is not None:
                 #speed_kmh = speed_response.value.to("km/h")
