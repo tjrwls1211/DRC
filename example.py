@@ -74,10 +74,6 @@ accel_label.pack(side="right", padx=20, pady=10)
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
 brake_label.pack(side="left", padx=20, pady=10)
 
-# 상태 텍스트 레이블
-#driveState = data["driveState"]#[::-1] 이걸 활성화하면 글씨가 좌우반전으로 출력 
-
-#테스트 
 data = {"driveState": "Drive Ready"}
 
 status_label = tk.Label(root, text=data["driveState"], font=font_large, bg="black", fg="white", padx=10, pady=10, width=25)
@@ -87,8 +83,6 @@ status_label.place(relx=0.44, rely=0.05, anchor='center')
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
 text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
 text_label.place(relx=0.97, rely=0.05, anchor='ne')
-
-
 
 # pygame 초기화
 # pygame.mixer.init()
@@ -146,35 +140,7 @@ def update_display_state(accel_value, brake_value, state):
     text_label.config(text=f"현재 : {int(accel_value)}")
     #나중에 obd스피드 입력넣을때 accel_value대신에 speed_response.value 로 교체
          
-    #data["driveState"] = state
-    #status_label.config(text=data["driveState"])
-'''
-    # 상태에 따른 텍스트 업데이트
-    if state == "Rapid Acceleration":
-        status_label.config(text="Rapid Acceleration (급가속)", fg="red")
-        accel_text_label.config(text="과속", fg="red", bg="transparent")
-    elif state == "Rapid Braking":
-        status_label.config(text="Rapid Braking (급정거)", fg="blue")
-        brake_text_label.config(text="급브레이크", fg="blue", bg="transparent")
-    elif state == "Both Feet Driving":
-        status_label.config(text="Both Feet Driving (양발운전)", fg="yellow")
-        accel_text_label.config(text="양발운전", fg="yellow", bg="transparent")
-        brake_text_label.config(text="양발운전", fg="yellow", bg="transparent")
-    else:
-        status_label.config(text="Normal Driving (정상주행중)", fg="green")
-'''
-'''
-# 이미지 위에 텍스트 표시를 위한 레이블 생성
-accel_text_label = tk.Label(root, text="", font=font_large, bg="transparent", fg="red")
-accel_text_label.place(relx=0.25, rely=0.4, anchor='center')  # 중앙에 위치
 
-brake_text_label = tk.Label(root, text="", font=font_large, bg="transparent", fg="blue")
-brake_text_label.place(relx=0.75, rely=0.4, anchor='center')  # 중앙에 위치
-'''
-# TEST
-
-#미리 로드 만들어두기
-#rapid_acceleration_sound = pygame.mixer.Sound("rapid_acceleration.wav")
 
 rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1.wav")
 rapidspeed_2_sound = pygame.mixer.Sound("rapidspeed_2.wav")
@@ -202,10 +168,7 @@ def check_info(accel_value, brake_value):
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_accel_time
-            if elapsed_time >= 4 and not pygame.mixer.music.get_busy(): 
-                #rapid_acceleration_sound.play()
-                #time.sleep(4)
-                
+            if elapsed_time >= 4 and not pygame.mixer.music.get_busy():    
                 rapidspeed_1_sound.play()
                 time.sleep(4)
                 rapidspeed_2_sound.play()
