@@ -19,7 +19,7 @@ import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
 import com.trustping.DTO.MyDataResponseDTO;
 import com.trustping.DTO.OtpResponseDTO;
-import com.trustping.DTO.OtpRequestDTO;
+import com.trustping.DTO.PasswordDTO;
 import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.entity.UserData;
 import com.trustping.repository.UserDataRepository;
@@ -180,14 +180,16 @@ public class UserDataServiceImpl implements UserDataService {
 	// 회원 탈퇴
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public DeleteUserDTO deleteUser(LoginRequestDTO loginRequestDTO) {
-		String id = loginRequestDTO.getId();
-		String pw = loginRequestDTO.getPw();
-		UserData userData = userDataRepository.findById(id).orElse(null);
+	public DeleteUserDTO deleteUser(String jwtToken,PasswordDTO passwordDTO) {
+		String userId = jwtUtil.extractUsername(jwtToken);
+		String password = passwordDTO.getPw();
+		UserData userData = userDataRepository.findById(userId).orElse(null);
+		
 		if (userData == null) {
 			return new DeleteUserDTO(false, "ID가 존재하지 않습니다.", HttpStatus.UNAUTHORIZED);
 		}
-		if (!passwordEncoder.matches(pw, userData.getPw())) {
+		
+		if (!passwordEncoder.matches(password, userData.getPw())) {
 			return new DeleteUserDTO(false, "비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
 		}
 		

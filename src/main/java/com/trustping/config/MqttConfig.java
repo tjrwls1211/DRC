@@ -11,25 +11,28 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MqttConfig {
 
-	@Autowired
-	private EnvConfig envConfig;
-	
-    //private static final String USERNAME = "your-username"; // 필요 시 사용
-    //private static final String PASSWORD = "your-password"; // 필요 시 사용
+    @Autowired
+    private EnvConfig envConfig;
 
     @Bean
-    public MqttClient mqttClient() throws MqttException {
-    	String mqttBrokerUrl = envConfig.getMqttBrokerUrl();
-    	String mqttClientId = envConfig.getMqttClientId();
-    	//String userName = envConfig.getMqttUserName();
-    	//String userPassword = envConfig.getMqttUserPassword();
-    	MqttClient mqttClient = new MqttClient(mqttBrokerUrl, mqttClientId, new MemoryPersistence());
-        MqttConnectOptions options = new MqttConnectOptions();
-        options.setCleanSession(true);
-        options.setAutomaticReconnect(true);
-        //options.setUserName(USERNAME);
-        //options.setPassword(PASSWORD.toCharArray());
-        mqttClient.connect(options);
-        return mqttClient;
+    public MqttClient mqttClient() {
+        String mqttBrokerUrl = envConfig.getMqttBrokerUrl();
+        String mqttClientId = envConfig.getMqttClientId();
+        
+        MqttClient mqttClient = null;
+        try {
+            mqttClient = new MqttClient(mqttBrokerUrl, mqttClientId, new MemoryPersistence());
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setCleanSession(true);
+            options.setAutomaticReconnect(true);
+            // 필요 시 사용자 인증 정보 설정
+            // options.setUserName(envConfig.getMqttUserName());
+            // options.setPassword(envConfig.getMqttUserPassword().toCharArray());
+            mqttClient.connect(options);
+        } catch (MqttException e) {
+            System.err.println("MQTT Client connection failed: " + e.getMessage());
+        }
+        
+        return mqttClient; 
     }
 }

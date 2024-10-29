@@ -1,11 +1,11 @@
 package com.trustping.service;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,15 +24,24 @@ public class MqttSubscriberService implements MqttCallback {
     private EnvConfig envConfig; // 구독 토픽도 가져옴
     
     @Autowired
-    private PedalLogProcessingService pedalLogService; // 메시지 전달을 위해 연결함
+    private PedalLogProcessingService pedalLogService;
     
     @PostConstruct
     public void subscribeToTopic() {
-    	String mqttTopic = envConfig.getMqttTopic();
+        String mqttTopic = envConfig.getMqttTopic();
+        if (mqttClient == null) {
+            System.out.println("MQTT 연결 불가, 클라이언트가 null");
+            return;
+        }
+
         try {
             mqttClient.setCallback(this);
-            mqttClient.subscribe(mqttTopic);
-            System.out.println("Subscribed to topic: " + mqttTopic);
+            if (mqttClient.isConnected()) {
+                mqttClient.subscribe(mqttTopic);
+                System.out.println("Subscribed to topic: " + mqttTopic);
+            } else {
+                System.out.println("MQTT 연결 불가");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,8 +50,36 @@ public class MqttSubscriberService implements MqttCallback {
     @Override
     public void connectionLost(Throwable cause) {
         System.out.println("Connection lost! " + cause.getMessage());
+        reconnect();
     }
 
+    private void reconnect() {
+        int retryCount = 0;
+        int backoffTime = 2000;
+
+        while (retryCount < 5) { 
+            try {
+                System.out.println("Attempting to reconnect");
+                mqttClient.connect(); 
+                String mqttTopic = envConfig.getMqttTopic();
+                mqttClient.subscribe(mqttTopic); 
+                System.out.println("Reconnected and subscribed to topic: " + mqttTopic);
+                return; 
+            } catch (MqttException e) {
+                System.out.println("Reconnection attempt failed: " + e.getMessage());
+                retryCount++;
+                try {
+                    Thread.sleep(backoffTime); 
+                    backoffTime *= 2; 
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+        System.out.println("Failed to reconnect after 5 attempts.");
+    }
+
+    
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
     	String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
