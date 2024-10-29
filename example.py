@@ -171,8 +171,8 @@ def play_sounds_in_sequence(sounds):
                 pygame.mixer.music.stop()  # 현재 재생 중인 음성도 중단
                 print("음성 재생 중단")
                 return
-            time.sleep(0.1)  # 비차단 대기
-        time.sleep(2)  # 음성 간 간격
+            time.sleep(1)  # 비차단 대기
+        time.sleep(3)  # 음성 간 간격
 
 # 로드셀 데이터와 상태를 업데이트하는 함수
 def check_info(accel_value, brake_value):
@@ -190,7 +190,7 @@ def check_info(accel_value, brake_value):
             if elapsed_time >= 4:
                 # 재생 중인 음성을 중단
                 stop_sounds = True  
-                time.sleep(0.1)  # 이전 스레드 종료 대기
+                time.sleep(1)  # 이전 스레드 종료 대기
 
                 # 음성 리스트 설정
                 sounds = [
