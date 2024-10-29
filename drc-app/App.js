@@ -8,10 +8,11 @@ import SuddenAcceleration from './src/screens/Analysis/SuddenAcceleration';
 import SuddenBraking from './src/screens/Analysis/SuddenBraking';
 import SamePedal from './src/screens/Analysis/SamePedal';
 import PersonalInfoScreen from './src/screens/PersonalInfoScreen';
-import AnalysisTabs from './src/screens/Analysis/AnalysisTabs';
+import AnalysisTabs from './src/screens/Analysis/AnalysisTabs'; 
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import ChatbotScreen from './src/screens/ChatbotScreen';
+import DrivingScoreEvaluator from './src/components/Score/DrivingScoreEvaluator';// score 테스트 화면
 import { TwoFAProvider } from './src/context/TwoFAprovider'; // NavigationContainer를 TwoFAProvider로 감쌈으로서 애플리케이션 전체에서 2차 인증 상태를 사용할 수 있게 함
 
 
@@ -25,6 +26,11 @@ export default function App() {
         initialRouteName="LoginScreen"
         screenOptions={{ headerShown: false }}
         >
+          <Stack.Screen
+            name="DrivingScoreEvaluator"
+            component={DrivingScoreEvaluator}
+            options={{ headerShown: false, headerTitle: '점수 테스트 화면', headerTitleAlign: 'center' }}
+          />
           <Stack.Screen
             name="MainScreen"
             component={MainScreen}

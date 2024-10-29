@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import {View, StyleSheet, Button, TouchableOpacity, Text} from 'react-native';
 import ViewCard from "../components/Card/ViewCard";
+import DrivingScoreEvaluator from "../components/Score/DrivingScoreEvaluator";
 import TouchCard from "../components/Card/TouchCard";
 import {useNavigation} from '@react-navigation/native';
 import AnalysisTabs from "./Analysis/AnalysisTabs";
@@ -10,6 +11,8 @@ import Icon3 from 'react-native-vector-icons/Ionicons';
 import Icon4 from 'react-native-vector-icons/FontAwesome5';
 
 const MainScreen = () => {
+    const [score, setScore] = useState(100); // Lift score state up to MainScreen
+
     const navigation = useNavigation(); // 네비게이션 훅 사용
 
     // 각 분석 화면 이동 함수 정의
@@ -38,7 +41,7 @@ const MainScreen = () => {
             
             <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 20 }}>
 
-            <ViewCard name="OOO" score="70" />
+            <ViewCard name="OOO" score={score} />
 
             <Text style={{marginTop: 15, fontWeight:'bold', fontSize: 15}}>운전 습관</Text>
             <View style={styles.cardContainer}>
@@ -47,6 +50,11 @@ const MainScreen = () => {
                 <TouchCard iconSource={require('../../assets/brake-icon.png')} analysis_item="급정거 분석 결과" analysis_count="7회" onPress={goToSuddenBraking} /> 
                 <TouchCard iconSource={require('../../assets/pedal-icon.png')} analysis_item="페달동시사용 분석 결과" analysis_count="2회" onPress={goToSamePedal} />
             </View>
+
+            {/* Acceleration Monitor Component */}
+                {/* Pass setScore to update score from AccelerationMonitor */}
+                <DrivingScoreEvaluator score={score} setScore={setScore} />
+
 
             {/* 챗봇 버튼 */}
             <TouchableOpacity 
