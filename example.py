@@ -248,6 +248,7 @@ def run_code():
             now = datetime.now()
             now_format = now.strftime('%Y-%m-%dT%H:%M:%S')
             data["createdAt"] = str(now_format)
+            print(data)
             client.publish('pedal', json.dumps(data), 0, retain=False)
 
             # Tkinter UI 업데이트
