@@ -154,7 +154,19 @@ speedless_2_sound = pygame.mixer.Sound("speedless_2.wav")
 carstop_1_sound = pygame.mixer.Sound("carstop_1.wav")
 carstop_2_sound = pygame.mixer.Sound("carstop_2.wav")
 
+# 음성을 비차단 방식으로 재생하는 함수
+def play_sounds_in_sequence(sounds, accel_value, brake_value):
+    for sound in sounds:
+        # 조건 불충족 시 음성 재생 중단
+        if accel_value <= 200 or brake_value > 30:
+            print("가속 페달 값 조건 불충족으로 음성 재생 중단")
+            break
 
+        sound.play()
+        while pygame.mixer.music.get_busy():  # 현재 음성이 재생 중일 때 대기
+            time.sleep(0.1)  # 다른 작업을 수행할 수 있는 비차단 대기
+        time.sleep(2)  # 음성 간 1초 간격
+        
 # 로드셀 데이터와 상태를 업데이트하는 함수
 def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating
@@ -168,28 +180,18 @@ def check_info(accel_value, brake_value):
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_accel_time
-            if elapsed_time >= 4 and not pygame.mixer.music.get_busy():    
-                rapidspeed_1_sound.play()
-                time.sleep(4)
-                rapidspeed_2_sound.play()
-                time.sleep(4)
-                rapidspeed_3_sound.play()
-                time.sleep(4)
-                nobrake_1_sound.play()
-                time.sleep(4)
-                nobrake_2_sound.play()
-                time.sleep(4)
-                nobrake_3_sound.play()
-                time.sleep(4)
-                speedless_1_sound.play()
-                time.sleep(4)
-                speedless_2_sound.play()
-                time.sleep(4)
-                carstop_1_sound.play()
-                time.sleep(4)
-                carstop_2_sound.play()
-                time.sleep(4)           
+            if elapsed_time >= 4:
+                  
+                sounds = [
+                    rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound,
+                    nobrake_1_sound, nobrake_2_sound, nobrake_3_sound,
+                    speedless_1_sound, speedless_2_sound,
+                    carstop_1_sound, carstop_2_sound
+                ]          
+                # 별도의 스레드에서 음성 재생 시작
+                threading.Thread(target=play_sounds_in_sequence, args=(sounds, accel_value, brake_value), daemon=True).start()
                 
+                # 마지막 가속 시간 업데이트
                 last_accel_time = time.time()
 
     elif brake_value > 200 and accel_value <= 30:
@@ -231,9 +233,6 @@ def run_code():
             hx2.power_down()
             hx1.power_up()
             hx2.power_up()
-            #원래 코드
-            #data["aclPedal"] = int(val_accelerator)
-            #data["brkPedal"] = int(val_brake)
                      
              # 속도 및 RPM 데이터 추가
            # if speed_response.value is not None:
@@ -253,10 +252,6 @@ def run_code():
                 "createdAt": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                 "driveState": data["driveState"],  # 기존 driveState 유지
             })            
-            
-            
-            #now_format = now.strftime('%Y-%m-%dT%H:%M:%S')
-            #data["createdAt"] = str(now_format)
             print(data)
             client.publish('pedal', json.dumps(data), 0, retain=False)
 
