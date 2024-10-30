@@ -26,42 +26,58 @@ export const loginUser = async (email, password) => {
   console.log("로그인 데이터:", data);
 
   try {
-    const response = await apiClient.post("/api/user/login", data);
+    const response = await apiClient.post("/user/login", data);
     console.log('로그인 데이터 전송 성공:', response.data);
-    console.log('로그인 반환 데이터: ', response);
     
     // 로그인 성공 시 JWT 토큰 저장
     const token = response.data.token;
-    await AsyncStorage.setItem('token',  token);
-    console.log("로컬 저장 토큰:", token);
+    
+    // 토큰이 존재할 경우만 저장
+    if (token) {
+      await AsyncStorage.setItem('token', token);
+      console.log("로컬 저장 토큰:", token);
+    } else {
+      console.log("토큰이 없으므로 저장하지 않습니다.");
+    }
 
     return response.data; // 서버 반환 성공 여부
   } catch (error) {
     if (error.response) {
       console.error('로그인 실패 이유:', error.response.data);
-   } else {
-        console.error('로그인 데이터 전송 오류:', error);
+    } else {
+      console.error('로그인 데이터 전송 오류:', error);
     }
     throw error; 
-    }
+  }
 };
+
 
 // 서버로 JWT 유효성 검사 요청 통신 코드
 export const checkTokenValidity = async (token) => {
   try {
-    const response = await apiClient.post("/api/user/checkToken", { token });
-    return response.data.isValid; // JWT 유효성 여부 반환
+    const response = await apiClient.post("/user/validate", {}, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data; // 응답 데이터 전체 반환
   } catch (error) {
-    console.error('JWT 유효성 검사 오류:', error);
-    return false; // 오류 발생 시 false 반환
+    if (error.response) {
+      console.error('서버에서 반환된 오류 메시지:', error.response.data);
+    } else {
+      console.error('JWT 유효성 검사 오류:', error);
+    }
+    return { valid: false }; // 오류 발생 시 false 반환
   }
 };
+
+
 
 
 // 회원가입 ID 중복 확인
 export const checkID = async (email) => {
   try {
-    const response = await apiClient.get("/api/user/check", { params: { id: email }});
+    const response = await apiClient.get("/user/check", { params: { id: email }});
     console.log("ID중복 여부: ", response.data);
     return response.data; // 서버에서 boolean(?)값 반환
   } catch (error) {
@@ -83,7 +99,7 @@ export const SignUpUser = async (email, password, nickname, birthDate, carNumber
   console.log("회원가입 데이터: ", data);
 
   try {
-    const response = await apiClient.post("/api/user/signUp", data);
+    const response = await apiClient.post("/user/signUp", data);
     console.log("회원가입 반환 데이터: ", response);
     console.log('회원가입 데이터 전송 성공:', response.data.success);
     console.log('회원가입 실패 이유: ', response.data.message);
@@ -102,7 +118,7 @@ export const enableTwoFactorAuth = async () => {
     console.log(token);
     
     // 서버에 2차 인증 활성화 요청
-    const response = await apiClient.post("/api/user/otp", null, {
+    const response = await apiClient.post("/user/otp", null, {
       headers: {
         Authorization: `Bearer ${token}`, // JWT 토큰을 Authorization 헤더에 추가
       },
@@ -125,7 +141,7 @@ export const enableTwoFactorAuth = async () => {
 export const disableTwoFactorAuth = async () => {
   try {
     // 서버에 2차 인증 비활성화 요청
-    await apiClient.post("/api/2fa/disable");
+    await apiClient.post("/2fa/disable");
   } catch (error) {
     console.error("2차 인증 비활성화 오류:", error);
     throw error;
@@ -136,16 +152,32 @@ export const disableTwoFactorAuth = async () => {
 export const checkOTP = async (email, otp) => {
   const data = {
     id: email,
-    otp, otp
-  }
+    key: otp
+  };
+
+  console.log("2차 인증 검증 요청값: ", data);
 
   try {
     // 서버에 OTP 검증 요청 (이메일, OTP코드 전송)
-    const response = await apiClient.post("/api/user/mfa", data); // 맞는 url
-    console.log("otp 검증 요청 반환 데이터: ", response);
+    const response = await apiClient.post("/user/mfa", data);
+
+    console.log("otp 검증 요청 반환 데이터: ", response.data);
+    
+    // 2차 인증 성공 시 JWT 토큰이 포함된 경우 저장
+    if (response.data.success) {
+      await AsyncStorage.setItem('token', response.data.token); // 새로 발급된 토큰 저장
+      console.log("2차인증 후 토큰 저장: ", response.data.token);
+    }
+
     return response.data.success; // 검증 성공 여부 반환
   } catch (error) {
-    console.error("OTP 인증 실패:", error);
+    if (error.response) {
+      console.error("OTP 인증 실패@:", error.response.data); // 서버 응답 데이터 출력
+      console.error("HTTP 상태 코드@:", error.response.status); // HTTP 상태 코드 출력
+    } else {
+      console.error("OTP 인증 요청 오류@:", error);
+    }
     throw error;
   }
 };
+

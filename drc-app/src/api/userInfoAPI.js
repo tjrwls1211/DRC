@@ -9,7 +9,7 @@ export const fetchUserInfo = async () => {
       const token = await AsyncStorage.getItem('token');
   
        // 헤더에 토큰 포함하여 요청 보내기
-      const response = await axios.get("/api/user/info", {
+      const response = await axios.get("/user/info", {
         headers: {
           Authorization: `Bearer ${token}`,  // 토큰을 Bearer 방식으로 설정
         },

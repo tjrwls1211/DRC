@@ -20,16 +20,36 @@ const LoginScreen = () => {
   // 앱 재접속 시 JWT 유효성 검사 후 자동 로그인 처리
   useEffect(() => {
     const checkAutoLogin = async () => {
-      const token = await AsyncStorage.getItem('token');
-      if (token) {
-        const isValid = await checkTokenValidity(token);
-        if (isValid) {
-          navigation.navigate("MainScreen");
+      try {
+        const token = await AsyncStorage.getItem('token');
+        
+        // 토큰이 없을 경우
+        if (!token) {
+          console.log("토큰이 없습니다. 로그인 화면으로 이동합니다.");
+          navigation.navigate("LoginScreen");
+          return;
         }
+
+        // 토큰이 있을 경우 유효성 검사
+        const response = await checkTokenValidity(token);
+        if (response.valid) { // valid 값을 체크
+          console.log("토큰이 유효합니다. 메인 화면으로 이동합니다.");
+          navigation.navigate("MainScreen");
+        } else {
+          console.log("토큰이 유효하지 않습니다. 로그인 화면으로 이동합니다.");
+          navigation.navigate("LoginScreen");
+        }
+      } catch (error) {
+        console.error("자동 로그인 중 오류:", error);
+        Alert.alert("오류", "자동 로그인 중 문제가 발생했습니다.");
+        navigation.navigate("LoginScreen");
       }
     };
+
     checkAutoLogin();
   }, []);
+
+  
 
   // // (테스트 코드) 토큰을 사용하여 차량 정보 조회
   // useEffect(() => {
@@ -95,7 +115,7 @@ const LoginScreen = () => {
 
     try {
       const response = await loginUser(email, password);
-      if (response.loginStatus === 2) {
+      if (response.loginStatus === 1) {
         // 2차 인증이 필요한 경우
         setIs2FARequired(true);
         Alert.alert("2차 인증 필요", "OTP 코드를 입력하세요.");
@@ -130,20 +150,30 @@ const LoginScreen = () => {
   const handleOTPVerification = async () => {
     const otpCode = otp.join(''); // 6자리 OTP 코드 결합
     try {
-      const isVerified = await checkOTP(email, otpCode);
-      if (isVerified) {
-        Alert.alert("OTP 확인 성공", "메인 화면으로 이동합니다.");
-        const response = await loginUser(email, password); // JWT 토큰 재요청
-        await AsyncStorage.setItem('token', response.token);
-        navigation.navigate("MainScreen");
-      } else {
-        Alert.alert("OTP 확인 실패", "OTP 코드를 다시 확인하세요.");
-      }
+        const isVerified = await checkOTP(email, otpCode);
+        if (isVerified) {
+            Alert.alert("OTP 확인 성공", "메인 화면으로 이동합니다.");
+            // OTP 검증 후 받은 토큰을 AsyncStorage에 저장
+            const response = await checkOTP(email, otpCode);
+            console.log("(LoginScreen.js 2차인증 반환 데이터: ", response);
+            if (response) {
+                navigation.navigate("MainScreen", {screen: 'MainScreen'}); // 메인 화면으로 이동
+            } else {
+                Alert.alert("오류", "토큰을 받을 수 없습니다.");
+            }
+        } else {
+            Alert.alert("OTP 확인 실패", "OTP 코드를 다시 확인하세요.");
+        }
     } catch (error) {
-      console.error("OTP 인증 실패:", error);
-      Alert.alert("오류 발생", "OTP 인증 중 문제가 발생했습니다.");
+        console.error("OTP 인증 실패:", error);
+        Alert.alert("오류 발생", "OTP 인증 중 문제가 발생했습니다.");
     }
-  };
+};
+
+const handleOTPFocus = () => {
+  setOtp(Array(6).fill('')); // 모든 입력 초기화
+};
+
 
   return (
     <View style={Styles.container}>
@@ -199,6 +229,7 @@ const LoginScreen = () => {
                       value={digit}
                       maxLength={1}
                       keyboardType="numeric"
+                      
                     />
                   ))}
                 </View>

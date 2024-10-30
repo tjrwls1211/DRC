@@ -14,7 +14,7 @@ const apiClient = axios.create({
 export const fetchCurrentNickname = async () => {
     try {
         const token = await AsyncStorage.getItem('token'); // AsyncStorage에서 JWT 토큰 가져오기
-        const response = await axios.get(`${API_URL}/api/user/nickname`, {
+        const response = await axios.get(`${API_URL}/user/nickname`, {
             headers: {
                 Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
                 "Content-Type": "application/json",
@@ -31,7 +31,7 @@ export const fetchCurrentNickname = async () => {
 export const changeNickname = async (newNickname) => {
     try {
         const token = await AsyncStorage.getItem('token'); // AsyncStorage에서 JWT 토큰 가져오기
-        const response = await axios.post(`${API_URL}/api/user/nickname`, 
+        const response = await axios.post(`${API_URL}/user/nickname`, 
             { nickname: newNickname }, 
             {
                 headers: {
@@ -50,7 +50,7 @@ export const changeNickname = async (newNickname) => {
 // 비밀번호 확인 API
 export const checkPassword = async (password) => {
   try {
-    const response = await axios.post("/api/user/checkPassword", { password });
+    const response = await axios.post("/user/checkPassword", { password });
     return response.data.isValid;
   } catch (error) {
     console.error('비밀번호 확인 오류:', error);
@@ -64,9 +64,10 @@ export const deleteUserAccount = async (password) => {
     const token = await AsyncStorage.getItem('token');
 
     // 서버에 회원 탈퇴 요청
-    const response = await apiClient.post("/api/user/deleteUser", { password }, {
+    const response = await apiClient.post("/user/deleteUser", { pw: password }, { // 파라미터 이름 수정
       headers: {
-        Authorization: `Bearer ${token}`, // JWT 토큰을 Authorization 헤더에 추가
+        'AuthAuthorization': `Bearer ${token}`, // 요청 스펙에 맞춰 헤더 이름 수정
+        'Content-Type': 'application/json' // Content-Type 추가
       },
     });
 

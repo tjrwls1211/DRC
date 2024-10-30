@@ -11,7 +11,8 @@ import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차인증 필요 상
 import QRCode from 'react-native-qrcode-svg'; // QR 코드 생성을 위한 라이브러리 추가
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
-import Clipboard from '@react-native-community/clipboard'; // 클립보드 작업을 위한 라이브러리
+import * as Clipboard from 'expo-clipboard'; // 클립보드 작업을 위한 라이브러리
+import { Linking } from 'react-native';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -37,6 +38,7 @@ const SettingsScreen = () => {
       const { qrUrl, otpKey } = await enableTwoFactorAuth(); // 2차 인증 활성화 함수 호출 (QR URL 요청)
       setQrUrl(qrUrl); // QR URL을 상태에 저장
       setOtpKey(otpKey); 
+      setModalVisible(true); // 모달을 열도록 설정
       Alert.alert("QR 코드가 생성되었습니다.", "QR 코드를 스캔하여 OTP를 설정하세요."); // 알림 표시
     } else {
       console.log("2차인증 비활성");
@@ -54,6 +56,7 @@ const SettingsScreen = () => {
     setPasswordModalVisible(false);
     setDeleteModalVisible(false);
     setLogoutModalVisible(false);
+    setModalVisible(false);
   };
 
   const handleNicknameChange = (newNickname) => {
@@ -83,6 +86,14 @@ const SettingsScreen = () => {
     }
   };
 
+  const handleCopyOtpKey = () => {
+    if (otpKey) {
+      Clipboard.setString(otpKey); // otpKey 클립보드에 복사
+      Alert.alert("복사 완료", "OTP 키가 클립보드에 복사되었습니다."); // 복사 완료 알림
+    } else {
+      Alert.alert("오류", "OTP 키가 없습니다."); // otpKey가 없을 경우
+    }
+  }; 
 
   return (
     <View style={styles.container}>
@@ -121,18 +132,14 @@ const SettingsScreen = () => {
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>OTP 키</Text>
           <Text style={styles.otpKey}>{otpKey}</Text>
-          <Button title="복사하기" onPress={() => {
-            // 클립보드에 otpKey 복사 로직
-            Clipboard.setString(otpKey); // otpKey 클립보드에 복사
-            Alert.alert("복사 완료", "OTP 키가 클립보드에 복사되었습니다."); // 복사 완료 알림
-          }} />
+          <Button title="복사하기" onPress={handleCopyOtpKey} />
           <Button title="QR 확인" onPress={() => {
-            // QR URL로 이동
             Linking.openURL(qrUrl); // QR URL을 웹 브라우저에서 열기
           }} />
           <Button title="닫기" onPress={closeModal} />
         </View>
       </Modal>
+
 
       <Text style={styles.label}>앱 설정</Text>
       <View style={styles.darkModeContainer}>
