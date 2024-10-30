@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { loginUser, checkTokenValidity, checkOTP } from '../api/authAPI'; // api.js에서 loginUser 함수 가져오기
@@ -14,6 +14,8 @@ const LoginScreen = () => {
   const { is2FAEnabled } = useTwoFA(); // Context에서 2차 인증 상태 가져오기
   const [otp, setOtp] = useState(Array(6).fill('')); // 6자리 OTP 입력 상태
   const [is2FARequired, setIs2FARequired] = useState(false); // 2차 인증 필요 여부
+
+  const otpRefs = useRef(Array(6).fill(null)); // 6자리 OTP 입력 필드에 대한 ref 배열
 
   // 앱 재접속 시 JWT 유효성 검사 후 자동 로그인 처리
   useEffect(() => {
@@ -120,11 +122,9 @@ const LoginScreen = () => {
 
     // 다음 입력 필드로 포커스 이동
     if (text && index < 5) {
-      const nextInput = document.getElementById(`otp-input-${index + 1}`);
-      if (nextInput) nextInput.focus();
+      otpRefs.current[index + 1].focus(); // ref를 사용하여 포커스 이동
     }
   };
-
 
   // OTP 검증 핸들러
   const handleOTPVerification = async () => {
@@ -193,7 +193,7 @@ const LoginScreen = () => {
                   {otp.map((digit, index) => (
                     <TextInput
                       key={index}
-                      id={`otp-input-${index}`}
+                      ref={(el) => (otpRefs.current[index] = el)} // ref 설정
                       style={Styles.otpInput}
                       onChangeText={(text) => handleOTPChange(text, index)}
                       value={digit}
