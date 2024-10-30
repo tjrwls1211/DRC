@@ -74,31 +74,25 @@ accel_label.pack(side="right", padx=20, pady=10)
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
 brake_label.pack(side="left", padx=20, pady=10)
 
+#나중에 지울꺼
 data = {"driveState": "Drive Ready"}
+
 
 status_label = tk.Label(root, text=data["driveState"], font=font_large, bg="black", fg="white", padx=10, pady=10, width=25)
 status_label.place(relx=0.44, rely=0.05, anchor='center')
 
-
+#나중에 지울꺼
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
 text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
 text_label.place(relx=0.97, rely=0.05, anchor='ne')
 
 # pygame 초기화
-# pygame.mixer.init()
-
-#테스트 파일 
-try:
-    pygame.mixer.init()
-except pygame.error as e:
-    print(f"오디오 초기화 실패: {e}")
-
+pygame.mixer.init()
 
 #OBD 연결 및 데이터 요청 
 #connection = obd.OBD()
 
-
-
+#테스트 출력 확인
 #print("Speed:", speed_response.value)  # km/h 단위
 #print("RPM:", rpm_response.value)      # RPM 단위
 
@@ -131,16 +125,15 @@ def update_display_state(accel_value, brake_value, state):
         if brake_label.cget("image") != str(brake_img_normal):
             brake_label.config(image=brake_img_normal)
     
+    ##나중에 지울꺼
     #상태업데이트 : 이전 상태와 비교하여 변화가 있을 때만 업데이트 테스트 텍스트 
     if data["driveState"] != state:
         data["driveState"] = state
         status_label.config(text=data["driveState"])
-    
+    ##나중에 지울꺼
     # accel_value 레이블 업데이트 (정수 형식)
     text_label.config(text=f"현재 : {int(accel_value)}")
     #나중에 obd스피드 입력넣을때 accel_value대신에 speed_response.value 로 교체
-         
-
 
 rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1.wav")
 rapidspeed_2_sound = pygame.mixer.Sound("rapidspeed_2.wav")
@@ -186,7 +179,7 @@ def play_sounds_in_sequence(sounds):
 def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds
 
-    if accel_value > 200 and brake_value <= 30:
+    if accel_value > 200 and brake_value <= 30:    # 급발진 조건을 수정하자 accel_value < 10000 and brake_value > 5000 and speed >= 50 and rpm > 5000:
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
 
@@ -214,13 +207,13 @@ def check_info(accel_value, brake_value):
                 # 마지막 가속 시간 업데이트
                 last_accel_time = time.time()
 
-    elif brake_value > 200 and accel_value <= 30:
+    elif brake_value > 200 and accel_value <= 30: # 급정거 brake_value > 15000 and accel_value <= 30:
         state = "Rapid Braking" 
         update_display_state(accel_value, brake_value, state)
         is_accelerating = False
         stop_sounds = True  # 브레이크가 작동하면 음성 재생 중단
 
-    elif accel_value > 100 and brake_value > 100:
+    elif accel_value > 100 and brake_value > 100: # 양발 운전 accel_vlaue > 1000 and brake_value > 1000
         state = "Both Feet Driving"
         update_display_state(accel_value, brake_value, state)
         is_accelerating = False
