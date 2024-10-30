@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MfaResponseDTO {
+	private String token;
 	private boolean success;
 	private String message;
 }

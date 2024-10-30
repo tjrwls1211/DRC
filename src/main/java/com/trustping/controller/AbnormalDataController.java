@@ -1,11 +1,12 @@
 package com.trustping.controller;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trustping.DTO.BothPedalDTO;
 import com.trustping.DTO.SAclDTO;
 import com.trustping.DTO.SBrkDTO;
+import com.trustping.security.JwtUtil;
 import com.trustping.service.AbnormalDataService;
 
 @RestController
@@ -21,27 +23,53 @@ public class AbnormalDataController {
 	@Autowired
 	private AbnormalDataService abnormalDataService;
 	
+	@Autowired
+	private JwtUtil jwtUtil;
+	
 	// 급가속 날짜로 조회
 	@GetMapping("/sacl")
-	public Optional<SAclDTO> getSacl(@RequestParam(name = "carId") String carId,
-			@RequestParam(name = "date") String date) {
-		LocalDate searchDate = LocalDate.parse(date);
-		return abnormalDataService.getSaclByCarIdAndDate(carId, searchDate);
+	public ResponseEntity<SAclDTO> getSacl(@RequestParam(name = "carId") String carId, @RequestParam(name = "date") String date) {
+	    LocalDate searchDate = LocalDate.parse(date); 
+	    SAclDTO result = abnormalDataService.getSaclByCarIdAndDate(carId, searchDate);
+	    if (result == null) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
+	    }
+	    return ResponseEntity.ok(result);
 	}
+	
+	// 급가속 날짜로 조회
+	@GetMapping("/sacll")
+	public ResponseEntity<SAclDTO> getSacll(@RequestHeader(value = "Authorization") String token, @RequestParam(name = "date") String date) {
+	    LocalDate searchDate = LocalDate.parse(date); 
+	    String jwtToken = token.substring(7);
+	    String id = jwtUtil.extractUsername(jwtToken);
+	    SAclDTO result = abnormalDataService.getSaclByCarIdAndDate(id, searchDate);
+	    if (result == null) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
+	    }
+	    return ResponseEntity.ok(result);
+	}
+
 
 	// 급정거 날짜로 조회
 	@GetMapping("/sbrk")
-	public Optional<SBrkDTO> getSbrk(@RequestParam(name = "carId") String carId,
-			@RequestParam(name = "date") String date) {
-		LocalDate searchDate = LocalDate.parse(date);
-		return abnormalDataService.getSbrkByCarIdAndDate(carId, searchDate);
+	public ResponseEntity<SBrkDTO> getSbrk(@RequestParam(name = "carId") String carId, @RequestParam(name = "date") String date) {
+	    LocalDate searchDate = LocalDate.parse(date); 
+	    SBrkDTO result = abnormalDataService.getSbrkByCarIdAndDate(carId, searchDate);
+	    if (result == null) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
+	    }
+	    return ResponseEntity.ok(result);
 	}
-
+	
 	// 양발 운전 날짜로 조회
 	@GetMapping("/bothPedal")
-	public Optional<BothPedalDTO> getBothPedal(@RequestParam(name = "carId") String carId,
-			@RequestParam(name = "date") String date) {
-		LocalDate searchDate = LocalDate.parse(date);
-		return abnormalDataService.getBothPedalByCarIdAndDate(carId, searchDate);
+	public ResponseEntity<BothPedalDTO> getBothPedal(@RequestParam(name = "carId") String carId, @RequestParam(name = "date") String date) {
+	    LocalDate searchDate = LocalDate.parse(date); 
+	    BothPedalDTO result = abnormalDataService.getBothPedalByCarIdAndDate(carId, searchDate);
+	    if (result == null) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
+	    }
+	    return ResponseEntity.ok(result);
 	}
 }

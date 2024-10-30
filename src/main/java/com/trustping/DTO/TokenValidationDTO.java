@@ -12,5 +12,4 @@ import lombok.Setter;
 public class TokenValidationDTO {
     private boolean isValid;
     private String message;
-
 }

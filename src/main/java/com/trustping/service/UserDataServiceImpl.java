@@ -2,9 +2,9 @@ package com.trustping.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +17,7 @@ import com.trustping.DTO.DeleteUserDTO;
 import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
+import com.trustping.DTO.MfaResponseDTO;
 import com.trustping.DTO.MyDataResponseDTO;
 import com.trustping.DTO.OtpResponseDTO;
 import com.trustping.DTO.PasswordDTO;
@@ -35,7 +36,7 @@ public class UserDataServiceImpl implements UserDataService {
 	private UserDataRepository userDataRepository;
 
 	@Autowired
-	private JwtUtil jwtUtil; // JWT 유틸리티 클래스 주입
+	private JwtUtil jwtUtil; 
 
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -45,16 +46,15 @@ public class UserDataServiceImpl implements UserDataService {
 	}
 
 	// 비밀번호 조회
-	public String getPasswordById(String id) {
-		return userDataRepository.findById(id).map(UserData::getPw)
-				.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + id));
+	public Optional<String> getPasswordById(String id) {
+	    return userDataRepository.findById(id).map(UserData::getPw);
 	}
 
 	// otpKey 조회
-	public String getOtpKeyById(String id) {
-		return userDataRepository.findById(id).map(UserData::getOtpKey)
-				.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + id));
+	public Optional<String> getOtpKeyById(String id) {
+	    return userDataRepository.findById(id).map(UserData::getOtpKey);
 	}
+
 
 	// 비밀번호 확인
 	public boolean verifyPassword(String rawPassword, String encodedPassword) {
@@ -73,7 +73,7 @@ public class UserDataServiceImpl implements UserDataService {
 		UserData userData = new UserData(request.getId(), hashedPassword, request.getNickname(), request.getBirthDate(),
 				request.getCarId(), null, // OTP 키 초기값
 				"ROLE_USER");
-
+		
 		userDataRepository.save(userData);
 		return true; // 회원가입 성공
 	}
@@ -81,50 +81,54 @@ public class UserDataServiceImpl implements UserDataService {
 	// 로그인
 	@Override
 	public LoginResponseDTO loginUser(LoginRequestDTO loginRequestDTO) {
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		String id = loginRequestDTO.getId();
-		String pw = loginRequestDTO.getPw();
-		UserData userData = userDataRepository.findById(id).orElse(null);
+	    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	    String id = loginRequestDTO.getId();
+	    String pw = loginRequestDTO.getPw();
+	    
+	    Optional<UserData> userDataOptional = userDataRepository.findById(id);
 
-		if (userData == null) {
-			return new LoginResponseDTO(null, 0, "ID가 존재하지 않습니다.", HttpStatus.UNAUTHORIZED);
-		}
+	    // 값이 없거나 비밀번호가 일치하지 않을 때 처리
+	    if (userDataOptional.isEmpty() || !passwordEncoder.matches(pw, userDataOptional.get().getPw())) {
+	        return new LoginResponseDTO(null, 0, "ID나 비밀번호가 잘못되었습니다.");
+	    }
 
-		if (!passwordEncoder.matches(pw, userData.getPw())) {
-			return new LoginResponseDTO(null, 0, "비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
-		}
+	    UserData userData = userDataOptional.get(); 
 
-		if (userData.getOtpKey() != null) {
-			return new LoginResponseDTO(null, 1,"OTP 인증 필요", HttpStatus.OK);
-		}
+	    // OTP 키가 존재할 때 처리
+	    if (userData.getOtpKey() != null) {
+	        return new LoginResponseDTO(null, 1, "OTP 인증 필요");
+	    }
 
-		// JWT 토큰 생성
-		String jwtToken = jwtUtil.generateToken(userData.getId());
-		return new LoginResponseDTO(jwtToken, 2,"로그인 성공", HttpStatus.OK);
+	    // JWT 토큰 생성
+	    String jwtToken = jwtUtil.generateToken(userData.getId());
+	    return new LoginResponseDTO(jwtToken, 2, "로그인 성공");
 	}
 
 	// 유저 필터 추가
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// 사용자 정보를 데이터베이스에서 조회
-		UserData userData = userDataRepository.findById(username)
-				.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
+	    Optional<UserData> userDataOptional = userDataRepository.findById(username);
 
-		// 권한 리스트 생성 및 추가
-		List<GrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority(userData.getRole()));
+	    UserData userData = userDataOptional.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
 
-		// UserDetails 객체 반환
-		return new org.springframework.security.core.userdetails.User(userData.getId(), userData.getPw(), authorities);
+	    // 권한 리스트 생성 및 추가
+	    List<GrantedAuthority> authorities = new ArrayList<>();
+	    authorities.add(new SimpleGrantedAuthority(userData.getRole()));
+
+	    // UserDetails 객체 반환
+	    return new org.springframework.security.core.userdetails.User(userData.getId(), userData.getPw(), authorities);
 	}
+
 
 	// Google OTP 생성
 	@Transactional(rollbackFor = Exception.class)
 	public OtpResponseDTO generateGoogleMFA(String jwtToken) {
-		String userId = jwtUtil.extractUsername(jwtToken);
+	    String userId = jwtUtil.extractUsername(jwtToken);
 
-		UserData userData = userDataRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + userId));
+	    Optional<UserData> userDataOptional = userDataRepository.findById(userId);
+
+	    UserData userData = userDataOptional.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + userId));
+
 	    OtpResponseDTO otpDTO = new OtpResponseDTO();
 
 	    try {
@@ -151,22 +155,42 @@ public class UserDataServiceImpl implements UserDataService {
 	    return otpDTO;
 	}
 
+
 	// Google OTP 인증
 	@Override
-	public boolean verifyGoogleMFA(MfaRequestDTO mfaRequestDTO) {
-		GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
-		String otpKey = getOtpKeyById(mfaRequestDTO.getId());
-		boolean verify = googleAuthenticator.authorize(otpKey, mfaRequestDTO.getKey());
-		return verify;
+	public MfaResponseDTO verifyGoogleMFA(MfaRequestDTO mfaRequestDTO) {
+	    GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
+	    String id = mfaRequestDTO.getId();
+
+	    // Optional을 사용하여 OTP 키를 가져옴
+	    Optional<String> otpKeyOptional = getOtpKeyById(id);
+
+	    // OTP 키가 존재하지 않을 경우 처리
+	    if (otpKeyOptional.isEmpty()) {
+	        return new MfaResponseDTO(null, false, "존재하지 않는 사용자 ID");
+	    }
+
+	    // OTP 키가 존재하면 인증 진행
+	    String otpKey = otpKeyOptional.get();
+	    boolean verify = googleAuthenticator.authorize(otpKey, mfaRequestDTO.getKey());
+	    
+	    if (verify) {
+	        // JWT 토큰 생성
+	        String jwtToken = jwtUtil.generateToken(id);
+	        return new MfaResponseDTO(jwtToken, true, "인증 성공");
+	    } else {
+	        return new MfaResponseDTO(null, false, "인증 실패");
+	    }
 	}
 
 	// 마이페이지 데이터 확인
 	@Override
 	public MyDataResponseDTO getMyDataByToken(String jwtToken) {
 		String userId = jwtUtil.extractUsername(jwtToken);
+		
+		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
 
-		UserData userData = userDataRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + userId));
+	    UserData userData = userDataOptional.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + userId));
 
 		MyDataResponseDTO data = new MyDataResponseDTO(
 				userData.getId(), 
@@ -180,20 +204,26 @@ public class UserDataServiceImpl implements UserDataService {
 	// 회원 탈퇴
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public DeleteUserDTO deleteUser(String jwtToken,PasswordDTO passwordDTO) {
-		String userId = jwtUtil.extractUsername(jwtToken);
-		String password = passwordDTO.getPw();
-		UserData userData = userDataRepository.findById(userId).orElse(null);
-		
-		if (userData == null) {
-			return new DeleteUserDTO(false, "ID가 존재하지 않습니다.", HttpStatus.UNAUTHORIZED);
-		}
-		
-		if (!passwordEncoder.matches(password, userData.getPw())) {
-			return new DeleteUserDTO(false, "비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
-		}
-		
-		userDataRepository.delete(userData);
-		return new DeleteUserDTO(true, "회원 탈퇴 되었습니다.", HttpStatus.OK);
+	public DeleteUserDTO deleteUser(String jwtToken, PasswordDTO passwordDTO) {
+	    String userId = jwtUtil.extractUsername(jwtToken);
+	    String password = passwordDTO.getPw();
+
+	    Optional<UserData> userDataOptional = userDataRepository.findById(userId);
+
+	    UserData userData = userDataOptional.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + userId));
+
+	    if (userData == null) {
+	        return new DeleteUserDTO(false, "ID가 존재하지 않습니다.");
+	    }
+
+	    // 비밀번호가 일치하지 않을 경우
+	    if (!passwordEncoder.matches(password, userData.getPw())) {
+	        return new DeleteUserDTO(false, "비밀번호가 일치하지 않습니다.");
+	    }
+
+	    // 사용자 삭제
+	    userDataRepository.delete(userData);
+	    return new DeleteUserDTO(true, "회원 탈퇴 되었습니다.");
 	}
+
 }
