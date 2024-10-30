@@ -39,7 +39,7 @@ export const fetchData = async (date, keyword) => {
     // 서버에 데이터 조회 요청 (토큰 포함)
     const response = await axios.get(url, {
       headers: {
-        Authorization: `Bearer ${token}`, // JWT 토큰을 Authorization 헤더에 추가
+        // Authorization: `Bearer ${token}`, // JWT 토큰을 Authorization 헤더에 추가
       },
       params: {
         carId: 1234, // carId를 쿼리 파라미터로 추가
