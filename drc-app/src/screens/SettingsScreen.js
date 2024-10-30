@@ -11,6 +11,7 @@ import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차인증 필요 상
 import QRCode from 'react-native-qrcode-svg'; // QR 코드 생성을 위한 라이브러리 추가
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
+import Clipboard from '@react-native-community/clipboard'; // 클립보드 작업을 위한 라이브러리
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -49,8 +50,11 @@ const SettingsScreen = () => {
 
   // 모달 닫기 함수
   const closeModal = () => {
-    setModalVisible(false);
-  }
+    setNicknameModalVisible(false);
+    setPasswordModalVisible(false);
+    setDeleteModalVisible(false);
+    setLogoutModalVisible(false);
+  };
 
   const handleNicknameChange = (newNickname) => {
     console.log('New nickname: ', newNickname);
@@ -62,12 +66,6 @@ const SettingsScreen = () => {
     console.log('New password:', newPassword);
     setPasswordModalVisible(false);
     // 비밀번호 변경 로직 - 추후 구현
-  };
-
-  const handleAccountDeletion = () => {
-    console.log('Account deleted');
-    setDeleteModalVisible(false);
-    // 회원탈퇴 로직 (추후 구현)
   };
 
   const handleLogout = async () => {
@@ -155,6 +153,10 @@ const SettingsScreen = () => {
         />
       </View>
 
+      <AccountDeletionModal 
+        visible={deleteModalVisible} 
+        onClose={closeModal} // 모달 닫기
+      />
 
       <NicknameChangeModal
         visible={nicknameModalVisible}
@@ -166,11 +168,6 @@ const SettingsScreen = () => {
         visible={passwordModalVisible} 
         onClose={() => setPasswordModalVisible(false)} 
         onConfirm={handlePasswordChange}
-      />
-      <AccountDeletionModal 
-        visible={deleteModalVisible} 
-        onClose={() => setDeleteModalVisible(false)} 
-        onConfirm={handleAccountDeletion}
       />
       <LogoutModal 
         visible={logoutModalVisible} 

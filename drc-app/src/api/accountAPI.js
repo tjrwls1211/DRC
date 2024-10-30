@@ -59,12 +59,21 @@ export const checkPassword = async (password) => {
 };
 
 // 회원 탈퇴 API
-export const deleteUserAccount = async () => {
+export const deleteUserAccount = async (password) => {
   try {
-    const response = await axios.delete("/api/user/delete");
-    return response.data;
+    const token = await AsyncStorage.getItem('token');
+
+    // 서버에 회원 탈퇴 요청
+    const response = await apiClient.post("/api/user/deleteUser", { password }, {
+      headers: {
+        Authorization: `Bearer ${token}`, // JWT 토큰을 Authorization 헤더에 추가
+      },
+    });
+
+    console.log("회원 탈퇴 요청 반환 데이터: ", response.data);
+    return response.data; // 서버 반환 성공 여부
   } catch (error) {
-    console.error('회원 탈퇴 오류:', error);
+    console.error("회원 탈퇴 요청 오류:", error);
     throw error;
   }
 };

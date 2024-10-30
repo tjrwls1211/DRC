@@ -134,9 +134,15 @@ export const disableTwoFactorAuth = async () => {
 
 // OTP 검증 요청
 export const checkOTP = async (email, otp) => {
+  const data = {
+    id: email,
+    otp, otp
+  }
+
   try {
     // 서버에 OTP 검증 요청 (이메일, OTP코드 전송)
-    const response = await apiClient.post("/api/user/mfa", { email, otp }); // 맞는 url
+    const response = await apiClient.post("/api/user/mfa", data); // 맞는 url
+    console.log("otp 검증 요청 반환 데이터: ", response);
     return response.data.success; // 검증 성공 여부 반환
   } catch (error) {
     console.error("OTP 인증 실패:", error);
