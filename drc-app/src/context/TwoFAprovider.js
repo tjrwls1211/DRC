@@ -16,6 +16,7 @@ export const TwoFAProvider = ({ children }) => {
   };
   
   // Context 사용을 위한 커스텀 훅
+  // 다른 컴포넌트에서 useTwoFA 훅을 통해 사용 가능
   export const useTwoFA = () => {
     return useContext(TwoFAContext);
   };

@@ -10,6 +10,9 @@ import LogoutModal from '../components/Modal/LogoutModal.js';
 import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차인증 필요 상태 Context import
 import QRCode from 'react-native-qrcode-svg'; // QR 코드 생성을 위한 라이브러리 추가
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Modal from 'react-native-modal';
+import * as Clipboard from 'expo-clipboard'; // 클립보드 작업을 위한 라이브러리
+import { Linking } from 'react-native';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -18,7 +21,9 @@ const SettingsScreen = () => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [qrUrl, setQrUrl] = useState(null); // QR URL 상태
-  
+  const [otpKey, setOtpKey] = useState(null); // otpKey 상태
+  const [isModalVisible, setModalVisible] = useState(false); // 모달 상태
+
   const { is2FAEnabled, setIs2FAEnabled } = useTwoFA(); // Context에서 2차인증 필요 상태 가져오기
   const [open, setOpen] = useState(false); // DropDownPicker 열림/닫힘 상태
   const [items, setItems] = useState([
@@ -30,15 +35,28 @@ const SettingsScreen = () => {
   const handle2FAChange = async (value) => {
     if (value) {
       console.log("2차인증 활성");
-      const qrUrl = await enableTwoFactorAuth(); // 2차 인증 활성화 함수 호출 (QR URL 요청)
+      const { qrUrl, otpKey } = await enableTwoFactorAuth(); // 2차 인증 활성화 함수 호출 (QR URL 요청)
       setQrUrl(qrUrl); // QR URL을 상태에 저장
+      setOtpKey(otpKey); 
+      setModalVisible(true); // 모달을 열도록 설정
       Alert.alert("QR 코드가 생성되었습니다.", "QR 코드를 스캔하여 OTP를 설정하세요."); // 알림 표시
     } else {
       console.log("2차인증 비활성");
       await disableTwoFactorAuth(); // 비활성화 함수 호출
       setQrUrl(null);
+      setOtpKey(null);
     }
     setIs2FAEnabled(value); // Context를 통해 2차 인증 상태 업데이트
+    console.log("2차인증 전역상태 업데이트: ", is2FAEnabled);
+  };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setNicknameModalVisible(false);
+    setPasswordModalVisible(false);
+    setDeleteModalVisible(false);
+    setLogoutModalVisible(false);
+    setModalVisible(false);
   };
 
   const handleNicknameChange = (newNickname) => {
@@ -51,12 +69,6 @@ const SettingsScreen = () => {
     console.log('New password:', newPassword);
     setPasswordModalVisible(false);
     // 비밀번호 변경 로직 - 추후 구현
-  };
-
-  const handleAccountDeletion = () => {
-    console.log('Account deleted');
-    setDeleteModalVisible(false);
-    // 회원탈퇴 로직 (추후 구현)
   };
 
   const handleLogout = async () => {
@@ -74,6 +86,14 @@ const SettingsScreen = () => {
     }
   };
 
+  const handleCopyOtpKey = () => {
+    if (otpKey) {
+      Clipboard.setString(otpKey); // otpKey 클립보드에 복사
+      Alert.alert("복사 완료", "OTP 키가 클립보드에 복사되었습니다."); // 복사 완료 알림
+    } else {
+      Alert.alert("오류", "OTP 키가 없습니다."); // otpKey가 없을 경우
+    }
+  }; 
 
   return (
     <View style={styles.container}>
@@ -89,22 +109,37 @@ const SettingsScreen = () => {
       <DropDownPicker
         open={open}
         value={is2FAEnabled}
-        items={items} // 드롭다운 항목들
-        setOpen={setOpen} // 드롭다운 열림 상태 업데이트 함수
-        setValue={setIs2FAEnabled} // 선택된 값 업데이트 함수
-        setItems={setItems} // 드롭다운 항목들 업데이트 함수
-        onChangeValue={handle2FAChange} // 선택 값 변경 시 호출되는 함수
-        style={styles.dropdown} // 드롭다운 스타일
-        dropDownContainerStyle={styles.dropdownContainer} // 드롭다운 컨테이너 스타일
+        items={items} 
+        setOpen={setOpen} 
+        setValue={setIs2FAEnabled} 
+        setItems={setItems} 
+        onChangeValue={handle2FAChange} 
+        style={styles.dropdown} 
+        dropDownContainerStyle={styles.dropdownContainer}
       />
 
       {/* QR 코드 표시 부분 ☆ */}
+      {/* 지울 예정 ☆ */}
       {qrUrl && (
         <View style={styles.qrContainer}>
           <Text style={styles.label}>QR 코드</Text>
-          <QRCode value={qrUrl} size={200} /> {/* QR 코드 생성 */}
+          <QRCode value={qrUrl} size={200} /> 
         </View>
       )}
+
+      {/* OTP 키와 QR URL을 보여주는 모달 */}
+      <Modal isVisible={isModalVisible}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>OTP 키</Text>
+          <Text style={styles.otpKey}>{otpKey}</Text>
+          <Button title="복사하기" onPress={handleCopyOtpKey} />
+          <Button title="QR 확인" onPress={() => {
+            Linking.openURL(qrUrl); // QR URL을 웹 브라우저에서 열기
+          }} />
+          <Button title="닫기" onPress={closeModal} />
+        </View>
+      </Modal>
+
 
       <Text style={styles.label}>앱 설정</Text>
       <View style={styles.darkModeContainer}>
@@ -125,6 +160,10 @@ const SettingsScreen = () => {
         />
       </View>
 
+      <AccountDeletionModal 
+        visible={deleteModalVisible} 
+        onClose={closeModal} // 모달 닫기
+      />
 
       <NicknameChangeModal
         visible={nicknameModalVisible}
@@ -136,11 +175,6 @@ const SettingsScreen = () => {
         visible={passwordModalVisible} 
         onClose={() => setPasswordModalVisible(false)} 
         onConfirm={handlePasswordChange}
-      />
-      <AccountDeletionModal 
-        visible={deleteModalVisible} 
-        onClose={() => setDeleteModalVisible(false)} 
-        onConfirm={handleAccountDeletion}
       />
       <LogoutModal 
         visible={logoutModalVisible} 

@@ -1,11 +1,11 @@
-// 회원 탈퇴
 import React, { useState } from 'react';
 import { TextInput, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BasicModal from './BasicModal';
 import { checkPassword, deleteUserAccount } from '../../api/accountAPI';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const AccountDeletionModal = ({ visible, onClose}) => {
+const AccountDeletionModal = ({ visible, onClose }) => {
   const navigation = useNavigation();
   const [password, setPassword] = useState('');
   const [isVerified, setIsVerified] = useState(false);
@@ -17,7 +17,7 @@ const AccountDeletionModal = ({ visible, onClose}) => {
       const isCorrect = await checkPassword(password); // 비밀번호 검증 API 호출
       if (isCorrect) {
         setVerificationMessage("인증되었습니다.");
-        handleAccountDeletion(); // 비밀번호가 맞으면 회원 탈퇴 처리
+        setIsVerified(true); // 인증 성공 시 상태 업데이트
       } else {
         setVerificationMessage("비밀번호가 틀렸습니다.");
       }
@@ -29,8 +29,13 @@ const AccountDeletionModal = ({ visible, onClose}) => {
 
   // 회원 탈퇴 함수
   const handleAccountDeletion = async () => {
+    if (!isVerified) {
+      Alert.alert("오류", "비밀번호 인증이 필요합니다."); // 인증되지 않은 경우 경고
+      return;
+    }
     try {
-      await deleteUserAccount(); // 회원 탈퇴 API 호출
+      await deleteUserAccount(password); // 회원 탈퇴 API 호출
+      await AsyncStorage.removeItem('token'); // 로컬 저장소의 토큰 삭제
       Alert.alert("회원 탈퇴 완료", "계정이 성공적으로 삭제되었습니다.");
       navigation.navigate('LoginScreen'); // 로그인 화면으로 이동
       onClose(); // 모달 닫기
@@ -45,7 +50,8 @@ const AccountDeletionModal = ({ visible, onClose}) => {
       visible={visible} 
       onClose={onClose} 
       title="회원탈퇴"
-      onConfirm={handleCheckPassword} // 확인 버튼 클릭 시 비밀번호 검증
+      onConfirm={handleAccountDeletion} // 확인 버튼은 탈퇴하기로 설정
+      confirmText="탈퇴하기" // 확인 버튼 텍스트를 "탈퇴하기"로 설정
     >
       <Text style={styles.warningText}>
         탈퇴 시, 계정은 삭제되며 복구되지 않습니다.
