@@ -12,8 +12,8 @@ const LoginScreen = () => {
   const [errorMessage, setErrorMessage] = useState(''); // 오류 메시지
   
   const { is2FAEnabled } = useTwoFA(); // Context에서 2차 인증 상태 가져오기
-  const [otp, setOtp] = useState(''); // OTP 입력 상태
-  const [is2FARequired, setIs2FARequired] = useState(false); // 2차 인증 필요 여부 상태
+  const [otp, setOtp] = useState(Array(6).fill('')); // 6자리 OTP 입력 상태
+  const [is2FARequired, setIs2FARequired] = useState(false); // 2차 인증 필요 여부
 
   // 앱 재접속 시 JWT 유효성 검사 후 자동 로그인 처리
   useEffect(() => {
@@ -87,47 +87,55 @@ const LoginScreen = () => {
   // 로그인 처리 핸들러
   const handleLogin = async () => {
     if (!email || !password) {
-      setErrorMessage("아이디(이메일)와 비밀번호를 입력해 주세요."); // 오류 메시지 설정
-      return; // 함수 종료
+      setErrorMessage("아이디(이메일)와 비밀번호를 입력해 주세요.");
+      return;
     }
 
     try {
-      const success = await loginUser(email, password); // 서버에 로그인 요청
-
-      if (success) {
-        // 로그인 성공 시 2차 인증 필요 여부 확인
-        if (is2FAEnabled) { // 2차 인증 활성화 상태 참조
-          setIs2FARequired(true); // 2차 인증 필요로 설정
-          Alert.alert("2차 인증 필요", "OTP 코드를 입력하세요."); // 알림 표시
-        } else {
+      const response = await loginUser(email, password);
+      if (response.loginStatus === 2) {
+        // 2차 인증이 필요한 경우
+        setIs2FARequired(true);
+        Alert.alert("2차 인증 필요", "OTP 코드를 입력하세요.");
+      } else if (response.token) {
           // 2차 인증 비활성 경우 그냥 로그인 처리
           console.log('로그인 성공');
           setErrorMessage('');
+          // JWT 토큰이 반환된 경우
+          await AsyncStorage.setItem('token', response.token);
           navigation.navigate("MainScreen", { screen: 'MainScreen' }); // 메인화면 이동
-        }
-      } else {
-        setErrorMessage('아이디나 비밀번호가 틀렸습니다. 다시 입력해 주세요.'); // 로그인 실패 시 메시지
+        } else {
+          setErrorMessage('로그인 실패: ' + response.message); // 로그인 실패 시 메시지
       }
     } catch (error) {
-      // 오류 발생 시 처리
-      if (error.response && error.response.data) {
-        setErrorMessage(error.response.data); // 서버에서 받은 오류 메시지 설정
-      } else {
-        setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
-        console.error('로그인 오류:', error);
-      }
+      setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
+      console.error('로그인 오류:', error);
     }
   };
 
+  const handleOTPChange = (text, index) => {
+    const newOtp = [...otp];
+    newOtp[index] = text.replace(/[^0-9]/g, ''); // 숫자만 허용
+    setOtp(newOtp);
+
+    // 다음 입력 필드로 포커스 이동
+    if (text && index < 5) {
+      const nextInput = document.getElementById(`otp-input-${index + 1}`);
+      if (nextInput) nextInput.focus();
+    }
+  };
+
+
   // OTP 검증 핸들러
   const handleOTPVerification = async () => {
+    const otpCode = otp.join(''); // 6자리 OTP 코드 결합
     try {
-      // checkOTP 함수로 서버에 OTP 검증 요청
-      const isVerified = await checkOTP(email, otp);
-
+      const isVerified = await checkOTP(email, otpCode);
       if (isVerified) {
         Alert.alert("OTP 확인 성공", "메인 화면으로 이동합니다.");
-        navigation.navigate("MainScreen", { screen: 'MainScreen' });
+        const response = await loginUser(email, password); // JWT 토큰 재요청
+        await AsyncStorage.setItem('token', response.token);
+        navigation.navigate("MainScreen");
       } else {
         Alert.alert("OTP 확인 실패", "OTP 코드를 다시 확인하세요.");
       }
@@ -180,17 +188,23 @@ const LoginScreen = () => {
             {/* 2차 인증 필요 경우 OTP 입력 UI 표시 */}
             {is2FARequired && (
               <>
-                <TextInput
-                  style={Styles.TextInput}
-                  onChangeText={setOtp}
-                  value={otp}
-                  placeholder="OTP 코드"
-                  placeholderTextColor="#D9D9D9"
-                  keyboardType="numeric"
-                />
+                <Text style={Styles.otpText}>OTP 입력 (6자리)</Text>
+                <View style={Styles.otpContainer}>
+                  {otp.map((digit, index) => (
+                    <TextInput
+                      key={index}
+                      id={`otp-input-${index}`}
+                      style={Styles.otpInput}
+                      onChangeText={(text) => handleOTPChange(text, index)}
+                      value={digit}
+                      maxLength={1}
+                      keyboardType="numeric"
+                    />
+                  ))}
+                </View>
 
-                <TouchableOpacity style={Styles.LoginBtn} onPress={handleOTPVerification}>
-                  <Text style={Styles.BtnText}>OTP 확인</Text>
+                <TouchableOpacity style={Styles.loginBtn} onPress={handleOTPVerification}>
+                  <Text style={Styles.btnText}>OTP 확인</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -269,5 +283,33 @@ const Styles = StyleSheet.create({
     color: 'red', 
     marginBottom: 10,
     textAlign: 'center', 
-  }
+  },
+  loginBtn: {
+    backgroundColor: '#007BFF',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  btnText: {
+    color: '#fff',
+  },
+  otpText: {
+    marginTop: 20,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  otpContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  otpInput: {
+    width: 40,
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    textAlign: 'center',
+    fontSize: 18,
+    marginRight: 5,
+  },
 });
