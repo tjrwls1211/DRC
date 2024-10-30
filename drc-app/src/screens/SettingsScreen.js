@@ -10,6 +10,7 @@ import LogoutModal from '../components/Modal/LogoutModal.js';
 import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차인증 필요 상태 Context import
 import QRCode from 'react-native-qrcode-svg'; // QR 코드 생성을 위한 라이브러리 추가
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Modal from 'react-native-modal';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -18,7 +19,9 @@ const SettingsScreen = () => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [qrUrl, setQrUrl] = useState(null); // QR URL 상태
-  
+  const [otpKey, setOtpKey] = useState(null); // otpKey 상태
+  const [isModalVisible, setModalVisible] = useState(false); // 모달 상태
+
   const { is2FAEnabled, setIs2FAEnabled } = useTwoFA(); // Context에서 2차인증 필요 상태 가져오기
   const [open, setOpen] = useState(false); // DropDownPicker 열림/닫힘 상태
   const [items, setItems] = useState([
@@ -30,16 +33,24 @@ const SettingsScreen = () => {
   const handle2FAChange = async (value) => {
     if (value) {
       console.log("2차인증 활성");
-      const qrUrl = await enableTwoFactorAuth(); // 2차 인증 활성화 함수 호출 (QR URL 요청)
+      const { qrUrl, otpKey } = await enableTwoFactorAuth(); // 2차 인증 활성화 함수 호출 (QR URL 요청)
       setQrUrl(qrUrl); // QR URL을 상태에 저장
+      setOtpKey(otpKey); 
       Alert.alert("QR 코드가 생성되었습니다.", "QR 코드를 스캔하여 OTP를 설정하세요."); // 알림 표시
     } else {
       console.log("2차인증 비활성");
       await disableTwoFactorAuth(); // 비활성화 함수 호출
       setQrUrl(null);
+      setOtpKey(null);
     }
     setIs2FAEnabled(value); // Context를 통해 2차 인증 상태 업데이트
+    console.log("2차인증 전역상태 업데이트: ", is2FAEnabled);
   };
+
+  // 모달 닫기 함수
+  const closeModal = () => {
+    setModalVisible(false);
+  }
 
   const handleNicknameChange = (newNickname) => {
     console.log('New nickname: ', newNickname);
@@ -99,12 +110,31 @@ const SettingsScreen = () => {
       />
 
       {/* QR 코드 표시 부분 ☆ */}
+      {/* 지울 예정 ☆ */}
       {qrUrl && (
         <View style={styles.qrContainer}>
           <Text style={styles.label}>QR 코드</Text>
           <QRCode value={qrUrl} size={200} /> 
         </View>
       )}
+
+      {/* OTP 키와 QR URL을 보여주는 모달 */}
+      <Modal isVisible={isModalVisible}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>OTP 키</Text>
+          <Text style={styles.otpKey}>{otpKey}</Text>
+          <Button title="복사하기" onPress={() => {
+            // 클립보드에 otpKey 복사 로직
+            Clipboard.setString(otpKey); // otpKey 클립보드에 복사
+            Alert.alert("복사 완료", "OTP 키가 클립보드에 복사되었습니다."); // 복사 완료 알림
+          }} />
+          <Button title="QR 확인" onPress={() => {
+            // QR URL로 이동
+            Linking.openURL(qrUrl); // QR URL을 웹 브라우저에서 열기
+          }} />
+          <Button title="닫기" onPress={closeModal} />
+        </View>
+      </Modal>
 
       <Text style={styles.label}>앱 설정</Text>
       <View style={styles.darkModeContainer}>

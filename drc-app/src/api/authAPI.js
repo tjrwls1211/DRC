@@ -28,7 +28,7 @@ export const loginUser = async (email, password) => {
   try {
     const response = await apiClient.post("/api/user/login", data);
     console.log('로그인 데이터 전송 성공:', response.data);
-    console.log('반환response: ', response);
+    console.log('로그인 반환 데이터: ', response);
     
     // 로그인 성공 시 JWT 토큰 저장
     const token = response.data.token;
@@ -60,9 +60,6 @@ export const checkTokenValidity = async (token) => {
 
 // 회원가입 ID 중복 확인
 export const checkID = async (email) => {
-
-  
-
   try {
     const response = await apiClient.get("/api/user/check", { params: { id: email }});
     console.log("ID중복 여부: ", response.data);
@@ -111,11 +108,13 @@ export const enableTwoFactorAuth = async () => {
       },
     });
     
-    console.log(response.data);
+    console.log("2차인증 반환 데이터: ", response.data);
     const qrUrl = response.data.qrurl; // 응답에서 OR 코드 URL 추출
+    const otpKey = response.data.otpKey;
     console.log("OTP QR_URL: ", qrUrl);
+    console.log("OTP Key: ", otpKey);
     // QR URL을 사용자에게 전달하여 설정할 수 있도록 처리
-    return qrUrl;
+    return { qrUrl, otpKey };
   } catch (error) {
     console.error("2차 인증 활성화 오류:", error);
     throw error;
