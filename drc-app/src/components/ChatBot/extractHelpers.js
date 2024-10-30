@@ -18,7 +18,7 @@ export const extractDateAndKeyword = (input) => {
   }
 
   // 키워드 추출
-  const keywords = ["급가속", "급제동", "급발진", "주행정보"];
+  const keywords = ["급가속", "급제동", "급발진", "주행정보","양발운전"];
   const keyword = keywords.find((kw) => input.includes(kw)) || null;
 
   console.log("Formatted date:", date);

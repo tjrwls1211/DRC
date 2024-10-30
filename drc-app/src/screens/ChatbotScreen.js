@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, KeyboardAvoidingView, Linking } from 'react-native';
-import { everyday } from '../components/ChatBot/ChatBot_Api';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, KeyboardAvoidingView, Linking, Image } from 'react-native';
+import { fetchData } from '../components/ChatBot/ApiService';
 import { extractDateAndKeyword } from '../components/ChatBot/extractHelpers';
 import { chatbotResponses } from '../components/ChatBot/chatbotResponses';
 import axios from 'axios';
+
 
 const ChatbotScreen = ({ navigation }) => {
     const [messages, setMessages] = useState([{ text: "무엇을 도와드릴까요? \n데이터 조회를 원하는 경우 \"YYYY년 MM월 DD일 급가속 조회해줘\"와 같이 말씀해주세요", isBot: true }]);
     const [inputText, setInputText] = useState('');
     const [showQueryButtons, setShowQueryButtons] = useState(false);
     const [showBackOnly, setShowBackOnly] = useState(false);
+    const [activeButton, setActiveButton] = useState(null);
+
+
   
     // GPT API 호출 함수
     const callGPTApi = async (userInput) => {
@@ -43,17 +47,26 @@ const ChatbotScreen = ({ navigation }) => {
       const { date, keyword } = extractDateAndKeyword(inputText);
   
       if (date && keyword) {
-          // everydata 호출
+          // fetchData 호출
           console.log(date, keyword)
           try {
-          await everyday(date, [keyword]); // 키워드는 배열로 전달
-          const botResponse = `서버에 ${date}와 ${keyword}를 전송했습니다.`; // 서버 응답에 대한 메시지
-          setMessages(prevMessages => [...prevMessages, { text: botResponse, isBot: true }]);
-          } catch (error) {
-          console.error('Error sending request:', error);
-          const errorMessage = '서버와의 통신에 실패했습니다.';
-          setMessages(prevMessages => [...prevMessages, { text: errorMessage, isBot: true }]);
-          }
+            console.log(date, keyword);
+            let botResponse = '';
+
+            if (keyword === "급가속" || keyword === "급제동" || keyword === "양발운전") {
+                const result = await fetchData(date, keyword); // 서버로부터 받은 결과 값
+                botResponse = `조회결과 ${result}회 입니다.`;
+            } else {
+                botResponse = `서버에 ${date}와 ${keyword}를 전송했습니다.`;
+            }
+
+            setMessages(prevMessages => [...prevMessages, { text: botResponse, isBot: true }]);
+        } catch (error) {
+            console.error('Error sending request:', error);
+            const errorMessage = '서버와의 통신에 실패했습니다.';
+            setMessages(prevMessages => [...prevMessages, { text: errorMessage, isBot: true }]);
+        }
+
       } else {
           // 각 키워드에 대한 처리
           const keywords = {
@@ -126,10 +139,11 @@ const ChatbotScreen = ({ navigation }) => {
           for (const [key, phrases] of Object.entries(keywords)) {
           // 입력 텍스트가 특정 키워드와 정확히 일치하는지 확인
           if (phrases.some(phrase => inputText.trim() === phrase)) {
-              handleButtonPress(key);
-              setInputText(''); // 입력 후 텍스트 초기화
-              return; // 이후 GPT API 호출을 생략하고 버튼 클릭 요청 처리
-          }
+            handleButtonPress(key); // 버튼 클릭 처리
+            setInputText(''); // 입력 후 텍스트 초기화
+            return; // 이후 GPT API 호출을 생략하고 버튼 클릭 요청 처리
+        }
+        
       }
   
       const botResponse = await callGPTApi(inputText);
@@ -140,9 +154,10 @@ const ChatbotScreen = ({ navigation }) => {
   
     // 버튼 클릭 처리
     const handleButtonPress = (buttonText) => {
+      setActiveButton(buttonText); // 클릭한 버튼을 activeButton에 설정
       const botResponse = chatbotResponses[buttonText];
       if (botResponse) {
-        setMessages(prevMessages => [...prevMessages, { text: botResponse, isBot: true }]);
+          setMessages(prevMessages => [...prevMessages, { text: botResponse, isBot: true }]);
       }
   
       if (buttonText === "급가속" || buttonText === "급제동" || buttonText === "주행정보") {
@@ -153,6 +168,7 @@ const ChatbotScreen = ({ navigation }) => {
         handleEmailSupport();
       }
     };
+
   
     // 고객지원 이메일 처리
     const handleEmailSupport = () => {
@@ -184,168 +200,199 @@ const ChatbotScreen = ({ navigation }) => {
   
     // 조회 및 뒤로가기 버튼 처리
     const handleQueryPress = () => {
-      setShowBackOnly(false);
-      setShowQueryButtons(true);
-      setMessages(prevMessages => [...prevMessages, { text: "조회 버튼을 클릭했습니다.", isBot: true }]);
-    };
+      if (activeButton === "급가속") {
+          navigation.navigate("SuddenAcceleration"); // SuddenAcceleration.js로 이동
+      } else if (activeButton === "급제동") {
+          navigation.navigate("SuddenBraking"); // SuddenBraking.js로 이동
+      } else if (activeButton === "주행정보") {
+        navigation.navigate("MypageScreen"); // MypageScreen.js로 이동
+    }
+  
+      // 상태 초기화
+      setShowQueryButtons(false);
+      setActiveButton(null); // activeButton 초기화
+  };
   
     const handleBackPress = () => {
       setShowBackOnly(false);
       setShowQueryButtons(false);
       setMessages(prevMessages => [...prevMessages, { text: "이전 상태로 돌아갔습니다.", isBot: true }]);
     };
-  
+
+    
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <ScrollView contentContainerStyle={styles.chatContainer}>
-          {messages.map((message, index) => (
-            <View key={index} style={[styles.messageContainer, message.isBot ? styles.botMessage : styles.userMessage]}>
-              <Text style={styles.messageText}>{message.text}</Text>
-            </View>
-          ))}
-  
-          {showQueryButtons ? (
-            <View style={styles.queryButtonsContainer}>
-              <TouchableOpacity style={styles.queryButton} onPress={handleQueryPress}>
-                <Text style={styles.queryButtonText}>조회</Text>
+      <ScrollView contentContainerStyle={styles.chatContainer}>
+        {messages.map((message, index) => (
+          <View key={index} style={[styles.messageContainer, message.isBot ? styles.botMessage : styles.userMessage]}>
+            <Text style={styles.messageText}>{message.text}</Text>
+          </View>
+        ))}
+
+        {showQueryButtons ? (
+          <View style={styles.queryButtonsContainer}>
+            <TouchableOpacity style={styles.queryButton} onPress={handleQueryPress}>
+              <Text style={styles.queryButtonText}>조회</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.queryButton} onPress={handleBackPress}>
+              <Text style={styles.queryButtonText}>뒤로가기</Text>
+            </TouchableOpacity>
+          </View>
+        ) : showBackOnly ? (
+          <View style={styles.queryButtonsContainer}>
+            <TouchableOpacity style={styles.queryButton} onPress={handleCountermeasurePress}>
+              <Text style={styles.queryButtonText}>대처방법</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.queryButton} onPress={handleBackPress}>
+              <Text style={styles.queryButtonText}>뒤로가기</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.buttonsContainer}>
+            <View style={styles.row}>
+              <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급가속")}>
+                <Text style={styles.buttonText}>급가속</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.queryButton} onPress={handleBackPress}>
-                <Text style={styles.queryButtonText}>뒤로가기</Text>
+              <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급제동")}>
+                <Text style={styles.buttonText}>급제동</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급발진")}>
+                <Text style={styles.buttonText}>급발진</Text>
               </TouchableOpacity>
             </View>
-          ) : showBackOnly ? (
-            <View style={styles.queryButtonsContainer}>
-              <TouchableOpacity style={styles.queryButton} onPress={handleCountermeasurePress}>
-                <Text style={styles.queryButtonText}>대처방법</Text>
+            <View style={styles.row}>
+              <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("주행정보")}>
+                <Text style={styles.buttonText}>주행정보</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.queryButton} onPress={handleBackPress}>
-                <Text style={styles.queryButtonText}>뒤로가기</Text>
+              <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("앱 도움말")}>
+                <Text style={styles.buttonText}>앱 도움말</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("고객지원")}>
+                <Text style={styles.buttonText}>고객지원</Text>
               </TouchableOpacity>
             </View>
-          ) : (
-            <View style={styles.buttonsContainer}>
-              <View style={styles.row}>
-                <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급가속")}>
-                  <Text style={styles.buttonText}>급가속</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급제동")}>
-                  <Text style={styles.buttonText}>급제동</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급발진")}>
-                  <Text style={styles.buttonText}>급발진</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.row}>
-                <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("주행정보")}>
-                  <Text style={styles.buttonText}>주행정보</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("앱 도움말")}>
-                  <Text style={styles.buttonText}>앱 도움말</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("고객지원")}>
-                  <Text style={styles.buttonText}>고객지원</Text>
-                </TouchableOpacity>
-              </View>
+          </View>
+        )}
+      </ScrollView>
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="메시지를 입력하세요..."
+          value={inputText}
+          onChangeText={setInputText}
+          onSubmitEditing={handleSend}
+          returnKeyType="send"
+        />
+        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+          <Text style={styles.sendButtonText}>전송</Text>
+        </TouchableOpacity>
             </View>
-          )}
-        </ScrollView>
-  
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="메시지를 입력하세요..."
-            value={inputText}
-            onChangeText={setInputText}
-            onSubmitEditing={handleSend}
-            returnKeyType="send"
-          />
-          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-            <Text style={styles.sendButtonText}>전송</Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
     );
-  };
-  
-  
-  const styles = StyleSheet.create({
-    container: {
+};
+
+const styles = StyleSheet.create({
+  container: {
       flex: 1,
       backgroundColor: '#f4f4f4',
-    },
-    chatContainer: {
+  },
+  chatContainer: {
       paddingVertical: 20,
       paddingHorizontal: 10,
-    },
-    messageContainer: {
+  },
+  messageContainer: {
       marginBottom: 10,
       padding: 10,
       borderRadius: 10,
-    },
-    botMessage: {
+  },
+  botMessage: {
       alignSelf: 'flex-start',
       backgroundColor: '#e1f5fe',
-    },
-    userMessage: {
+  },
+  userMessage: {
       alignSelf: 'flex-end',
       backgroundColor: '#c8e6c9',
-    },
-    messageText: {
+  },
+  messageText: {
       fontSize: 16,
-    },
-    buttonsContainer: {
+  },
+  buttonsContainer: {
       marginTop: 20,
-    },
-    row: {
+  },
+  row: {
       flexDirection: 'row',
       justifyContent: 'space-around',
       marginBottom: 10,
-    },
-    button: {
+  },
+  button: {
       padding: 10,
       backgroundColor: '#81d4fa',
       borderRadius: 5,
-    },
-    buttonText: {
+  },
+  buttonText: {
       fontSize: 16,
       color: '#fff',
-    },
-    inputContainer: {
+  },
+  inputContainer: {
       flexDirection: 'row',
       padding: 10,
       backgroundColor: '#fff',
-    },
-    input: {
+  },
+  input: {
       flex: 1,
       borderColor: '#ccc',
       borderWidth: 1,
       borderRadius: 5,
       paddingHorizontal: 10,
-    },
-    sendButton: {
+  },
+  sendButton: {
       backgroundColor: '#81d4fa',
       borderRadius: 5,
       padding: 10,
       marginLeft: 10,
-    },
-    sendButtonText: {
+  },
+  sendButtonText: {
       color: '#fff',
       fontSize: 16,
-    },
-    queryButtonsContainer: {
+  },
+  queryButtonsContainer: {
       flexDirection: 'row',
       justifyContent: 'space-around',
       marginTop: 10,
-    },
-    queryButton: {
+  },
+  queryButton: {
       padding: 10,
       backgroundColor: '#4caf50',
       borderRadius: 5,
-    },
-    queryButtonText: {
+  },
+  queryButtonText: {
       color: '#fff',
       fontSize: 16,
-    },
-  });
+  },
+  
+  authButtonContainer: {
+      alignItems: 'center',
+      marginVertical: 10,
+  },
+  authButton: {
+      padding: 10,
+      backgroundColor: '#ff9800',
+      borderRadius: 5,
+  },
+authButtonContainer: {
+    alignItems: 'center',
+    marginVertical: 10,
+},
+authButton: {
+    padding: 10,
+    backgroundColor: '#ff9800',
+    borderRadius: 5,
+},
+authButtonText: {
+    color: '#fff',
+    fontSize: 16,
+},
+});
 
 export default ChatbotScreen;
