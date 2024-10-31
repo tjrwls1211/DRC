@@ -236,7 +236,8 @@ def check_info(accel_value, brake_value):
         is_accelerating = False
         stop_sounds = True  # 일반 주행일 때 음성 중단
         
-    if mqtt_state != prev_mqtt_state:
+    # 상태가 변경되고 mqtt_state가 None이 아닐 때만 MQTT 전송    
+    if mqtt_state is not None and mqtt_state != prev_mqtt_state:
         alert_data = {
             "carId": 1234,
             "state": mqtt_state
