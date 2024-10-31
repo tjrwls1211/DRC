@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { loginUser, checkTokenValidity, checkOTP } from '../api/authAPI'; // api.js에서 loginUser 함수 가져오기
 import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차 인증 필요 상태 Context import
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Modal from 'react-native-modal';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -14,8 +15,8 @@ const LoginScreen = () => {
   const { is2FAEnabled } = useTwoFA(); // Context에서 2차 인증 상태 가져오기
   const [otp, setOtp] = useState(Array(6).fill('')); // 6자리 OTP 입력 상태
   const [is2FARequired, setIs2FARequired] = useState(false); // 2차 인증 필요 여부
-
   const otpRefs = useRef(Array(6).fill(null)); // 6자리 OTP 입력 필드에 대한 ref 배열
+  const [isModalVisible, setModalVisible] = useState(true);
 
   // 앱 재접속 시 JWT 유효성 검사 후 자동 로그인 처리
   useEffect(() => {
@@ -49,62 +50,6 @@ const LoginScreen = () => {
     checkAutoLogin();
   }, []);
 
-  
-
-  // // (테스트 코드) 토큰을 사용하여 차량 정보 조회
-  // useEffect(() => {
-  //   const fetchCarData = async () => {
-  //     try {
-  //       // AsyncStorage에서 토큰 가져오기
-  //       const token = await AsyncStorage.getItem('token');
-        
-  //       if (token) {
-  //         // 차량 정보 조회 API 호출
-  //         const response = await axios.get('http:/비밀/api/pedalLog/sel/CAR789', {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`, // Bearer 토큰 방식으로 헤더 설정
-  //           },
-  //         });
-          
-  //         console.log('차량 정보:', response.data);
-  //       } else {
-  //         console.log('토큰이 없습니다.');
-  //       }
-  //     } catch (error) {
-  //       console.error('차량 정보 조회 오류:', error);
-  //     }
-  //   };
-
-  //   fetchCarData(); // 컴포넌트가 마운트될 때 차량 정보 조회 실행
-  // }, []);
-
-  // 로그인 처리 핸들러(2차인증 관련 수정 전)
-  // const handleLogin = async () => {
-  //   if (!email || !password) {
-  //     setErrorMessage("아이디(이메일)와 비밀번호를 입력해 주세요.");
-  //     return;
-  //   }
-
-  //   try {
-  //     // liginUser 함수로 서버에 로그인 요청 후 응답 대기
-  //     const success = await loginUser(email, password);
-  //     if (success) {
-  //       console.log('로그인 성공');
-  //       setErrorMessage('');
-  //       navigation.navigate("MainScreen", {screen: 'MainScreen'}); // 로그인 성공 시 메인화면 이동
-  //     } else {
-  //       setErrorMessage('아이디나 비밀번호가 틀렸습니다. 다시 입력해 주세요.')
-  //     }
-  //   } catch (error) {
-  //       if (error.response && error.response.data) {
-  //         // 서버에서 받은 로그인 실패 이유 오류 메시지 화면에 출력
-  //         setErrorMessage(error.response.data);
-  //       } else {
-  //         setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
-  //         console.error('로그인 오류:', error);
-  //       }
-  //   }
-  // };
 
   // 로그인 처리 핸들러
   const handleLogin = async () => {
@@ -118,6 +63,7 @@ const LoginScreen = () => {
       if (response.loginStatus === 1) {
         // 2차 인증이 필요한 경우
         setIs2FARequired(true);
+        setModalVisible(true);
         Alert.alert("2차 인증 필요", "OTP 코드를 입력하세요.");
       } else if (response.token) {
           // 2차 인증 비활성 경우 그냥 로그인 처리
@@ -176,19 +122,19 @@ const handleOTPFocus = () => {
 
 
   return (
-    <View style={Styles.container}>
-      <Text style={Styles.LogoText}>DRC</Text>
+    <View style={styles.container}>
+      <Text style={styles.LogoText}>DRC</Text>
 
-      <View style={Styles.LoginView}>
+      <View style={styles.LoginView}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{ flex: 1 }}
           keyboardVerticalOffset={100}
         >
-          <ScrollView contentContainerStyle={Styles.scrollContent}>
+          <ScrollView contentContainerStyle={styles.scrollContent}>
             <Text>ID (Email)</Text>
             <TextInput
-              style={Styles.TextInput}
+              style={styles.TextInput}
               onChangeText={setEmail}
               value={email}
               placeholder="ID (Email)"
@@ -199,7 +145,7 @@ const handleOTPFocus = () => {
 
             <Text>Password</Text>
             <TextInput
-              style={Styles.TextInput}
+              style={styles.TextInput}
               onChangeText={setPassword}
               value={password}
               placeholder="Password"
@@ -208,54 +154,55 @@ const handleOTPFocus = () => {
             />
 
             {errorMessage ? (
-              <Text style={Styles.ErrorMessage}>{errorMessage}</Text>
+              <Text style={styles.ErrorMessage}>{errorMessage}</Text>
             ) : null}
 
-            <TouchableOpacity style={Styles.LoginBtn} onPress={handleLogin}>
-              <Text style={Styles.BtnText}>Login</Text>
+            <TouchableOpacity style={styles.LoginBtn} onPress={handleLogin}>
+              <Text style={styles.BtnText}>Login</Text>
             </TouchableOpacity>
-
-            {/* 2차 인증 필요 경우 OTP 입력 UI 표시 */}
-            {is2FARequired && (
-              <>
-                <Text style={Styles.otpText}>OTP 입력 (6자리)</Text>
-                <View style={Styles.otpContainer}>
-                  {otp.map((digit, index) => (
-                    <TextInput
-                      key={index}
-                      ref={(el) => (otpRefs.current[index] = el)} // ref 설정
-                      style={Styles.otpInput}
-                      onChangeText={(text) => handleOTPChange(text, index)}
-                      value={digit}
-                      maxLength={1}
-                      keyboardType="numeric"
-                      
-                    />
-                  ))}
-                </View>
-
-                <TouchableOpacity style={Styles.loginBtn} onPress={handleOTPVerification}>
-                  <Text style={Styles.btnText}>OTP 확인</Text>
-                </TouchableOpacity>
-              </>
-            )}
 
             <TouchableOpacity
               style={{ marginTop: 20 }}
               onPress={() => navigation.navigate("SignUpScreen", { screen: 'SignUpScreen' })}
             >
-              <Text style={Styles.SignUpText}>회원가입하러가기</Text>
+              <Text style={styles.SignUpText}>회원가입하러가기</Text>
             </TouchableOpacity>
           </ScrollView>
         </KeyboardAvoidingView>
       </View>
+
+      <Modal isVisible={isModalVisible}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>2차 인증</Text>
+          <Text style={styles.otpText}>OTP 입력 (6자리)</Text>
+          <View style={styles.otpContainer}>
+            {otp.map((digit, index) => (
+              <TextInput
+                key={index}
+                ref={(el) => (otpRefs.current[index] = el)}
+                style={styles.otpInput}
+                onChangeText={(text) => handleOTPChange(text, index)}
+                value={digit}
+                maxLength={1}
+                keyboardType="numeric"
+              />
+            ))}
+          </View>
+          <TouchableOpacity style={styles.modalBtn} onPress={handleOTPVerification}>
+            <Text style={styles.btnText}>OTP 확인</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.closeModalButton} onPress={() => setModalVisible(false)}>
+            <Text style={styles.closeModalText}>닫기</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };
 
 export default LoginScreen;
 
-const Styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -289,12 +236,12 @@ const Styles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 35,
     borderRadius: 6,
-    borderColor: '#D9D9D9',
+    borderColor: '#009688',
     borderWidth: 1
   },
   LoginBtn: {
     margin: 10,
-    backgroundColor: "black",
+    backgroundColor: "#009688",
     padding: 10,
     width: "100%",
     alignSelf: "center",
@@ -315,32 +262,60 @@ const Styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center', 
   },
-  loginBtn: {
-    backgroundColor: '#007BFF',
-    padding: 15,
-    borderRadius: 5,
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
     alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
   },
-  btnText: {
-    color: '#fff',
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#009688', // 청록색 적용
   },
   otpText: {
     marginTop: 20,
     marginBottom: 10,
     textAlign: 'center',
+    color: '#009688', // 청록색 적용
   },
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 20,
   },
   otpInput: {
     width: 40,
     height: 40,
-    borderColor: '#ccc',
+    borderColor: '#009688', // 청록색 적용
     borderWidth: 1,
     borderRadius: 5,
     textAlign: 'center',
     fontSize: 18,
-    marginRight: 5,
+    marginRight: 10, // 필드 간격 조정
+  },
+  btnText: {
+    color: '#fff',
+    },
+  modalBtn: {
+    backgroundColor: '#009688', // 청록색 적용
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 10, // 버튼과 닫기 버튼 간격 조정
+  },
+  closeModalButton: {
+    backgroundColor: '#D9D9D9', // 닫기 버튼 배경색
+    padding: 10,
+    borderRadius: 5,
+    width: '100%',
+  },
+  closeModalText: {
+    textAlign: 'center',
+    color: '#000', // 닫기 버튼 텍스트 색상
   },
 });

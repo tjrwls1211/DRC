@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, Button, Switch, StyleSheet, Alert } from 'react-native';
+import {View, Text, Button, Switch, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker'; // DropDownPicker 가져오기
 import { enableTwoFactorAuth, disableTwoFactorAuth } from '../api/authAPI'; // 2FA 관련 서버 통신 함수 가져오기
 import {useNavigation} from '@react-navigation/native';
@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
 import * as Clipboard from 'expo-clipboard'; // 클립보드 작업을 위한 라이브러리
 import { Linking } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -118,25 +119,20 @@ const SettingsScreen = () => {
         dropDownContainerStyle={styles.dropdownContainer}
       />
 
-      {/* QR 코드 표시 부분 ☆ */}
-      {/* 지울 예정 ☆ */}
-      {qrUrl && (
-        <View style={styles.qrContainer}>
-          <Text style={styles.label}>QR 코드</Text>
-          <QRCode value={qrUrl} size={200} /> 
-        </View>
-      )}
-
       {/* OTP 키와 QR URL을 보여주는 모달 */}
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>OTP 키</Text>
-          <Text style={styles.otpKey}>{otpKey}</Text>
-          <Button title="복사하기" onPress={handleCopyOtpKey} />
-          <Button title="QR 확인" onPress={() => {
-            Linking.openURL(qrUrl); // QR URL을 웹 브라우저에서 열기
-          }} />
-          <Button title="닫기" onPress={closeModal} />
+          <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+            <MaterialIcons name="close" size={24} color="#009688" />
+          </TouchableOpacity>
+          <Text style={styles.modalTitle}>2차 인증 정보</Text>
+          <View style={styles.otpKeyContainer}>
+            <Text style={styles.otpKey}>OTP 키: {otpKey}</Text>
+            <TouchableOpacity onPress={handleCopyOtpKey}>
+              <MaterialIcons name="content-copy" size={24} color="#009688" />
+            </TouchableOpacity>
+          </View>
+          <Button title="QR 확인" color="#009688" onPress={() => Linking.openURL(qrUrl)} />
         </View>
       </Modal>
 
@@ -189,6 +185,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: '#ffffff',
   },
   darkModeContainer: {
     justifyContent: 'flex-start',
@@ -196,36 +193,60 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     marginVertical: 20,
-    height: "40%",
-    //backgroundColor: "black",
   },
   buttonContainer: {
-    flex: 1,
     justifyContent: 'center', // 화면 하단 정렬
     padding: 16,
     flexDirection: 'row', // 수평 정렬
     alignItems: 'center', // 수직 가운데
-  },
+    },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#009688',
   },
   label: {
     fontSize: 18,
-    marginBootm: 5,
+    marginBottom: 5,
     color: 'gray',
   },
   dropdown: {
     marginVertical: 10,
-    borderColor: 'gray',
+    borderColor: '#009688',
   },
   dropdownContainer: {
-    borderColor: 'gray',
+    borderColor: '#009688',
   },
-  qrContainer: {
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
     alignItems: 'center',
-    marginVertical: 20,
+    justifyContent: 'center',
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#009688',
+  },
+  otpKeyContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  otpKey: {
+    fontSize: 16,
+    marginVertical: 10,
+    color: '#555',
+    padding: 10,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
   },
 });
 
