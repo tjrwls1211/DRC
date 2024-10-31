@@ -181,7 +181,7 @@ prev_mqtt_state = None
 
 # 로드셀 데이터와 상태를 업데이트하는 함수    # 급발진 조건을 수정하자 accel_value < 10000 and brake_value > 5000 and speed >= 50 and rpm > 5000:
 def check_info(accel_value, brake_value):
-    global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds
+    global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds, prev_mqtt_state
 
     state = "Normal Driving"
     mqtt_state = 0
