@@ -183,8 +183,8 @@ prev_mqtt_state = None
 def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds, prev_mqtt_state
 
-    state = "Normal Driving"
-    mqtt_state = 0
+
+    mqtt_state = None
 
 
     if accel_value > 200 and brake_value <= 30:    
