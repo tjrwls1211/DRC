@@ -60,6 +60,7 @@ const LoginScreen = () => {
 
     try {
       const response = await loginUser(email, password);
+
       if (response.loginStatus === 1) {
         // 2차 인증이 필요한 경우
         setIs2FARequired(true);
@@ -72,11 +73,24 @@ const LoginScreen = () => {
           // JWT 토큰이 반환된 경우
           await AsyncStorage.setItem('token', response.token);
           navigation.navigate("MainScreen", { screen: 'MainScreen' }); // 메인화면 이동
-        } else {
-          setErrorMessage('로그인 실패: ' + response.message); // 로그인 실패 시 메시지
-      }
+        } else if (response.loginStatus === 0) {
+          // 로그인 실패 시 반환된 메시지를 오류 메시지로 설정
+          setErrorMessage('로그인 실패: ' + response.message);
+        }
     } catch (error) {
-      setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
+      // 서버 오류 처리
+      if (error.response) {
+        const errorResponse = error.response.data;
+        // 로그인 실패 시 서버 반환 메시지 오류 메시지로 설정
+        if (errorResponse && errorResponse.loginStatus !== undefined) {
+          setErrorMessage(`로그인 실패: ${errorResponse.message}`);
+        } else {
+          setErrorMessage('로그인 처리 중 예기치 못한 오류가 발생했습니다.');
+        }
+      } else {
+        // 네트워크 오류 또는 기타 예외 처리
+        setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
+      }
       console.error('로그인 오류:', error);
     }
   };
