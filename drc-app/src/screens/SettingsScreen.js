@@ -26,6 +26,7 @@ const SettingsScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false); // 모달 상태
 
   const { is2FAEnabled, setIs2FAEnabled } = useTwoFA(); // Context에서 2차인증 필요 상태 가져오기
+  console.log("2차인증 전역 변수 상태 확인: ", is2FAEnabled);
   const [open, setOpen] = useState(false); // DropDownPicker 열림/닫힘 상태
   const [items, setItems] = useState([
     { label: '비활성', value: false }, 
