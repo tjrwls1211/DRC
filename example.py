@@ -181,13 +181,13 @@ def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds
 
     state = "Normal Driving"
-    mqtt_state = 1
+    mqtt_state = 0
 
 
     if accel_value > 200 and brake_value <= 30:    
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
-
+        mqtt_state = 1
         if not is_accelerating:
             last_accel_time = time.time()
             is_accelerating = True
