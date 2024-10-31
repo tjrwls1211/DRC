@@ -176,6 +176,9 @@ def play_sounds_in_sequence(sounds):
 
     is_playing_sounds = False  # 모든 음성 재생 완료 후 플래그 해제
 
+#전역 변수로 안전 상태 저장
+prev_mqtt_state = None
+
 # 로드셀 데이터와 상태를 업데이트하는 함수    # 급발진 조건을 수정하자 accel_value < 10000 and brake_value > 5000 and speed >= 50 and rpm > 5000:
 def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds
@@ -233,13 +236,15 @@ def check_info(accel_value, brake_value):
         is_accelerating = False
         stop_sounds = True  # 일반 주행일 때 음성 중단
         
-    if mqtt_state is not None:
+    if mqtt_state != prev_mqtt_state:
         alert_data = {
             "carId": 1234,
             "state": mqtt_state
         }
         print(alert_data)
         client.publish('AbnormalDriving', json.dumps(alert_data), 0, retain=False)
+        #이전 상태  갱신
+        prev_mqtt_state = mqtt_state
 
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
 def run_code():
