@@ -101,9 +101,15 @@ const SettingsScreen = () => {
       <Text style={styles.title}>설정</Text>
 
       <Text style={styles.label}>계정</Text>
-      <Button title="개인정보" onPress={() => navigation.navigate('PersonalInfoScreen') } />
-      <Button title="닉네임 수정" onPress = {() => setNicknameModalVisible(true)} />
-      <Button title="비밀번호 수정" onPress = {() => setPasswordModalVisible(true)} />
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('PersonalInfoScreen')}>
+        <Text style={styles.buttonText}>개인정보</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => setNicknameModalVisible(true)}>
+        <Text style={styles.buttonText}>닉네임 수정</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => setPasswordModalVisible(true)}>
+        <Text style={styles.buttonText}>비밀번호 수정</Text>
+      </TouchableOpacity>
 
       {/* 2차 인증 드롭다운 */}
       <Text style={styles.label}>2차 인증 설정</Text>
@@ -187,39 +193,45 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#ffffff',
   },
-  darkModeContainer: {
-    justifyContent: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    marginVertical: 20,
-  },
-  buttonContainer: {
-    justifyContent: 'center', // 화면 하단 정렬
-    padding: 16,
-    flexDirection: 'row', // 수평 정렬
-    alignItems: 'center', // 수직 가운데
-    },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#009688',
+    textAlign: 'center',
   },
   label: {
-    fontSize: 18,
+    fontSize: 20,
     marginBottom: 5,
-    color: 'gray',
+    color: '#2F4F4F', // 다크 슬레이트 그레이
   },
   dropdown: {
     marginVertical: 10,
     borderColor: '#009688',
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
   },
   dropdownContainer: {
     borderColor: '#009688',
   },
+  darkModeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 20,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: '#009688', // 기본색 청록
+  },
+  buttonContainer: {
+    justifyContent: 'center',
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: '#ffffff',
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
@@ -227,7 +239,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
     color: '#009688',
@@ -248,6 +260,19 @@ const styles = StyleSheet.create({
     top: 10,
     right: 10,
   },
+  button: {
+    backgroundColor: '#009688', // 기본색 청록
+    borderRadius: 10,
+    padding: 10,
+    marginVertical: 5,
+    width: '100%',
+  },
+  buttonText: {
+    color: '#ffffff',
+    textAlign: 'center',
+    fontSize: 18,
+  },
 });
+
 
 export default SettingsScreen;
