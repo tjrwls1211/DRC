@@ -307,7 +307,7 @@ const ChatbotScreen = ({ navigation }) => {
         returnKeyType="send"
     />
     <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-        <Image source={require('../../assets/send-icon.png')} style={styles.sendIcon} />
+        <Image source={require('../../assets/sending-icon.png')} style={styles.sendIcon} />
     </TouchableOpacity>
 </View>
       </KeyboardAvoidingView>
