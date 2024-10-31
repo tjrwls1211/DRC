@@ -16,7 +16,7 @@ const LoginScreen = () => {
   const [otp, setOtp] = useState(Array(6).fill('')); // 6자리 OTP 입력 상태
   const [is2FARequired, setIs2FARequired] = useState(false); // 2차 인증 필요 여부
   const otpRefs = useRef(Array(6).fill(null)); // 6자리 OTP 입력 필드에 대한 ref 배열
-  const [isModalVisible, setModalVisible] = useState(true);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   // 앱 재접속 시 JWT 유효성 검사 후 자동 로그인 처리
   useEffect(() => {
@@ -109,9 +109,17 @@ const LoginScreen = () => {
   // OTP 검증 핸들러
   const handleOTPVerification = async () => {
     const otpCode = otp.join(''); // 6자리 OTP 코드 결합
+
+    if (otpCode.length !== 6) { 
+      Alert.alert("OTP 오류", "6자리의 OTP를 입력해 주세요.");
+      return;
+    }
+
     try {
         const isVerified = await checkOTP(email, otpCode);
         if (isVerified) {
+            setModalVisible(false); // 모달 닫기
+            console.log("otp 인증 모달 여닫이 상태: ", isModalVisible);
             Alert.alert("OTP 확인 성공", "메인 화면으로 이동합니다.");
             // OTP 검증 후 받은 토큰을 AsyncStorage에 저장
             const response = await checkOTP(email, otpCode);
@@ -122,11 +130,14 @@ const LoginScreen = () => {
                 Alert.alert("오류", "토큰을 받을 수 없습니다.");
             }
         } else {
+            setErrorMessage("OTP 인증 실패: 다시 시도해 주세요.");
             Alert.alert("OTP 확인 실패", "OTP 코드를 다시 확인하세요.");
+            setOtp(Array(6).fill('')); // 인증 실패 시 OTP 필드 초기화
         }
     } catch (error) {
         console.error("OTP 인증 실패:", error);
         Alert.alert("오류 발생", "OTP 인증 중 문제가 발생했습니다.");
+        setOtp(Array(6).fill('')); // 인증 오류 시 OTP 필드 초기화
     }
 };
 
