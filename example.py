@@ -23,6 +23,8 @@ data = {
     "brkPedal": 0,
     "createdAt": 0,
     "driveState": "",
+    #"speed"
+    #"rpm"
 }
 
 def cleanAndExit():
@@ -236,6 +238,7 @@ def check_info(accel_value, brake_value):
             "carId": 1234,
             "state": mqtt_state
         }
+        print(alert_data)
         client.publish('AbnormalDriving', json.dumps(alert_data), 0, retain=False)
 
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
@@ -278,6 +281,9 @@ def run_code():
                 "brkPedal": int(val_brake),
                 "createdAt": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                 "driveState": data["driveState"],  # 기존 driveState 유지
+                #speed
+                #rpm
+                #delta_velocity 가속도 변수
             })            
             print(data)
             
