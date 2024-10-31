@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, Button, Switch, StyleSheet, Alert } from 'react-native';
+import {View, Text, Button, Switch, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker'; // DropDownPicker 가져오기
 import { enableTwoFactorAuth, disableTwoFactorAuth } from '../api/authAPI'; // 2FA 관련 서버 통신 함수 가져오기
 import {useNavigation} from '@react-navigation/native';
@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
 import * as Clipboard from 'expo-clipboard'; // 클립보드 작업을 위한 라이브러리
 import { Linking } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -25,6 +26,7 @@ const SettingsScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false); // 모달 상태
 
   const { is2FAEnabled, setIs2FAEnabled } = useTwoFA(); // Context에서 2차인증 필요 상태 가져오기
+  console.log("2차인증 전역 변수 상태 확인: ", is2FAEnabled);
   const [open, setOpen] = useState(false); // DropDownPicker 열림/닫힘 상태
   const [items, setItems] = useState([
     { label: '비활성', value: false }, 
@@ -100,9 +102,15 @@ const SettingsScreen = () => {
       <Text style={styles.title}>설정</Text>
 
       <Text style={styles.label}>계정</Text>
-      <Button title="개인정보" onPress={() => navigation.navigate('PersonalInfoScreen') } />
-      <Button title="닉네임 수정" onPress = {() => setNicknameModalVisible(true)} />
-      <Button title="비밀번호 수정" onPress = {() => setPasswordModalVisible(true)} />
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('PersonalInfoScreen')}>
+        <Text style={styles.buttonText}>개인정보</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => setNicknameModalVisible(true)}>
+        <Text style={styles.buttonText}>닉네임 수정</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => setPasswordModalVisible(true)}>
+        <Text style={styles.buttonText}>비밀번호 수정</Text>
+      </TouchableOpacity>
 
       {/* 2차 인증 드롭다운 */}
       <Text style={styles.label}>2차 인증 설정</Text>
@@ -118,25 +126,20 @@ const SettingsScreen = () => {
         dropDownContainerStyle={styles.dropdownContainer}
       />
 
-      {/* QR 코드 표시 부분 ☆ */}
-      {/* 지울 예정 ☆ */}
-      {qrUrl && (
-        <View style={styles.qrContainer}>
-          <Text style={styles.label}>QR 코드</Text>
-          <QRCode value={qrUrl} size={200} /> 
-        </View>
-      )}
-
       {/* OTP 키와 QR URL을 보여주는 모달 */}
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>OTP 키</Text>
-          <Text style={styles.otpKey}>{otpKey}</Text>
-          <Button title="복사하기" onPress={handleCopyOtpKey} />
-          <Button title="QR 확인" onPress={() => {
-            Linking.openURL(qrUrl); // QR URL을 웹 브라우저에서 열기
-          }} />
-          <Button title="닫기" onPress={closeModal} />
+          <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+            <MaterialIcons name="close" size={24} color="#009688" />
+          </TouchableOpacity>
+          <Text style={styles.modalTitle}>2차 인증 정보</Text>
+          <View style={styles.otpKeyContainer}>
+            <Text style={styles.otpKey}>OTP 키: {otpKey}</Text>
+            <TouchableOpacity onPress={handleCopyOtpKey}>
+              <MaterialIcons name="content-copy" size={24} color="#009688" />
+            </TouchableOpacity>
+          </View>
+          <Button title="QR 확인" color="#009688" onPress={() => Linking.openURL(qrUrl)} />
         </View>
       </Modal>
 
@@ -189,44 +192,88 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-  },
-  darkModeContainer: {
-    justifyContent: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    marginVertical: 20,
-    height: "40%",
-    //backgroundColor: "black",
-  },
-  buttonContainer: {
-    flex: 1,
-    justifyContent: 'center', // 화면 하단 정렬
-    padding: 16,
-    flexDirection: 'row', // 수평 정렬
-    alignItems: 'center', // 수직 가운데
+    backgroundColor: '#ffffff',
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#009688',
+    textAlign: 'center',
   },
   label: {
-    fontSize: 18,
-    marginBootm: 5,
-    color: 'gray',
+    fontSize: 20,
+    marginBottom: 5,
+    color: '#2F4F4F', // 다크 슬레이트 그레이
   },
   dropdown: {
     marginVertical: 10,
-    borderColor: 'gray',
+    borderColor: '#009688',
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
   },
   dropdownContainer: {
-    borderColor: 'gray',
+    borderColor: '#009688',
   },
-  qrContainer: {
+  darkModeContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginVertical: 20,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: '#009688', // 기본색 청록
+  },
+  buttonContainer: {
+    justifyContent: 'center',
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#009688',
+  },
+  otpKeyContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  otpKey: {
+    fontSize: 16,
+    marginVertical: 10,
+    color: '#555',
+    padding: 10,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  button: {
+    backgroundColor: '#009688', // 기본색 청록
+    borderRadius: 10,
+    padding: 10,
+    marginVertical: 5,
+    width: '100%',
+  },
+  buttonText: {
+    color: '#ffffff',
+    textAlign: 'center',
+    fontSize: 18,
   },
 });
+
 
 export default SettingsScreen;

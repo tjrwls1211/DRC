@@ -49,6 +49,31 @@ export const loginUser = async (email, password) => {
     }
     throw error; 
   }
+//   if (error.response) {
+//     const errorData = error.response.data;
+
+//     // 에러 메시지를 파싱하여 사용자에게 적절한 메시지 전달
+//     let userFriendlyMessage = '로그인 실패:';
+
+//     // 비밀번호 관련 에러 메시지 추가
+//     if (errorData.includes("비밀번호는 최소 8자")) {
+//         userFriendlyMessage += ' 비밀번호는 최소 8자, 하나의 문자, 숫자, 특수 문자가 포함되어야 합니다.';
+//     }
+
+//     // 이메일 관련 에러 메시지 추가
+//     if (errorData.includes("올바른 이메일 형식이 아닙니다")) {
+//         userFriendlyMessage += ' 유효한 이메일 주소를 입력하세요.';
+//     }
+
+//     console.error('로그인 실패 이유:', errorData);
+//     alert(userFriendlyMessage); // 사용자에게 알림
+// } else {
+//     console.error('로그인 데이터 전송 오류:', error);
+//     alert('로그인 처리 중 네트워크 오류가 발생했습니다.');
+// }
+// throw error; 
+// }
+
 };
 
 
@@ -63,7 +88,7 @@ export const checkTokenValidity = async (token) => {
     return response.data; // 응답 데이터 전체 반환
   } catch (error) {
     if (error.response) {
-      console.error('서버에서 반환된 오류 메시지:', error.response.data);
+      console.log('서버에서 반환된 오류 메시지:', error.response);
     } else {
       console.error('JWT 유효성 검사 오류:', error);
     }
