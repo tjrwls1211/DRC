@@ -13,14 +13,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.trustping.DTO.DeleteUserDTO;
 import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
 import com.trustping.DTO.MfaResponseDTO;
+import com.trustping.DTO.ModifyNicknameDTO;
+import com.trustping.DTO.ModifyNicknameResponseDTO;
 import com.trustping.DTO.MyDataResponseDTO;
 import com.trustping.DTO.OtpResponseDTO;
 import com.trustping.DTO.PasswordDTO;
+import com.trustping.DTO.ResponseDTO;
 import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.entity.UserData;
 import com.trustping.repository.UserDataRepository;
@@ -36,7 +38,7 @@ public class UserDataServiceImpl implements UserDataService {
 	private UserDataRepository userDataRepository;
 
 	@Autowired
-	private JwtUtil jwtUtil; 
+	private JwtUtil jwtUtil;
 
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -47,19 +49,20 @@ public class UserDataServiceImpl implements UserDataService {
 
 	// 비밀번호 조회
 	public Optional<String> getPasswordById(String id) {
-	    return userDataRepository.findById(id).map(UserData::getPw);
+		return userDataRepository.findById(id).map(UserData::getPw);
 	}
 
 	// otpKey 조회
 	public Optional<String> getOtpKeyById(String id) {
-	    return userDataRepository.findById(id).map(UserData::getOtpKey);
+		return userDataRepository.findById(id).map(UserData::getOtpKey);
 	}
 
-
 	// 비밀번호 확인
+	/*
 	public boolean verifyPassword(String rawPassword, String encodedPassword) {
 		return passwordEncoder.matches(rawPassword, encodedPassword);
 	}
+	*/
 
 	// 회원가입
 	@Override
@@ -70,10 +73,14 @@ public class UserDataServiceImpl implements UserDataService {
 		}
 
 		String hashedPassword = passwordEncoder.encode(request.getPw());
-		UserData userData = new UserData(request.getId(), hashedPassword, request.getNickname(), request.getBirthDate(),
-				request.getCarId(), null, // OTP 키 초기값
+		UserData userData = new UserData(request.getId(), 
+				hashedPassword, 
+				request.getNickname(), 
+				request.getBirthDate(),
+				request.getCarId(), 
+				null, // OTP 키 초기값
 				"ROLE_USER");
-		
+
 		userDataRepository.save(userData);
 		return true; // 회원가입 성공
 	}
@@ -81,122 +88,156 @@ public class UserDataServiceImpl implements UserDataService {
 	// 로그인
 	@Override
 	public LoginResponseDTO loginUser(LoginRequestDTO loginRequestDTO) {
-	    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-	    String id = loginRequestDTO.getId();
-	    String pw = loginRequestDTO.getPw();
-	    
-	    Optional<UserData> userDataOptional = userDataRepository.findById(id);
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		String id = loginRequestDTO.getId();
+		String pw = loginRequestDTO.getPw();
 
-	    // 값이 없거나 비밀번호가 일치하지 않을 때 처리
-	    if (userDataOptional.isEmpty() || !passwordEncoder.matches(pw, userDataOptional.get().getPw())) {
-	        return new LoginResponseDTO(null, 0, "ID나 비밀번호가 잘못되었습니다.");
-	    }
+		Optional<UserData> userDataOptional = userDataRepository.findById(id);
 
-	    UserData userData = userDataOptional.get(); 
+		// 값이 없거나 비밀번호가 일치하지 않을 때 처리
+		if (userDataOptional.isEmpty() || !passwordEncoder.matches(pw, userDataOptional.get().getPw())) {
+			return new LoginResponseDTO(null, 0, "ID나 비밀번호가 잘못되었습니다");
+		}
 
-	    // OTP 키가 존재할 때 처리
-	    if (userData.getOtpKey() != null) {
-	        return new LoginResponseDTO(null, 1, "OTP 인증 필요");
-	    }
+		UserData userData = userDataOptional.get();
 
-	    // JWT 토큰 생성
-	    String jwtToken = jwtUtil.generateToken(userData.getId());
-	    return new LoginResponseDTO(jwtToken, 2, "로그인 성공");
+		// OTP 키가 존재할 때 처리
+		if (userData.getOtpKey() != null) {
+			return new LoginResponseDTO(null, 1, "OTP 인증 필요");
+		}
+
+		// JWT 토큰 생성
+		String jwtToken = jwtUtil.generateToken(userData.getId());
+		return new LoginResponseDTO(jwtToken, 2, "로그인 성공");
 	}
 
 	// 유저 필터 추가
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-	    Optional<UserData> userDataOptional = userDataRepository.findById(username);
+		Optional<UserData> userDataOptional = userDataRepository.findById(username);
 
-	    UserData userData = userDataOptional.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
+		UserData userData = userDataOptional
+				.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + username));
 
-	    // 권한 리스트 생성 및 추가
-	    List<GrantedAuthority> authorities = new ArrayList<>();
-	    authorities.add(new SimpleGrantedAuthority(userData.getRole()));
+		// 권한 리스트 생성 및 추가
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority(userData.getRole()));
 
-	    // UserDetails 객체 반환
-	    return new org.springframework.security.core.userdetails.User(userData.getId(), userData.getPw(), authorities);
+		// UserDetails 객체 반환
+		return new org.springframework.security.core.userdetails.User(userData.getId(), userData.getPw(), authorities);
 	}
-
 
 	// Google OTP 생성
 	@Transactional(rollbackFor = Exception.class)
 	public OtpResponseDTO generateGoogleMFA(String jwtToken) {
-	    String userId = jwtUtil.extractUsername(jwtToken);
+		String userId = jwtUtil.extractUsername(jwtToken);
 
-	    Optional<UserData> userDataOptional = userDataRepository.findById(userId);
+		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
 
-	    UserData userData = userDataOptional.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + userId));
+		UserData userData = userDataOptional.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다 : " + userId));
 
-	    OtpResponseDTO otpDTO = new OtpResponseDTO();
+		OtpResponseDTO otpDTO = new OtpResponseDTO();
 
-	    try {
-	        GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
-	        GoogleAuthenticatorKey googleAuthenticatorKey = googleAuthenticator.createCredentials();
+		try {
+			GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
+			GoogleAuthenticatorKey googleAuthenticatorKey = googleAuthenticator.createCredentials();
 
-	        String otpKey = googleAuthenticatorKey.getKey();
-	        String QRUrl = GoogleAuthenticatorQRGenerator.getOtpAuthURL("DRC", userData.getId(),
-	                googleAuthenticatorKey);
+			String otpKey = googleAuthenticatorKey.getKey();
+			String QRUrl = GoogleAuthenticatorQRGenerator.getOtpAuthURL("DRC", userData.getId(),
+					googleAuthenticatorKey);
 
-	        userData.setOtpKey(otpKey);
-	        userDataRepository.save(userData);
-	        
-	        otpDTO.setSuccess(true);
-	        otpDTO.setOtpKey(otpKey);
-	        otpDTO.setQRUrl(QRUrl);
+			userData.setOtpKey(otpKey);
+			userDataRepository.save(userData);
 
-	    } catch (Exception e) {
-	        otpDTO.setSuccess(false); 
-	        otpDTO.setOtpKey(null);
-	        otpDTO.setQRUrl(null);   
-	    }
+			otpDTO.setSuccess(true);
+			otpDTO.setOtpKey(otpKey);
+			otpDTO.setQRUrl(QRUrl);
 
-	    return otpDTO;
+		} catch (Exception e) {
+			otpDTO.setSuccess(false);
+			otpDTO.setOtpKey(null);
+			otpDTO.setQRUrl(null);
+		}
+
+		return otpDTO;
 	}
-
 
 	// Google OTP 인증
 	@Override
 	public MfaResponseDTO verifyGoogleMFA(MfaRequestDTO mfaRequestDTO) {
-	    GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
-	    String id = mfaRequestDTO.getId();
+		GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
+		String id = mfaRequestDTO.getId();
+		
+		// Optional을 사용하여 OTP 키를 가져옴
+		Optional<String> otpKeyOptional = getOtpKeyById(id);
+		
+		// OTP 키가 존재하지 않을 경우 처리
+		if (otpKeyOptional.isEmpty()) {
+			return new MfaResponseDTO(null, false, "존재하지 않는 사용자 ID");
+		}
+		
+		// OTP 키가 존재하면 인증 진행
+		String otpKey = otpKeyOptional.get();
+		boolean verify = googleAuthenticator.authorize(otpKey, mfaRequestDTO.getKey());
 
-	    // Optional을 사용하여 OTP 키를 가져옴
-	    Optional<String> otpKeyOptional = getOtpKeyById(id);
+		if (verify) {
+			
+			// JWT 토큰 생성
+			String jwtToken = jwtUtil.generateToken(id);
+			return new MfaResponseDTO(jwtToken, true, "인증 성공");
+		} else {
+			return new MfaResponseDTO(null, false, "인증 실패");
+		}
+	}
 
-	    // OTP 키가 존재하지 않을 경우 처리
-	    if (otpKeyOptional.isEmpty()) {
-	        return new MfaResponseDTO(null, false, "존재하지 않는 사용자 ID");
-	    }
-
-	    // OTP 키가 존재하면 인증 진행
-	    String otpKey = otpKeyOptional.get();
-	    boolean verify = googleAuthenticator.authorize(otpKey, mfaRequestDTO.getKey());
+	// 닉네임 변경
+	@Override
+	public ModifyNicknameResponseDTO modifyNickname(String jwtToken, ModifyNicknameDTO modifyNicknameDTO) {
+		String userId = jwtUtil.extractUsername(jwtToken);
+		String newNickname = modifyNicknameDTO.getNickname();
+	    Optional<UserData> userDataOptional = userDataRepository.findById(userId);
 	    
-	    if (verify) {
-	        // JWT 토큰 생성
-	        String jwtToken = jwtUtil.generateToken(id);
-	        return new MfaResponseDTO(jwtToken, true, "인증 성공");
-	    } else {
-	        return new MfaResponseDTO(null, false, "인증 실패");
+	    // 사용자가 존재하지 않을 경우 처리
+	    if (userDataOptional.isEmpty()) {
+	        return new ModifyNicknameResponseDTO(false, "ID가 존재하지 않습니다 : " + userId, null);
 	    }
+	    
+	    UserData userData = userDataOptional.get();
+		userData.setNickname(newNickname);
+		userDataRepository.save(userData);
+		return new ModifyNicknameResponseDTO(true, "닉네임이 변경 되었습니다", newNickname);
+	}
+	
+	// 비밀번호 인증
+	@Override
+	public ResponseDTO verifyPassword(String jwtToken, PasswordDTO passwordDTO) {
+	    String userId = jwtUtil.extractUsername(jwtToken);
+	    String password = passwordDTO.getPw();
+	    Optional<UserData> userDataOptional = userDataRepository.findById(userId);
+	    
+	    // 사용자가 존재하지 않을 경우 처리
+	    if (userDataOptional.isEmpty()) {
+	        return new ResponseDTO(false, "ID가 존재하지 않습니다 : " + userId);
+	    }
+	    
+	    UserData userData = userDataOptional.get();
+	    
+	    // 비밀번호가 일치하지 않을 경우
+	    if (!passwordEncoder.matches(password, userData.getPw())) {
+	        return new ResponseDTO(false, "비밀번호가 일치하지 않습니다");
+	    }
+	    
+	    return new ResponseDTO(true, "비밀번호가 일치합니다");
 	}
 
 	// 마이페이지 데이터 확인
 	@Override
 	public MyDataResponseDTO getMyDataByToken(String jwtToken) {
 		String userId = jwtUtil.extractUsername(jwtToken);
-		
 		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
-
-	    UserData userData = userDataOptional.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + userId));
-
-		MyDataResponseDTO data = new MyDataResponseDTO(
-				userData.getId(), 
-				userData.getNickname(),
-				userData.getBirthDate(), 
-				userData.getCarId());
+		UserData userData = userDataOptional.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다 : " + userId));
+		MyDataResponseDTO data = new MyDataResponseDTO(userData.getId(), userData.getNickname(),
+				userData.getBirthDate(), userData.getCarId());
 
 		return data;
 	}
@@ -204,26 +245,27 @@ public class UserDataServiceImpl implements UserDataService {
 	// 회원 탈퇴
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public DeleteUserDTO deleteUser(String jwtToken, PasswordDTO passwordDTO) {
+	public ResponseDTO deleteUser(String jwtToken, PasswordDTO passwordDTO) {
 	    String userId = jwtUtil.extractUsername(jwtToken);
 	    String password = passwordDTO.getPw();
-
 	    Optional<UserData> userDataOptional = userDataRepository.findById(userId);
-
-	    UserData userData = userDataOptional.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다: " + userId));
-
-	    if (userData == null) {
-	        return new DeleteUserDTO(false, "ID가 존재하지 않습니다.");
+	    
+	    // 사용자가 존재하지 않을 경우 처리
+	    if (userDataOptional.isEmpty()) {
+	        return new ResponseDTO(false, "ID가 존재하지 않습니다 : " + userId);
 	    }
-
+	    
+	    UserData userData = userDataOptional.get();
+	    
 	    // 비밀번호가 일치하지 않을 경우
 	    if (!passwordEncoder.matches(password, userData.getPw())) {
-	        return new DeleteUserDTO(false, "비밀번호가 일치하지 않습니다.");
+	        return new ResponseDTO(false, "비밀번호가 일치하지 않습니다");
 	    }
-
+	    
 	    // 사용자 삭제
 	    userDataRepository.delete(userData);
-	    return new DeleteUserDTO(true, "회원 탈퇴 되었습니다.");
+	    return new ResponseDTO(true, "회원 탈퇴 되었습니다");
 	}
+
 
 }

@@ -14,7 +14,6 @@ import com.trustping.entity.PedalLog;
 @Repository
 public interface PedalLogRepository extends JpaRepository<PedalLog, Long> {
 	List<PedalLog> findByCarId(String carId);
-
 	void deleteByCarId(String carId);
 	
 	@Modifying

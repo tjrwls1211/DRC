@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeleteUserDTO {
-	private boolean success;
-    private String message;
+public class ModifyNicknameDTO {
+	private String nickname;
 }

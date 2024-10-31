@@ -25,6 +25,5 @@ public interface AbnormalDataRepository extends JpaRepository<AbnormalData, Long
     @Query("SELECT new com.trustping.DTO.BothPedalDTO(a.bothPedal) FROM AbnormalData a WHERE a.carId = :carId AND a.date = :date")
     Optional<BothPedalDTO> findBothPedalByCarIdAndDate(@Param("carId") String carId, @Param("date") LocalDate date);
 	
-	@Query("SELECT a FROM AbnormalData a WHERE a.carId = :carId AND a.date = :date")
 	Optional<AbnormalData> findByCarIdAndDate(@Param("carId") String carId, @Param("date") LocalDate date);
 }

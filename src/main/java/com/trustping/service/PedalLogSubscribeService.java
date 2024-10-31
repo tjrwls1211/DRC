@@ -8,6 +8,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.trustping.config.EnvConfig;
@@ -18,7 +19,8 @@ import jakarta.annotation.PostConstruct;
 public class PedalLogSubscribeService implements MqttCallback {
 
     @Autowired
-    private MqttClient mqttClient; // 구성에서 mqttclient 받아옴
+    @Qualifier("pedalLogMqttClient")
+    private MqttClient pedalLogMqttClient; // 구성에서 mqttclient 받아옴
     
     @Autowired
     private EnvConfig envConfig; // 구독 토픽도 가져옴
@@ -29,15 +31,15 @@ public class PedalLogSubscribeService implements MqttCallback {
     @PostConstruct
     public void subscribeToTopic() {
         String mqttTopic = envConfig.getMqttPedalTopic();
-        if (mqttClient == null) {
+        if (pedalLogMqttClient == null) {
             System.out.println("MQTT 연결 불가, 클라이언트가 null");
             return;
         }
 
         try {
-            mqttClient.setCallback(this);
-            if (mqttClient.isConnected()) {
-                mqttClient.subscribe(mqttTopic);
+        	pedalLogMqttClient.setCallback(this);
+            if (pedalLogMqttClient.isConnected()) {
+            	pedalLogMqttClient.subscribe(mqttTopic);
                 System.out.println("Subscribed to topic: " + mqttTopic);
             } else {
                 System.out.println("MQTT 연결 불가");
@@ -60,9 +62,9 @@ public class PedalLogSubscribeService implements MqttCallback {
         while (retryCount < 5) { 
             try {
                 System.out.println("Attempting to reconnect");
-                mqttClient.connect(); 
+                pedalLogMqttClient.connect(); 
                 String mqttTopic = envConfig.getMqttPedalTopic();
-                mqttClient.subscribe(mqttTopic); 
+                pedalLogMqttClient.subscribe(mqttTopic); 
                 System.out.println("Reconnected and subscribed to topic: " + mqttTopic);
                 return; 
             } catch (MqttException e) {

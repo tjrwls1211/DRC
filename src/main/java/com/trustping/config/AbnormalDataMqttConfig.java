@@ -9,30 +9,27 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class MqttConfig {
-
+public class AbnormalDataMqttConfig {
+    
     @Autowired
     private EnvConfig envConfig;
 
     @Bean
-    public MqttClient mqttClient() {
-        String mqttBrokerUrl = envConfig.getMqttBrokerUrl();
-        String mqttClientId = envConfig.getMqttClientId();
-        
+    public MqttClient abnormalDataMqttClient() {
+        return createMqttClient(envConfig.getMqttBrokerUrl(), envConfig.getMqttClientId() + "_abnormalData");
+    }
+    
+    private MqttClient createMqttClient(String brokerUrl, String clientId) {
         MqttClient mqttClient = null;
         try {
-            mqttClient = new MqttClient(mqttBrokerUrl, mqttClientId, new MemoryPersistence());
+            mqttClient = new MqttClient(brokerUrl, clientId, new MemoryPersistence());
             MqttConnectOptions options = new MqttConnectOptions();
             options.setCleanSession(true);
             options.setAutomaticReconnect(true);
-            // 필요 시 사용자 인증 정보 설정
-            // options.setUserName(envConfig.getMqttUserName());
-            // options.setPassword(envConfig.getMqttUserPassword().toCharArray());
             mqttClient.connect(options);
         } catch (MqttException e) {
-            System.err.println("MQTT Client connection failed: " + e.getMessage());
+            System.err.println("MQTT Client connection failed for " + clientId + ": " + e.getMessage());
         }
-        
-        return mqttClient; 
+        return mqttClient;
     }
 }
