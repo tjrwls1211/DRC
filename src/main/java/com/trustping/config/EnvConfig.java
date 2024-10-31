@@ -41,8 +41,12 @@ public class EnvConfig {
 		return dotenv.get("MQTT_USER_PASSWORD");
 	}
 	
-	public String getMqttTopic() {
-		return dotenv.get("MQTT_TOPIC");
+	public String getMqttPedalTopic() {
+		return dotenv.get("MQTT_PEDAL_TOPIC");
+	}
+	
+	public String getMqttAbnormalDrivingTopic() {
+		return dotenv.get("MQTT_ABNORMAL_DRIVING_TOPIC");
 	}
 	
 	public String getJwtSecretKey() {

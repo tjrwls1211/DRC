@@ -27,5 +27,4 @@ public class AbnormalData {
 	private int sAcl;
 	private int sBrk;
 	private int bothPedal;
-	
 }

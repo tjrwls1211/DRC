@@ -39,7 +39,6 @@ public class AbnormalDataServiceImpl implements AbnormalDataService{
 	    // UserData가 존재하는지 확인
 	    if (userData.isPresent()) {
 	        String carId = userData.get().getCarId();
-	        System.out.println(carId);
 	        Optional<SAclDTO> result = abnormalDataRepository.findSAclByCarIdAndDate(carId, date);
 	        if (result.isEmpty()) {
 	            return null; 
