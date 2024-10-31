@@ -31,7 +31,6 @@ def cleanAndExit():
     print("Bye!")
     sys.exit()
 
-
 # 첫 번째 HX711 - 엑셀(Accelerator)
 hx1 = HX711(20, 16)
 # 두 번째 HX711 - 브레이크(Brake)
@@ -175,11 +174,15 @@ def play_sounds_in_sequence(sounds):
 
     is_playing_sounds = False  # 모든 음성 재생 완료 후 플래그 해제
 
-# 로드셀 데이터와 상태를 업데이트하는 함수
+# 로드셀 데이터와 상태를 업데이트하는 함수    # 급발진 조건을 수정하자 accel_value < 10000 and brake_value > 5000 and speed >= 50 and rpm > 5000:
 def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds
 
-    if accel_value > 200 and brake_value <= 30:    # 급발진 조건을 수정하자 accel_value < 10000 and brake_value > 5000 and speed >= 50 and rpm > 5000:
+    state = "Normal Driving"
+    mqtt_state = 1
+
+
+    if accel_value > 200 and brake_value <= 30:    
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
 
@@ -206,16 +209,19 @@ def check_info(accel_value, brake_value):
                 
                 # 마지막 가속 시간 업데이트
                 last_accel_time = time.time()
+                             
 
     elif brake_value > 200 and accel_value <= 30: # 급정거 brake_value > 15000 and accel_value <= 30:
         state = "Rapid Braking" 
         update_display_state(accel_value, brake_value, state)
+        mqtt_state = 2
         is_accelerating = False
         stop_sounds = True  # 브레이크가 작동하면 음성 재생 중단
 
     elif accel_value > 100 and brake_value > 100: # 양발 운전 accel_vlaue > 1000 and brake_value > 1000
         state = "Both Feet Driving"
         update_display_state(accel_value, brake_value, state)
+        mqtt_state = 3
         is_accelerating = False
         stop_sounds = True  # 양발 운전 상태에서도 음성 중단
 
@@ -224,7 +230,13 @@ def check_info(accel_value, brake_value):
         update_display_state(accel_value, brake_value, state)
         is_accelerating = False
         stop_sounds = True  # 일반 주행일 때 음성 중단
-
+        
+    if mqtt_state is not None:
+        alert_data = {
+            "carId": 1234,
+            "state": mqtt_state
+        }
+        client.publish('AbnormalDriving', json.dumps(alert_data), 0, retain=False)
 
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
 def run_code():
@@ -258,7 +270,6 @@ def run_code():
             #if rpm_response.value is not None:
                 #data["rpm"] = int(rpm_response.value)
 
-
             # 현재 시간 추가
             now = datetime.now()
             data.update({
@@ -269,8 +280,10 @@ def run_code():
                 "driveState": data["driveState"],  # 기존 driveState 유지
             })            
             print(data)
+            
+            
             client.publish('pedal', json.dumps(data), 0, retain=False)
-
+            #client.publish('AbnormalDriving', json.dumps(''), 0, retain=False)
             # Tkinter UI 업데이트
             check_info(val_accelerator, val_brake)
 
