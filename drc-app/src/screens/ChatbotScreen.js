@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, KeyboardAvoidingView, Linking, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, KeyboardAvoidingView, Linking, Image, Platform } from 'react-native';
 import { fetchData } from '../components/ChatBot/ApiService';
 import { extractDateAndKeyword } from '../components/ChatBot/extractHelpers';
 import { chatbotResponses } from '../components/ChatBot/chatbotResponses';
@@ -223,178 +223,233 @@ const ChatbotScreen = ({ navigation }) => {
 
     
     return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <ScrollView contentContainerStyle={styles.chatContainer}>
-        {messages.map((message, index) => (
-          <View key={index} style={[styles.messageContainer, message.isBot ? styles.botMessage : styles.userMessage]}>
-            <Text style={styles.messageText}>{message.text}</Text>
-          </View>
-        ))}
-
-        {showQueryButtons ? (
-          <View style={styles.queryButtonsContainer}>
-            <TouchableOpacity style={styles.queryButton} onPress={handleQueryPress}>
-              <Text style={styles.queryButtonText}>조회</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.queryButton} onPress={handleBackPress}>
-              <Text style={styles.queryButtonText}>뒤로가기</Text>
-            </TouchableOpacity>
-          </View>
-        ) : showBackOnly ? (
-          <View style={styles.queryButtonsContainer}>
-            <TouchableOpacity style={styles.queryButton} onPress={handleCountermeasurePress}>
-              <Text style={styles.queryButtonText}>대처방법</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.queryButton} onPress={handleBackPress}>
-              <Text style={styles.queryButtonText}>뒤로가기</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={styles.buttonsContainer}>
-            <View style={styles.row}>
-              <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급가속")}>
-                <Text style={styles.buttonText}>급가속</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급제동")}>
-                <Text style={styles.buttonText}>급제동</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급발진")}>
-                <Text style={styles.buttonText}>급발진</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.row}>
-              <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("주행정보")}>
-                <Text style={styles.buttonText}>주행정보</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("앱 도움말")}>
-                <Text style={styles.buttonText}>앱 도움말</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("고객지원")}>
-                <Text style={styles.buttonText}>고객지원</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-      </ScrollView>
-
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="메시지를 입력하세요..."
-          value={inputText}
-          onChangeText={setInputText}
-          onSubmitEditing={handleSend}
-          returnKeyType="send"
-        />
-        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-          <Text style={styles.sendButtonText}>전송</Text>
-        </TouchableOpacity>
-            </View>
-        </KeyboardAvoidingView>
-    );
+      <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+      >
+          <ScrollView contentContainerStyle={styles.chatContainer}>
+              {messages.map((message, index) => (
+                  <View key={index} style={[styles.messageContainer, message.isBot ? styles.botMessage : styles.userMessage]}>
+                      {message.isBot && (
+                          <View style={styles.botMessageContainer}>
+                              <View style={styles.iconContainer}>
+                                  <Image source={require('../../assets/free-icon-chatbot-5226034.png')} style={styles.icon} />
+                              </View>
+                              <View style={styles.messageContentContainer}>
+                                  <Text style={styles.messageText}>
+                                      {message.text || ''} {/* 빈 문자열 처리 */}
+                                  </Text>
+                              </View>
+                          </View>
+                      )}
+                      {!message.isBot && (
+                          <Text style={styles.userMessageText}>
+                              {message.text || ''} {/* 빈 문자열 처리 */}
+                          </Text>
+                      )}
+                  </View>
+              ))}
+  
+              {showQueryButtons ? (
+                  <View style={styles.queryButtonsContainer}>
+                      <TouchableOpacity style={styles.queryButton} onPress={handleQueryPress}>
+                          <Text style={styles.queryButtonText}>조회</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.queryButton} onPress={handleBackPress}>
+                          <Text style={styles.queryButtonText}>뒤로가기</Text>
+                      </TouchableOpacity>
+                  </View>
+              ) : showBackOnly ? (
+                  <View style={styles.queryButtonsContainer}>
+                      <TouchableOpacity style={styles.queryButton} onPress={handleCountermeasurePress}>
+                          <Text style={styles.queryButtonText}>대처방법</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.queryButton} onPress={handleBackPress}>
+                          <Text style={styles.queryButtonText}>뒤로가기</Text>
+                      </TouchableOpacity>
+                  </View>
+              ) : (
+                  <View style={styles.buttonsContainer}>
+                      <View style={styles.row}>
+                          <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급가속")}>
+                              <Text style={styles.buttonText}>급가속</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급제동")}>
+                              <Text style={styles.buttonText}>급제동</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급발진")}>
+                              <Text style={styles.buttonText}>급발진</Text>
+                          </TouchableOpacity>
+                      </View>
+                      <View style={styles.row}>
+                          <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("주행정보")}>
+                              <Text style={styles.buttonText}>주행정보</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("앱 도움말")}>
+                              <Text style={styles.buttonText}>앱 도움말</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("고객지원")}>
+                              <Text style={styles.buttonText}>고객지원</Text>
+                          </TouchableOpacity>
+                      </View>
+                  </View>
+              )}
+          </ScrollView>
+  
+          <View style={styles.inputContainer}>
+    <TextInput
+        style={styles.input}
+        placeholder="메시지를 입력하세요..."
+        value={inputText}
+        onChangeText={setInputText}
+        onSubmitEditing={handleSend}
+        returnKeyType="send"
+    />
+    <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+        <Image source={require('../../assets/send-icon.png')} style={styles.sendIcon} />
+    </TouchableOpacity>
+</View>
+      </KeyboardAvoidingView>
+  );
+  
 };
 
 const styles = StyleSheet.create({
   container: {
       flex: 1,
-      backgroundColor: '#f4f4f4',
+      backgroundColor: '#ffffff',
   },
-  chatContainer: {
-      paddingVertical: 20,
-      paddingHorizontal: 10,
+  cchatContainer: {
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    flexGrow: 1, // ScrollView가 늘어나도록 설정
+    justifyContent: 'flex-end', // 메시지가 아래로 쌓이도록 설정
   },
   messageContainer: {
-      marginBottom: 10,
-      padding: 10,
-      borderRadius: 10,
+    marginBottom: 10,
+    maxWidth: '75%', // 최대 너비 설정
+    alignSelf: 'flex-start', // 기본적으로 왼쪽 정렬
   },
-  botMessage: {
-      alignSelf: 'flex-start',
-      backgroundColor: '#e1f5fe',
+  botMessageContainer: {
+    flexDirection: 'row', // 아이콘과 메시지를 가로로 배치
+    alignItems: 'flex-start', // 아이콘과 메시지 세로 정렬
+    marginBottom: 10, // 아이콘과 메시지 사이의 공백
   },
-  userMessage: {
-      alignSelf: 'flex-end',
-      backgroundColor: '#c8e6c9',
+  iconContainer: {
+    marginRight: 10, // 아이콘과 메시지 간의 간격
+    backgroundColor: '#009688', // 아이콘 배경색 설정
+    borderRadius: 5, // 둥글게 설정 (선택 사항)
+    padding: 5, // 패딩 추가 (선택 사항)
+  },
+  icon: {
+    width: 35, // 아이콘 너비 조정
+    height: 35, // 아이콘 높이 조정
+    resizeMode: 'contain', // 비율 유지
+},
+sendIcon: {
+  width: 30, // 아이콘 너비
+  height: 30, // 아이콘 높이
+  resizeMode: 'contain', // 비율 유지
+},
+
+  messageContentContainer: {
+    backgroundColor: '#d3d3d3', // 챗봇 메시지 배경색
+    borderRadius: 10,
+    padding: 10,
   },
   messageText: {
-      fontSize: 16,
+    fontSize: 16,
+    color: '#000000',
+    flexWrap: 'wrap', // 텍스트 줄 바꿈 허용
   },
+  userMessage: {
+    backgroundColor: '#009688', // 사용자 메시지 배경색
+    alignSelf: 'flex-end', // 사용자 메시지 오른쪽 정렬
+    maxWidth: '75%', // 최대 너비 조정
+    borderRadius: 10, // 둥글게 설정
+    padding: 10, // 패딩 추가
+},
+
+  userMessageText: {
+    fontSize: 16,
+    color: '#ffffff', // 사용자 메시지 글자를 하얀색으로 설정
+    flexWrap: 'wrap', // 텍스트 줄 바꿈 허용
+  },
+  // 나머지 스타일은 그대로 유지...
   buttonsContainer: {
-      marginTop: 20,
+    marginTop: 20,
   },
   row: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 10,
   },
   button: {
-      padding: 10,
-      backgroundColor: '#81d4fa',
-      borderRadius: 5,
+    padding: 10,
+    backgroundColor: '#009688',
+    borderRadius: 5,
   },
   buttonText: {
-      fontSize: 16,
-      color: '#fff',
+    fontSize: 16,
+    color: '#fff',
   },
   inputContainer: {
-      flexDirection: 'row',
-      padding: 10,
-      backgroundColor: '#fff',
+    flexDirection: 'row',
+    padding: 10,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderColor: '#ccc',
   },
   input: {
-      flex: 1,
-      borderColor: '#ccc',
-      borderWidth: 1,
-      borderRadius: 5,
-      paddingHorizontal: 10,
+    flex: 1,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    height: 40, // 입력란 높이 조정
+    borderRadius: 20, // 둥글게 설정
   },
   sendButton: {
-      backgroundColor: '#81d4fa',
-      borderRadius: 5,
-      padding: 10,
-      marginLeft: 10,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    paddingVertical: 1, // 위아래 패딩 조정
+    paddingHorizontal: 7, // 좌우 패딩 조정
+    justifyContent: 'center', // 가운데 정렬
+    alignItems: 'center', // 가운데 정렬
   },
   sendButtonText: {
-      color: '#fff',
-      fontSize: 16,
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center', // 가운데 정렬
   },
   queryButtonsContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
   },
   queryButton: {
-      padding: 10,
-      backgroundColor: '#4caf50',
-      borderRadius: 5,
+    padding: 10,
+    backgroundColor: '#009688',
+    borderRadius: 5,
   },
   queryButtonText: {
-      color: '#fff',
-      fontSize: 16,
+    color: '#fff',
+    fontSize: 16,
   },
-  
   authButtonContainer: {
-      alignItems: 'center',
-      marginVertical: 10,
-  },
-  authButton: {
-      padding: 10,
-      backgroundColor: '#ff9800',
-      borderRadius: 5,
-  },
-authButtonContainer: {
     alignItems: 'center',
     marginVertical: 10,
-},
-authButton: {
+  },
+  authButton: {
     padding: 10,
     backgroundColor: '#ff9800',
     borderRadius: 5,
-},
-authButtonText: {
+  },
+  authButtonText: {
     color: '#fff',
     fontSize: 16,
-},
+  },
 });
 
 export default ChatbotScreen;
