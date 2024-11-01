@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, StyleSheet } from 'react-native';
 import BasicModal from './BasicModal';
-import { fetchUserInfo, changeNickname } from '../api/userInfoAPI';
+import { fetchUserInfo, changeNickname } from '../../api/userInfoAPI';
 
 const NicknameChangeModal = ({ visible, onClose, onConfirm }) => {
     const [newNickname, setNewNickname] = useState('');
