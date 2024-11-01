@@ -105,12 +105,20 @@ brake_img_normal = Image.open("brake_normal.png").resize((500, 400))
 brake_img_dark = Image.open("brake_dark.png").resize((500, 400))
 
 # 상하 좌우 반전된 이미지 생성 및 전역 변수로 참조 유지
-accel_img_normal_flipped = ImageTk.PhotoImage(accel_img_normal.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT))
-accel_img_dark_flipped = ImageTk.PhotoImage(accel_img_dark.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT))
-brake_img_normal_flipped = ImageTk.PhotoImage(brake_img_normal.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT))
-brake_img_dark_flipped = ImageTk.PhotoImage(brake_img_dark.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT))
+accel_img_normal_flipped = ImageTk.PhotoImage(
+    accel_img_normal.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT)
+)
+accel_img_dark_flipped = ImageTk.PhotoImage(
+    accel_img_dark.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT)
+)
+brake_img_normal_flipped = ImageTk.PhotoImage(
+    brake_img_normal.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT)
+)
+brake_img_dark_flipped = ImageTk.PhotoImage(
+    brake_img_dark.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT)
+)
 
-# Tkinter 레이블을 통해 이미지 표시
+# 이미지 레이블 생성 (상하 좌우 반전된 이미지 적용)
 accel_label = tk.Label(root, image=accel_img_normal_flipped, bg="black")
 accel_label.pack(side="right", padx=20, pady=10)
 
