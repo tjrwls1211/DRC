@@ -40,7 +40,11 @@ const PersonalInfoScreen = () => {
     };
 
     if (loading) {
-        return <ActivityIndicator size="large" color="#009688" />;
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#009688" />
+            </View>
+        );
     }
 
     return (
@@ -103,6 +107,12 @@ const styles = StyleSheet.create({
     value: {
         fontSize: 16,
         color: '#ffffff', // 텍스트 색상 화이트
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#ffffff',
     },
 });
 
