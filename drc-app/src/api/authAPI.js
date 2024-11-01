@@ -80,21 +80,22 @@ export const loginUser = async (email, password) => {
 // 서버로 JWT 유효성 검사 요청 통신 코드
 export const checkTokenValidity = async (token) => {
   try {
-    const response = await apiClient.post("/user/validate", {}, {
+    const response = await apiClient.get("/user/validate", {
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}` // 헤더에 토큰 추가
       }
     });
     return response.data; // 응답 데이터 전체 반환
   } catch (error) {
     if (error.response) {
-      console.log('서버에서 반환된 오류 메시지:', error.response);
+      console.log('서버에서 반환된 오류 메시지:', error.response); // 오류 메시지 출력
     } else {
       console.error('JWT 유효성 검사 오류:', error);
     }
     return { valid: false }; // 오류 발생 시 false 반환
   }
 };
+
 
 
 // 회원가입 ID 중복 확인
