@@ -112,6 +112,7 @@ const LoginScreen = () => {
     try {
         const isVerified = await checkOTP(email, otpCode);
         if (isVerified) {
+            setModalVisible(false);
             Alert.alert("OTP 확인 성공", "메인 화면으로 이동합니다.");
             // OTP 검증 후 받은 토큰을 AsyncStorage에 저장
             const response = await checkOTP(email, otpCode);
