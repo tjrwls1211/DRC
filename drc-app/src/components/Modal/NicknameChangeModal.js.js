@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, StyleSheet } from 'react-native';
 import BasicModal from './BasicModal';
-import { fetchCurrentNickname, changeNickname } from '../../api/accountAPI';
+import { fetchUserInfo, changeNickname } from '../api/userInfoAPI';
 
 const NicknameChangeModal = ({ visible, onClose, onConfirm }) => {
     const [newNickname, setNewNickname] = useState('');
-    const [currentNickname, setCurrentNickname] = useState('');
+    const [Nickname, setNickname] = useState('');
 
     useEffect(() => {
-        const getCurrentNickname = async () => {
+        const getNickname = async () => {
             try {
-                const nickname = await fetchCurrentNickname(); // 현재 닉네임 가져오기
-                setCurrentNickname(nickname); // 상태에 저장
+                const userInfo = await fetchUserInfo(); // 사용자 정보 가져와서
+                setNickname(userInfo.nickname); // 현재 닉네임 저장
             } catch (error) {
                 console.error('닉네임 가져오기 오류:', error);
             }
         };
 
         if (visible) {
-            getCurrentNickname(); // 모달이 열릴 때만 현재 닉네임 가져오기
+            getNickname(); // 모달이 열릴 때만 현재 닉네임 가져오기
         }
     }, [visible]);
 
     const handleConfirm = async () => {
         try {
-            await changeNickname(newNickname); // 새 닉네임으로 변경
-            onConfirm(newNickname); // 변경 후 호출
+            const response = await changeNickname(newNickname); // 새 닉네임으로 변경
+            onConfirm(response.newNickname); // 변경 후 호출
             setNewNickname(''); // 입력 필드 초기화
         } catch (error) {
             console.error('닉네임 변경 오류:', error);
@@ -42,7 +42,7 @@ const NicknameChangeModal = ({ visible, onClose, onConfirm }) => {
         <TextInput
             style={styles.input}
             placeholder="현재 닉네임"
-            value={currentNickname}
+            value={Nickname}
             editable={false} // 현재 닉네임은 수정 불가
         />
         <TextInput
@@ -58,7 +58,7 @@ const NicknameChangeModal = ({ visible, onClose, onConfirm }) => {
 const styles = StyleSheet.create({
     input: {
         borderWidth: 1,
-        borderColor: '#2ECC40', // 에메랄드 그린
+        borderColor: '#009688',
         padding: 10,
         marginBottom: 15,
         borderRadius: 5,
