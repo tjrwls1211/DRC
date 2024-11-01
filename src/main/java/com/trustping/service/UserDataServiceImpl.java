@@ -17,8 +17,8 @@ import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
 import com.trustping.DTO.MfaResponseDTO;
-import com.trustping.DTO.ModifyNicknameDTO;
-import com.trustping.DTO.ModifyNicknameResponseDTO;
+import com.trustping.DTO.UpdateNicknameDTO;
+import com.trustping.DTO.UpdateResponseDTO;
 import com.trustping.DTO.MyDataResponseDTO;
 import com.trustping.DTO.OtpResponseDTO;
 import com.trustping.DTO.PasswordDTO;
@@ -128,6 +128,7 @@ public class UserDataServiceImpl implements UserDataService {
 	}
 
 	// Google OTP 생성
+	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public OtpResponseDTO generateGoogleMFA(String jwtToken) {
 		String userId = jwtUtil.extractUsername(jwtToken);
@@ -192,20 +193,20 @@ public class UserDataServiceImpl implements UserDataService {
 
 	// 닉네임 변경
 	@Override
-	public ModifyNicknameResponseDTO modifyNickname(String jwtToken, ModifyNicknameDTO modifyNicknameDTO) {
+	public UpdateResponseDTO modifyNickname(String jwtToken, UpdateNicknameDTO updateNicknameDTO) {
 		String userId = jwtUtil.extractUsername(jwtToken);
-		String newNickname = modifyNicknameDTO.getNickname();
+		String newNickname = updateNicknameDTO.getNickname();
 	    Optional<UserData> userDataOptional = userDataRepository.findById(userId);
 	    
 	    // 사용자가 존재하지 않을 경우 처리
 	    if (userDataOptional.isEmpty()) {
-	        return new ModifyNicknameResponseDTO(false, "ID가 존재하지 않습니다 : " + userId, null);
+	        return new UpdateResponseDTO(false, "ID가 존재하지 않습니다 : " + userId, null);
 	    }
 	    
 	    UserData userData = userDataOptional.get();
 		userData.setNickname(newNickname);
 		userDataRepository.save(userData);
-		return new ModifyNicknameResponseDTO(true, "닉네임이 변경 되었습니다", newNickname);
+		return new UpdateResponseDTO(true, "닉네임이 변경 되었습니다", newNickname);
 	}
 	
 	// 비밀번호 인증
@@ -230,6 +231,27 @@ public class UserDataServiceImpl implements UserDataService {
 	    return new ResponseDTO(true, "비밀번호가 일치합니다");
 	}
 
+	// 비밀번호 변경
+	@Override
+	public ResponseDTO modifyPassword(String jwtToken, PasswordDTO passwordDTO) {
+		String userId = jwtUtil.extractUsername(jwtToken);
+		String newPassword = passwordDTO.getPw();
+	    Optional<UserData> userDataOptional = userDataRepository.findById(userId);
+	    
+	    // 사용자가 존재하지 않을 경우 처리
+	    if (userDataOptional.isEmpty()) {
+	        return new ResponseDTO(false, "ID가 존재하지 않습니다 : " + userId);
+	    }
+	    
+	    UserData userData = userDataOptional.get();
+		
+	    String newHashedPassword = passwordEncoder.encode(newPassword);
+		
+	    userData.setPw(newHashedPassword);
+		userDataRepository.save(userData);
+		return new ResponseDTO(true, "비밀번호가 변경 되었습니다");
+	}
+	
 	// 마이페이지 데이터 확인
 	@Override
 	public MyDataResponseDTO getMyDataByToken(String jwtToken) {

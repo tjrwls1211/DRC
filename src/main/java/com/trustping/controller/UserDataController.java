@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,14 +18,14 @@ import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
 import com.trustping.DTO.MfaResponseDTO;
-import com.trustping.DTO.ModifyNicknameDTO;
-import com.trustping.DTO.ModifyNicknameResponseDTO;
 import com.trustping.DTO.MyDataResponseDTO;
 import com.trustping.DTO.OtpResponseDTO;
 import com.trustping.DTO.PasswordDTO;
 import com.trustping.DTO.ResponseDTO;
 import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.DTO.TokenValidationDTO;
+import com.trustping.DTO.UpdateNicknameDTO;
+import com.trustping.DTO.UpdateResponseDTO;
 import com.trustping.security.JwtUtil;
 import com.trustping.service.UserDataService;
 
@@ -111,10 +112,10 @@ public class UserDataController {
 	}
 	
 	// 닉네임 변경
-	@PutMapping("/modifyNickname")
-	public ResponseEntity<ModifyNicknameResponseDTO> modifyNickName(@RequestHeader("Authorization") String token,@RequestBody ModifyNicknameDTO modifyNicknameDTO){
+	@PatchMapping("/modifyNickname")
+	public ResponseEntity<UpdateResponseDTO> modifyNickName(@RequestHeader("Authorization") String token,@RequestBody UpdateNicknameDTO modifyNicknameDTO){
 		String jwtToken = token.substring(7);
-		ModifyNicknameResponseDTO response = userDataService.modifyNickname(jwtToken,modifyNicknameDTO);		
+		UpdateResponseDTO response = userDataService.modifyNickname(jwtToken,modifyNicknameDTO);		
 		return ResponseEntity.ok(response);
 	}
 	
@@ -131,6 +132,14 @@ public class UserDataController {
 	    } else {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 	    }
+	}
+	
+	// 비밀번호 변경
+	@PatchMapping("/modifyPassword")
+	public ResponseEntity<ResponseDTO> modifyPassword(@RequestHeader("Authorization") String token,@RequestBody PasswordDTO passwordDTO){
+		String jwtToken = token.substring(7);
+		ResponseDTO response = userDataService.modifyPassword(jwtToken, passwordDTO);		
+		return ResponseEntity.ok(response);
 	}
 	
 	// 회원 탈퇴
@@ -150,7 +159,7 @@ public class UserDataController {
 
 
 	// JWT 토큰 유효성 검사
-	@PostMapping("/validate")
+	@GetMapping("/validate")
 	public ResponseEntity<TokenValidationDTO> validateToken(@RequestHeader(value = "Authorization") String token) {
 		String jwtToken = token.substring(7);
 		boolean isValid = jwtUtil.validateToken(jwtToken);

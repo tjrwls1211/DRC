@@ -28,34 +28,25 @@ public class AbnormalDataController {
 	
 	// 급가속 날짜로 조회
 	@GetMapping("/sacl")
-	public ResponseEntity<SAclDTO> getSacl(@RequestParam(name = "carId") String carId, @RequestParam(name = "date") String date) {
-	    LocalDate searchDate = LocalDate.parse(date); 
-	    SAclDTO result = abnormalDataService.getSaclByCarIdAndDate(carId, searchDate);
-	    if (result == null) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
-	    }
-	    return ResponseEntity.ok(result);
-	}
-	
-	// 급가속 날짜로 조회
-	@GetMapping("/sacll")
-	public ResponseEntity<SAclDTO> getSacll(@RequestHeader(value = "Authorization") String token, @RequestParam(name = "date") String date) {
+	public ResponseEntity<SAclDTO> getSacl(@RequestHeader(value = "Authorization") String token, @RequestParam(name = "date") String date) {
 	    LocalDate searchDate = LocalDate.parse(date); 
 	    String jwtToken = token.substring(7);
 	    String id = jwtUtil.extractUsername(jwtToken);
-	    SAclDTO result = abnormalDataService.getSaclByCarIdAndDate(id, searchDate);
+	    SAclDTO result = abnormalDataService.getSAclByCarIdAndDate(id, searchDate);
 	    if (result == null) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
 	    }
 	    return ResponseEntity.ok(result);
 	}
 
-
+	
 	// 급정거 날짜로 조회
 	@GetMapping("/sbrk")
-	public ResponseEntity<SBrkDTO> getSbrk(@RequestParam(name = "carId") String carId, @RequestParam(name = "date") String date) {
+	public ResponseEntity<SBrkDTO> getSbrk(@RequestHeader(value = "Authorization") String token, @RequestParam(name = "date") String date) {
 	    LocalDate searchDate = LocalDate.parse(date); 
-	    SBrkDTO result = abnormalDataService.getSbrkByCarIdAndDate(carId, searchDate);
+	    String jwtToken = token.substring(7);
+	    String id = jwtUtil.extractUsername(jwtToken);
+	    SBrkDTO result = abnormalDataService.getSBrkByCarIdAndDate(id, searchDate);
 	    if (result == null) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
 	    }

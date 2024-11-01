@@ -33,7 +33,7 @@ public class AbnormalDataServiceImpl implements AbnormalDataService{
 	}
 	*/
 	
-	public SAclDTO getSaclByCarIdAndDate(String id, LocalDate date) {
+	public SAclDTO getSAclByCarIdAndDate(String id, LocalDate date) {
 	    Optional<UserData> userData = userDataRepository.findById(id);
 	    
 	    // UserData가 존재하는지 확인
@@ -50,24 +50,39 @@ public class AbnormalDataServiceImpl implements AbnormalDataService{
 	    }
 	}
 
-
 	
-	public SBrkDTO getSbrkByCarIdAndDate(String carId, LocalDate date) {
-	    Optional<SBrkDTO> result = abnormalDataRepository.findSBrkByCarIdAndDate(carId, date);
-	    if (result.isEmpty()) {
-	        return null;
-	    }
+	public SBrkDTO getSBrkByCarIdAndDate(String id, LocalDate date) {
+	    Optional<UserData> userData = userDataRepository.findById(id);
 	    
-        return result.get();
+	    // UserData가 존재하는지 확인
+	    if (userData.isPresent()) {
+	        String carId = userData.get().getCarId();
+	        Optional<SBrkDTO> result = abnormalDataRepository.findSBrkByCarIdAndDate(carId, date);
+	        if (result.isEmpty()) {
+	            return null; 
+	        }
+	        
+	        return result.get(); 
+	    } else {
+	        return null; 
+	    }
 	}
 	
-	public BothPedalDTO getBothPedalByCarIdAndDate(String carId, LocalDate date) {
-	    Optional<BothPedalDTO> result = abnormalDataRepository.findBothPedalByCarIdAndDate(carId, date);
-	    if (result.isEmpty()) {
-	        return null;
-	    }
+	public BothPedalDTO getBothPedalByCarIdAndDate(String id, LocalDate date) {
+	    Optional<UserData> userData = userDataRepository.findById(id);
 	    
-	    return result.get();
+	    // UserData가 존재하는지 확인
+	    if (userData.isPresent()) {
+	        String carId = userData.get().getCarId();
+	        Optional<BothPedalDTO> result = abnormalDataRepository.findBothPedalByCarIdAndDate(carId, date);
+	        if (result.isEmpty()) {
+	            return null; 
+	        }
+	        
+	        return result.get(); 
+	    } else {
+	        return null; 
+	    }
 	}
 	
 }

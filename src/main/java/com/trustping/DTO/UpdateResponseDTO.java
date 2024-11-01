@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ModifyNicknameDTO {
-	private String nickname;
+public class UpdateResponseDTO {
+	private boolean success;
+    private String message;
+    private String newData;
 }
