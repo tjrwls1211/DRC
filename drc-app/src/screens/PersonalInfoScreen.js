@@ -60,7 +60,7 @@ const PersonalInfoScreen = () => {
                         }],
                     }}
                 >
-                    <Icon name={label === '닉네임' ? 'person' : label === 'ID (Email)' ? 'email' : label === '생년월일' ? 'cake' : 'directions-car'} size={24} color="#FF6F61" />
+                    <Icon name={label === '닉네임' ? 'person' : label === 'ID (Email)' ? 'email' : label === '생년월일' ? 'cake' : 'directions-car'} size={24} color="white" />
                     <Text style={styles.label}>{label}</Text>
                     <Text style={styles.value}>{userInfo[label === '닉네임' ? 'nickname' : label === 'ID (Email)' ? 'id' : label === '생년월일' ? 'birthDate' : 'carId']}</Text>
                 </Animated.View>

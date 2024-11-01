@@ -97,8 +97,6 @@ export const checkTokenValidity = async (token) => {
 };
 
 
-
-
 // 회원가입 ID 중복 확인
 export const checkID = async (email) => {
   try {
@@ -162,16 +160,16 @@ export const enableTwoFactorAuth = async () => {
   }
 };
 
-// 2차 인증 비활성화 요청
-export const disableTwoFactorAuth = async () => {
-  try {
-    // 서버에 2차 인증 비활성화 요청
-    await apiClient.post("/2fa/disable");
-  } catch (error) {
-    console.error("2차 인증 비활성화 오류:", error);
-    throw error;
-  }
-};
+// 2차 인증 비활성화 요청 - TODO: 백엔드 개발 후 그에 맞게 수정
+// export const disableTwoFactorAuth = async () => {
+//   try {
+//     // 서버에 2차 인증 비활성화 요청
+//     await apiClient.post("/2fa/disable");
+//   } catch (error) {
+//     console.error("2차 인증 비활성화 오류:", error);
+//     throw error;
+//   }
+// };
 
 // OTP 검증 요청
 export const checkOTP = async (email, otp) => {

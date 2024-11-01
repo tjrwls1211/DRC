@@ -13,7 +13,7 @@ const PasswordChangeModal = ({ visible, onClose, onConfirm }) => {
     // 비밀번호 검증 로직 (추후 구현)
     const isCorrect = true;  // 임시로 true로 설정
     setIsVerified(isCorrect);
-    setVerificationMessage(isCorrect ? "인증되었습니다." : "비밀번호가 틀렸습니다.");
+    setVerificationMessage(isCorrect ? "인증되었습니다" : "비밀번호가 틀렸습니다");
   };
 
   return (
@@ -63,14 +63,14 @@ const PasswordChangeModal = ({ visible, onClose, onConfirm }) => {
 const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
-    borderColor: '#2ECC40', // 에메랄드 그린
+    borderColor: '#009688', 
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
     fontSize: 16,
   },
   checkButton: {
-    backgroundColor: '#2ECC40', // 에메랄드 그린
+    backgroundColor: '#009688',
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,

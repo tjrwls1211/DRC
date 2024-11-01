@@ -124,6 +124,7 @@ const SettingsScreen = () => {
         onChangeValue={handle2FAChange} 
         style={styles.dropdown} 
         dropDownContainerStyle={styles.dropdownContainer}
+        labelStyle={{color: '#009688', fontSize: 18}}
       />
 
       {/* OTP 키와 QR URL을 보여주는 모달 */}
@@ -146,7 +147,7 @@ const SettingsScreen = () => {
 
       <Text style={styles.label}>앱 설정</Text>
       <View style={styles.darkModeContainer}>
-        <Text style={{fontSize: 18, fontWeight: 'bold'}}>다크모드</Text>
+        <Text style={{fontSize: 18, color: 'white'}}>다크모드</Text>
         <Switch value={false}/>
       </View>
 
@@ -198,13 +199,14 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#009688',
+    color: '#2F4F4F',
     textAlign: 'center',
   },
   label: {
     fontSize: 20,
     marginBottom: 5,
     color: '#2F4F4F', // 다크 슬레이트 그레이
+    fontWeight: 'bold',
   },
   dropdown: {
     marginVertical: 10,
