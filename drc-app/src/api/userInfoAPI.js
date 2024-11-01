@@ -30,3 +30,24 @@ export const fetchUserInfo = async () => {
         throw error;
     }
 };
+
+// 닉네임 수정 API
+export const changeNickname = async (newNickname) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.patch(`${API_URL}/user/modifyNickname`,
+            { nickname: newNickname }, 
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, // 헤더에 토큰 추가
+                    "Content-Type": "application/json",
+                }
+            }
+        );
+        console.log("닉네임 수정 처리-서버 반환: ", response.data);
+        return response.data; // 서버의 응답 반환
+    } catch (error) {
+        console.error('닉네임 변경 오류:', error);
+        throw error;
+    }
+};
