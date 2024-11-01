@@ -23,8 +23,8 @@ data = {
     "brkPedal": 0,
     "createdAt": 0,
     "driveState": "",
-    #"speed"
-    #"rpm"
+    "speed" : 50,
+    "rpm" : 2000
 }
 
 def cleanAndExit():
@@ -266,6 +266,8 @@ def run_code():
             #speed_response = connection.query(speed_cmd)
             #rpm_response = connection.query(rpm_cmd)
             
+            
+            
             hx1.power_down()
             hx2.power_down()
             hx1.power_up()
@@ -287,8 +289,8 @@ def run_code():
                 "brkPedal": int(val_brake),
                 "createdAt": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                 "driveState": data["driveState"],  # 기존 driveState 유지
-                #speed
-                #rpm
+                "speed" : 40,
+                "rpm" : 2000
                 #delta_velocity 가속도 변수
             })            
             print(data)
