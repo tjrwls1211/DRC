@@ -53,7 +53,7 @@ hx2.reset()
 hx1.tare()
 hx2.tare()
 
-# Tkinter 창생성
+""" # Tkinter 창생성
 root = tk.Tk()
 root.title("Car Driving Display")
 root.geometry("1000x600")
@@ -85,7 +85,52 @@ status_label.place(relx=0.44, rely=0.05, anchor='center')
 #나중에 지울꺼
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
 text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
-text_label.place(relx=0.97, rely=0.05, anchor='ne')
+text_label.place(relx=0.97, rely=0.05, anchor='ne') """
+
+
+# 테스트 부분 삭제
+# Tkinter 창 생성
+root = tk.Tk()
+root.title("Car Driving Display")
+root.geometry("1000x600")
+root.configure(bg="black")
+
+# 폰트 설정
+font_large = ("Arial", 40, "bold")
+
+# 이미지 로드
+accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((500, 400)))
+accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((500, 400)))
+brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((500, 400)))
+brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((500, 400)))
+
+# 반전된 이미지 생성
+accel_img_normal_flipped = ImageTk.PhotoImage(accel_img_normal.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT))
+accel_img_dark_flipped = ImageTk.PhotoImage(accel_img_dark.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT))
+brake_img_normal_flipped = ImageTk.PhotoImage(brake_img_normal.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT))
+brake_img_dark_flipped = ImageTk.PhotoImage(brake_img_dark.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT))
+
+# 이미지 레이블 생성 (상하좌우 반전된 이미지)
+accel_label = tk.Label(root, image=accel_img_flipped, bg="black")
+accel_label.pack(side="right", padx=20, pady=10)
+
+brake_label = tk.Label(root, image=brake_img_flipped, bg="black")
+brake_label.pack(side="left", padx=20, pady=10)
+
+# 나중에 지울 데이터 예제
+data = {"driveState": "Drive Ready"}
+
+# 상태 레이블 생성 (상하 좌우 반전 텍스트)
+canvas_status = tk.Canvas(root, width=500, height=100, bg="black", highlightthickness=0)
+canvas_status.place(relx=0.44, rely=0.05, anchor='center')
+status_text = canvas_status.create_text(250, 50, text=data["driveState"], font=font_large, fill="white", angle=180)
+
+canvas_speed = tk.Canvas(root, width=200, height=100, bg="black", highlightthickness=0)
+canvas_speed.place(relx=0.97, rely=0.05, anchor='ne')
+speed_text = canvas_speed.create_text(100, 50, text=speed_data, font=font_large, fill="white", angle=180)
+
+
+
 
 # pygame 초기화
 pygame.mixer.init()
@@ -105,7 +150,7 @@ is_accelerating = False
 client = mqtt.Client()
 client.connect(ip(), 1222, 60)
 
-# 상태 업데이트 및 이미지 전환 함수
+""" # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
     global data # driveState를 초기화하려면 필요한 코드
     # 엑셀 이미지 상태 업데이트
@@ -134,7 +179,44 @@ def update_display_state(accel_value, brake_value, state):
     ##나중에 지울꺼
     # accel_value 레이블 업데이트 (정수 형식)
     text_label.config(text=f"현재 : {int(accel_value)}")
-    #나중에 obd스피드 입력넣을때 accel_value대신에 speed_response.value 로 교체
+    #나중에 obd스피드 입력넣을때 accel_value대신에 speed_response.value 로 교체 """
+    
+def update_display_state(accel_value, brake_value, state):
+    global data # driveState를 초기화하려면 필요한 코드
+    # 엑셀 이미지 상태 업데이트
+    if accel_value <= 30:
+        if accel_label.cget("image") != str(accel_img_dark_flipped):  # 같은 이미지라면 업데이트 안함
+            accel_label.config(image=accel_img_dark_flipped)
+
+    else:
+        if accel_label.cget("image") != str(accel_img_normal_flipped):
+            accel_label.config(image=accel_img_normal_flipped)
+
+    # 브레이크 이미지 상태 업데이트
+    if brake_value <= 30:
+        if brake_label.cget("image") != str(brake_img_dark_flipped):
+            brake_label.config(image=brake_img_dark_flipped)
+
+    else:
+        if brake_label.cget("image") != str(brake_img_normal_flipped):
+            brake_label.config(image=brake_img_normal_flipped)
+    
+    ##나중에 지울꺼
+    #상태업데이트 : 이전 상태와 비교하여 변화가 있을 때만 업데이트 테스트 텍스트 
+    if data["driveState"] != state:
+        data["driveState"] = state
+        canvas_status.itemconfig(status_text, text=data["driveState"][::-1])  # 텍스트 좌우 반전
+
+    # accel_value 레이블 업데이트 (정수 형식으로 상하좌우 반전된 텍스트 표시)
+    canvas_speed.itemconfig(speed_text, text=f"현재 속도: {int(accel_value)}"[::-1])  # 속도 텍스트 좌우 반전
+    #나중에 obd스피드 입력넣을때 accel_value대신에 speed_response.value 로 교체    
+
+def simulate_update():
+    # 예제 값으로 상태를 변경하며 업데이트
+    update_display_state(80, 20, "Drive in Progress")
+    root.after(1000, simulate_update)  # 1초마다 업데이트
+
+simulate_update()    
 
 rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1.wav")
 rapidspeed_2_sound = pygame.mixer.Sound("rapidspeed_2.wav")
