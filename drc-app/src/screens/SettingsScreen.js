@@ -62,9 +62,7 @@ const SettingsScreen = () => {
   };
 
   const handleNicknameChange = (newNickname) => {
-    console.log('New nickname: ', newNickname);
     setNicknameModalVisible(false);
-    // 닉네임 변경 로직 추가 - 추후 구현
   }
 
   const handlePasswordChange = (newPassword) => {
