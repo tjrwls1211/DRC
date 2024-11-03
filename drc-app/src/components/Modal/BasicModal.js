@@ -1,14 +1,16 @@
 // 베이직 모달: 모달의 기본 레이아웃(타이틀, 취소 및 확인 버튼 등)
 // 이 위에 필요 입력 필드, 텍스트 추가하여 재사용
 
-// src/components/BasicModal.js
 import React from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 
 const BasicModal = ({ visible, onClose, title, children, onConfirm }) => {
   return (
     <Modal transparent={true} visible={visible} animationType="fade">
-      <View style={styles.modalContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.modalContainer}
+      >
         <View style={styles.modal}>
           <Text style={styles.title}>{title}</Text>
           <View style={styles.content}>
@@ -23,7 +25,7 @@ const BasicModal = ({ visible, onClose, title, children, onConfirm }) => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
