@@ -133,9 +133,12 @@ class CarDisplay(QWidget):
         # 상단 레이아웃 추가
         main_layout.addLayout(top_layout)
 
-        # 중앙 하단 텍스트 레이블 (살짝 하단으로 배치)
+        # 여유 공간 추가
+        main_layout.addStretch()
+
+        # 중앙 하단 텍스트 레이블
         self.speed_label = FlippedTextLabel("속도: 0", self)
-        main_layout.addStretch()  # 위젯들 사이에 여백 추가
+        self.speed_label.setStyleSheet("background-color: red; color: white;")  # 빨간색 배경으로 임시 확인
         main_layout.addWidget(self.speed_label, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
         # 레이아웃 설정
