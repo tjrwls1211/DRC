@@ -61,7 +61,7 @@ const SettingsScreen = () => {
     setModalVisible(false);
   };
 
-  const handleNicknameChange = (newNickname) => {
+  const handleNicknameChange = () => {
     setNicknameModalVisible(false);
   }
 
@@ -103,7 +103,7 @@ const SettingsScreen = () => {
       <Text style={styles.title}>설정</Text>
 
 
-      <View style={[styles.section, { marginTop: 15 }]}>
+      <View style={styles.section}>
         <FontAwesome name="user-circle" size={24} color="#009688" />
         <Text style={[styles.label, styles.labelSpacing]}>계정</Text>
       </View>
