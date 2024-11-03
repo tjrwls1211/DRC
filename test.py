@@ -41,7 +41,7 @@ hx2.tare()
 
 # MQTT 설정
 client = mqtt.Client()
-client.connect(ip(), 1883, 60)
+client.connect(ip(), 1222, 60)
 
 pygame.mixer.init()
 
