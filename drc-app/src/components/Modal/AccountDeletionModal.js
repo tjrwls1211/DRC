@@ -23,8 +23,9 @@ const AccountDeletionModal = ({ visible, onClose }) => {
         setIsVerified(false);
       }
     } catch (error) {
-      console.error('비밀번호 검증 중 오류 발생:', error);
-      setVerificationMessage("비밀번호 검증 중 오류가 발생했습니다.");
+      console.error('비밀번호 검증 에러:', error.response.data);
+      setVerificationMessage(error.response.data.message); // 서버 반환한 에러 메시지 사용
+      setIsVerified(false);
     }
   };
 
@@ -78,7 +79,7 @@ const AccountDeletionModal = ({ visible, onClose }) => {
           {verificationMessage ? (
             <Text style={[
               styles.verificationText, 
-              verificationMessage.includes("틀렸습니다.") ? styles.error : 
+              verificationMessage.includes("틀렸습니다.") || verificationMessage.includes("비밀번호가 일치하지 않습니다") ? styles.error : 
               verificationMessage.includes("인증되었습니다.") ? styles.success : 
               styles.default
             ]}>

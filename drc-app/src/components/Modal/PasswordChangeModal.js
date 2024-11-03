@@ -20,7 +20,8 @@ const PasswordChangeModal = ({ visible, onClose, onConfirm }) => {
       setVerificationMessage(isCorrect ? "인증되었습니다" : "비밀번호가 틀렸습니다");
     } catch (error) {
       setIsVerified(false);
-      setVerificationMessage("비밀번호 인증 중 오류가 발생했습니다");
+      console.log("비밀번호 인증 실패 에러", error.response.data);
+      setVerificationMessage(error.response.data.message);
     }
   };
 
