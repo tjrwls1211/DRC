@@ -23,10 +23,11 @@ import com.trustping.DTO.MyDataResponseDTO;
 import com.trustping.DTO.OtpResponseDTO;
 import com.trustping.DTO.PasswordDTO;
 import com.trustping.DTO.ResponseDTO;
+import com.trustping.DTO.SAclDTO;
 import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.entity.UserData;
 import com.trustping.repository.UserDataRepository;
-import com.trustping.security.JwtUtil;
+import com.trustping.utils.JwtUtil;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
@@ -57,12 +58,24 @@ public class UserDataServiceImpl implements UserDataService {
 		return userDataRepository.findById(id).map(UserData::getOtpKey);
 	}
 
+	// 차 번호 조회
+	public String getCarIdById(String id) {
+		Optional<UserData> userData = userDataRepository.findById(id);
+
+		// UserData가 존재하는지 확인
+		if (userData.isPresent()) {
+			String carId = userData.get().getCarId();
+			return carId;
+		} else {
+			return null;
+		}
+	}
+
 	// 비밀번호 확인
 	/*
-	public boolean verifyPassword(String rawPassword, String encodedPassword) {
-		return passwordEncoder.matches(rawPassword, encodedPassword);
-	}
-	*/
+	 * public boolean verifyPassword(String rawPassword, String encodedPassword) {
+	 * return passwordEncoder.matches(rawPassword, encodedPassword); }
+	 */
 
 	// 회원가입
 	@Override
@@ -73,12 +86,8 @@ public class UserDataServiceImpl implements UserDataService {
 		}
 
 		String hashedPassword = passwordEncoder.encode(request.getPw());
-		UserData userData = new UserData(request.getId(), 
-				hashedPassword, 
-				request.getNickname(), 
-				request.getBirthDate(),
-				request.getCarId(), 
-				null, // OTP 키 초기값
+		UserData userData = new UserData(request.getId(), hashedPassword, request.getNickname(), request.getBirthDate(),
+				request.getCarId(), null, // OTP 키 초기값
 				"ROLE_USER");
 
 		userDataRepository.save(userData);
@@ -168,21 +177,21 @@ public class UserDataServiceImpl implements UserDataService {
 	public MfaResponseDTO verifyGoogleMFA(MfaRequestDTO mfaRequestDTO) {
 		GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
 		String id = mfaRequestDTO.getId();
-		
+
 		// Optional을 사용하여 OTP 키를 가져옴
 		Optional<String> otpKeyOptional = getOtpKeyById(id);
-		
+
 		// OTP 키가 존재하지 않을 경우 처리
 		if (otpKeyOptional.isEmpty()) {
 			return new MfaResponseDTO(null, false, "존재하지 않는 사용자 ID");
 		}
-		
+
 		// OTP 키가 존재하면 인증 진행
 		String otpKey = otpKeyOptional.get();
 		boolean verify = googleAuthenticator.authorize(otpKey, mfaRequestDTO.getKey());
 
 		if (verify) {
-			
+
 			// JWT 토큰 생성
 			String jwtToken = jwtUtil.generateToken(id);
 			return new MfaResponseDTO(jwtToken, true, "인증 성공");
@@ -196,39 +205,39 @@ public class UserDataServiceImpl implements UserDataService {
 	public UpdateResponseDTO modifyNickname(String jwtToken, UpdateNicknameDTO updateNicknameDTO) {
 		String userId = jwtUtil.extractUsername(jwtToken);
 		String newNickname = updateNicknameDTO.getNickname();
-	    Optional<UserData> userDataOptional = userDataRepository.findById(userId);
-	    
-	    // 사용자가 존재하지 않을 경우 처리
-	    if (userDataOptional.isEmpty()) {
-	        return new UpdateResponseDTO(false, "ID가 존재하지 않습니다 : " + userId, null);
-	    }
-	    
-	    UserData userData = userDataOptional.get();
+		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
+
+		// 사용자가 존재하지 않을 경우 처리
+		if (userDataOptional.isEmpty()) {
+			return new UpdateResponseDTO(false, "ID가 존재하지 않습니다 : " + userId, null);
+		}
+
+		UserData userData = userDataOptional.get();
 		userData.setNickname(newNickname);
 		userDataRepository.save(userData);
 		return new UpdateResponseDTO(true, "닉네임이 변경 되었습니다", newNickname);
 	}
-	
+
 	// 비밀번호 인증
 	@Override
 	public ResponseDTO verifyPassword(String jwtToken, PasswordDTO passwordDTO) {
-	    String userId = jwtUtil.extractUsername(jwtToken);
-	    String password = passwordDTO.getPw();
-	    Optional<UserData> userDataOptional = userDataRepository.findById(userId);
-	    
-	    // 사용자가 존재하지 않을 경우 처리
-	    if (userDataOptional.isEmpty()) {
-	        return new ResponseDTO(false, "ID가 존재하지 않습니다 : " + userId);
-	    }
-	    
-	    UserData userData = userDataOptional.get();
-	    
-	    // 비밀번호가 일치하지 않을 경우
-	    if (!passwordEncoder.matches(password, userData.getPw())) {
-	        return new ResponseDTO(false, "비밀번호가 일치하지 않습니다");
-	    }
-	    
-	    return new ResponseDTO(true, "비밀번호가 일치합니다");
+		String userId = jwtUtil.extractUsername(jwtToken);
+		String password = passwordDTO.getPw();
+		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
+
+		// 사용자가 존재하지 않을 경우 처리
+		if (userDataOptional.isEmpty()) {
+			return new ResponseDTO(false, "ID가 존재하지 않습니다 : " + userId);
+		}
+
+		UserData userData = userDataOptional.get();
+
+		// 비밀번호가 일치하지 않을 경우
+		if (!passwordEncoder.matches(password, userData.getPw())) {
+			return new ResponseDTO(false, "비밀번호가 일치하지 않습니다");
+		}
+
+		return new ResponseDTO(true, "비밀번호가 일치합니다");
 	}
 
 	// 비밀번호 변경
@@ -236,22 +245,22 @@ public class UserDataServiceImpl implements UserDataService {
 	public ResponseDTO modifyPassword(String jwtToken, PasswordDTO passwordDTO) {
 		String userId = jwtUtil.extractUsername(jwtToken);
 		String newPassword = passwordDTO.getPw();
-	    Optional<UserData> userDataOptional = userDataRepository.findById(userId);
-	    
-	    // 사용자가 존재하지 않을 경우 처리
-	    if (userDataOptional.isEmpty()) {
-	        return new ResponseDTO(false, "ID가 존재하지 않습니다 : " + userId);
-	    }
-	    
-	    UserData userData = userDataOptional.get();
-		
-	    String newHashedPassword = passwordEncoder.encode(newPassword);
-		
-	    userData.setPw(newHashedPassword);
+		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
+
+		// 사용자가 존재하지 않을 경우 처리
+		if (userDataOptional.isEmpty()) {
+			return new ResponseDTO(false, "ID가 존재하지 않습니다 : " + userId);
+		}
+
+		UserData userData = userDataOptional.get();
+
+		String newHashedPassword = passwordEncoder.encode(newPassword);
+
+		userData.setPw(newHashedPassword);
 		userDataRepository.save(userData);
 		return new ResponseDTO(true, "비밀번호가 변경 되었습니다");
 	}
-	
+
 	// 마이페이지 데이터 확인
 	@Override
 	public MyDataResponseDTO getMyDataByToken(String jwtToken) {
@@ -268,26 +277,25 @@ public class UserDataServiceImpl implements UserDataService {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public ResponseDTO deleteUser(String jwtToken, PasswordDTO passwordDTO) {
-	    String userId = jwtUtil.extractUsername(jwtToken);
-	    String password = passwordDTO.getPw();
-	    Optional<UserData> userDataOptional = userDataRepository.findById(userId);
-	    
-	    // 사용자가 존재하지 않을 경우 처리
-	    if (userDataOptional.isEmpty()) {
-	        return new ResponseDTO(false, "ID가 존재하지 않습니다 : " + userId);
-	    }
-	    
-	    UserData userData = userDataOptional.get();
-	    
-	    // 비밀번호가 일치하지 않을 경우
-	    if (!passwordEncoder.matches(password, userData.getPw())) {
-	        return new ResponseDTO(false, "비밀번호가 일치하지 않습니다");
-	    }
-	    
-	    // 사용자 삭제
-	    userDataRepository.delete(userData);
-	    return new ResponseDTO(true, "회원 탈퇴 되었습니다");
-	}
+		String userId = jwtUtil.extractUsername(jwtToken);
+		String password = passwordDTO.getPw();
+		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
 
+		// 사용자가 존재하지 않을 경우 처리
+		if (userDataOptional.isEmpty()) {
+			return new ResponseDTO(false, "ID가 존재하지 않습니다 : " + userId);
+		}
+
+		UserData userData = userDataOptional.get();
+
+		// 비밀번호가 일치하지 않을 경우
+		if (!passwordEncoder.matches(password, userData.getPw())) {
+			return new ResponseDTO(false, "비밀번호가 일치하지 않습니다");
+		}
+
+		// 사용자 삭제
+		userDataRepository.delete(userData);
+		return new ResponseDTO(true, "회원 탈퇴 되었습니다");
+	}
 
 }

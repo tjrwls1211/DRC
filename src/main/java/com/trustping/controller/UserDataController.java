@@ -26,8 +26,8 @@ import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.DTO.TokenValidationDTO;
 import com.trustping.DTO.UpdateNicknameDTO;
 import com.trustping.DTO.UpdateResponseDTO;
-import com.trustping.security.JwtUtil;
 import com.trustping.service.UserDataService;
+import com.trustping.utils.JwtUtil;
 
 import jakarta.validation.Valid;
 

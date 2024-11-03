@@ -18,6 +18,7 @@ public class AbnormalDataStorageService {
 	@Autowired
 	private AbnormalDataRepository abnormalDataRepository;
 
+	// 비정상 주행 데이터 저장
 	public void saveMessage(String message) {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();

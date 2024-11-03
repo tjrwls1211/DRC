@@ -40,6 +40,8 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5' // jwt 의존성
 	compileOnly 'org.projectlombok:lombok' // lombok 의존성
 	annotationProcessor 'org.projectlombok:lombok' // lombok 의존성 2
+	implementation 'org.apache.poi:poi-ooxml:5.2.3' // apache poi 의존성
+	implementation 'org.apache.poi:poi:5.2.3' // apache poi 의존성
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

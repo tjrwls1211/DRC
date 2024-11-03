@@ -26,4 +26,5 @@ public interface UserDataService {
 	public UpdateResponseDTO modifyNickname(String jwtToken, UpdateNicknameDTO modifyNicknameDTO);
 	public ResponseDTO verifyPassword(String jwtToken, PasswordDTO passwordDTO);
 	public ResponseDTO modifyPassword(String jwtToken, PasswordDTO passwordDTO);
+	public String getCarIdById(String id);
 }

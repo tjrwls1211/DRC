@@ -22,17 +22,7 @@ public class AbnormalDataServiceImpl implements AbnormalDataService{
 	@Autowired
 	private UserDataRepository userDataRepository;
 	
-	/*
-	public SAclDTO getSaclByCarIdAndDate(String carId, LocalDate date) {
-	    Optional<SAclDTO> result = abnormalDataRepository.findSAclByCarIdAndDate(carId, date);
-	    if (result.isEmpty()) {
-	        return null;
-	    }
-	    
-        return result.get();
-	}
-	*/
-	
+	@Override
 	public SAclDTO getSAclByCarIdAndDate(String id, LocalDate date) {
 	    Optional<UserData> userData = userDataRepository.findById(id);
 	    
@@ -50,7 +40,7 @@ public class AbnormalDataServiceImpl implements AbnormalDataService{
 	    }
 	}
 
-	
+	@Override
 	public SBrkDTO getSBrkByCarIdAndDate(String id, LocalDate date) {
 	    Optional<UserData> userData = userDataRepository.findById(id);
 	    
@@ -68,6 +58,7 @@ public class AbnormalDataServiceImpl implements AbnormalDataService{
 	    }
 	}
 	
+	@Override
 	public BothPedalDTO getBothPedalByCarIdAndDate(String id, LocalDate date) {
 	    Optional<UserData> userData = userDataRepository.findById(id);
 	    

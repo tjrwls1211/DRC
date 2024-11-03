@@ -15,18 +15,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.trustping.DTO.MfaResponseDTO;
 import com.trustping.entity.AbnormalData;
-import com.trustping.entity.PedalLog;
+import com.trustping.entity.DriveLog;
 import com.trustping.repository.AbnormalDataRepository;
-import com.trustping.repository.PedalLogRepository;
+import com.trustping.repository.DriveLogRepository;
 
 @Service
-public class PedalLogStorageService {
+public class DriveLogStorageService {
 
 	@Autowired
-	private PedalLogRepository pedalLogRepository;
+	private DriveLogRepository pedalLogRepository;
 
 	@Autowired
-	private PedalLogService pedalLogService;
+	private DriveLogService pedalLogService;
 
 	// 정상 주행 데이터 삭제
 	@Scheduled(fixedRate = 10000)
@@ -35,12 +35,12 @@ public class PedalLogStorageService {
 		pedalLogService.deleteOldNormalLogs(targetTime);
 	}
 
-	// 페달 로그와 비정상 주행 데이터 저장
+	// 페달 로그 저장
 	public void saveMessage(String message) {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			objectMapper.registerModule(new JavaTimeModule());
-			PedalLog pedalLog = objectMapper.readValue(message, PedalLog.class);
+			DriveLog pedalLog = objectMapper.readValue(message, DriveLog.class);
 		
 			pedalLogRepository.save(pedalLog);
 			

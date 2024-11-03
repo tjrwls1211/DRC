@@ -16,7 +16,7 @@ import com.trustping.config.EnvConfig;
 import jakarta.annotation.PostConstruct;
 
 @Service
-public class PedalLogSubscribeService implements MqttCallback {
+public class DriveLogSubscribeService implements MqttCallback {
 
     @Autowired
     @Qualifier("pedalLogMqttClient")
@@ -26,7 +26,7 @@ public class PedalLogSubscribeService implements MqttCallback {
     private EnvConfig envConfig; // 구독 토픽도 가져옴
     
     @Autowired
-    private PedalLogStorageService pedalLogStorageService;
+    private DriveLogStorageService pedalLogStorageService;
     
     @PostConstruct
     public void subscribeToTopic() {

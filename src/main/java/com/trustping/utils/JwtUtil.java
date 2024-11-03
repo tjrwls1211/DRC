@@ -1,4 +1,4 @@
-package com.trustping.security;
+package com.trustping.utils;
 
 import java.security.Key;
 import java.util.Date;
