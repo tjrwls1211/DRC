@@ -96,7 +96,7 @@ speed_text = canvas_speed.create_text(
     text="0",  # 초기 텍스트
     font=font_large,
     fill="white",
-    angle=180  # 상하 반전
+    #angle=180  # 상하 반전
 )
 
 # pygame 초기화
