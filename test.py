@@ -84,13 +84,15 @@ def play_sounds_in_sequence(sounds):
     is_playing_sounds = False
 
 # 사용자 정의 QLabel 클래스 (상하좌우 반전된 텍스트 출력)
+# FlippedTextLabel 클래스
 class FlippedTextLabel(QLabel):
     def __init__(self, text, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text = text
         self.setFont(QFont("Arial", 40))
-        self.setStyleSheet("background-color: black; color: white;")  # 배경과 텍스트 색상 설정
-        self.setFixedSize(160, 50)        
+        self.setStyleSheet("background-color: black; color: white;")
+        self.setFixedSize(200, 100)  # 크기 조정
+
     def set_flipped_text(self, text):
         self.text = text
         self.update()
@@ -101,59 +103,47 @@ class FlippedTextLabel(QLabel):
         painter.setRenderHint(QPainter.Antialiasing)
         painter.translate(self.width(), self.height())
         painter.rotate(180)  # 상하 반전
-        painter.drawText(-self.width(), -self.height() + 50, self.text[::-1])  # 좌우 반전
+        painter.drawText(-self.width(), -self.height() + 30, self.text[::-1])  # 텍스트 위치 조정
         painter.end()
 
-# GUI 클래스
+# GUI 클래스에서 레이아웃
 class CarDisplay(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Car Driving Display")
         self.setGeometry(100, 100, 1000, 600)
         self.setStyleSheet("background-color: black;")
-        # 메인 레이아웃
         main_layout = QVBoxLayout()
 
-        # 상단 레이아웃
         top_layout = QHBoxLayout()
 
-        # 브레이크 이미지 (왼쪽 상단)
         self.brake_pixmap_normal = QPixmap("brake_normal.png").transformed(QTransform().scale(-1, -1))
         self.brake_pixmap_dark = QPixmap("brake_dark.png").transformed(QTransform().scale(-1, -1))
         self.brake_label = QLabel()
         self.brake_label.setPixmap(self.brake_pixmap_normal)
         top_layout.addWidget(self.brake_label, alignment=Qt.AlignLeft | Qt.AlignTop)
 
-        # 엑셀 이미지 (오른쪽 상단)
         self.accel_pixmap_normal = QPixmap("accel_normal.png").transformed(QTransform().scale(-1, -1))
         self.accel_pixmap_dark = QPixmap("accel_dark.png").transformed(QTransform().scale(-1, -1))
         self.accel_label = QLabel()
         self.accel_label.setPixmap(self.accel_pixmap_normal)
         top_layout.addWidget(self.accel_label, alignment=Qt.AlignRight | Qt.AlignTop)
 
-        # 상단 레이아웃 추가
         main_layout.addLayout(top_layout)
-
-        # 여유 공간 추가
-        main_layout.addStretch()
 
         # 중앙 하단 텍스트 레이블
         self.speed_label = FlippedTextLabel("속도: 0", self)
-        #self.speed_label.setStyleSheet("background-color: red; color: white;")  # 빨간색 배경으로 임시 확인
-        main_layout.addWidget(self.speed_label, alignment=Qt.AlignBottom | Qt.AlignCenter)
+        main_layout.addWidget(self.speed_label, alignment=Qt.AlignCenter)  # 정중앙에 배치
 
-        # 레이아웃 설정
         self.setLayout(main_layout)
 
-        # 주기적으로 디스플레이 업데이트
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_display)
         self.timer.start(1000)
 
     def update_display(self):
-        # 중앙 하단에 "aclPedal" 값 출력
-        acl_pedal_value = data.get('aclPedal', 0)  # None 방지 및 기본값 설정
-        flipped_speed = str(int(acl_pedal_value))  # 정수로 변환 후 문자열로 변환
+        acl_pedal_value = data.get('aclPedal', 0)
+        flipped_speed = str(int(acl_pedal_value))
         self.speed_label.set_flipped_text(f"{flipped_speed}km")
 
     def update_images(self, accel_value, brake_value):
