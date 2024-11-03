@@ -110,23 +110,23 @@ class CarDisplay(QWidget):
         self.setGeometry(100, 100, 1000, 600)
         self.setStyleSheet("background-color: black;")
 
-        # 브레이크 이미지 (상하좌우 반전)
-        self.brake_pixmap_normal = QPixmap("brake_normal.png").transformed(QTransform().scale(-1, -1))
-        self.brake_pixmap_dark = QPixmap("brake_dark.png").transformed(QTransform().scale(-1, -1))
-        self.brake_label = QLabel(self)
-        self.brake_label.setPixmap(self.brake_pixmap_normal)
-        self.brake_label.setGeometry(20, 10, 500, 400)  # (x, y, width, height)
-
-        # 엑셀 이미지 (상하좌우 반전)
+        # 엑셀 이미지 레이블 (오른쪽 상단, 벽면에서 20픽셀 떨어짐)
         self.accel_pixmap_normal = QPixmap("accel_normal.png").transformed(QTransform().scale(-1, -1))
         self.accel_pixmap_dark = QPixmap("accel_dark.png").transformed(QTransform().scale(-1, -1))
         self.accel_label = QLabel(self)
         self.accel_label.setPixmap(self.accel_pixmap_normal)
-        self.accel_label.setGeometry(730, 10, 500, 400)  # (x, y, width, height)
+        self.accel_label.setGeometry(780, 20, 200, 200)  # 오른쪽 20픽셀, 위쪽 20픽셀에서 위치
 
-        # 속도 텍스트 레이블 (중앙 하단)
+        # 브레이크 이미지 레이블 (왼쪽 상단, 벽면에서 20픽셀 떨어짐)
+        self.brake_pixmap_normal = QPixmap("brake_normal.png").transformed(QTransform().scale(-1, -1))
+        self.brake_pixmap_dark = QPixmap("brake_dark.png").transformed(QTransform().scale(-1, -1))
+        self.brake_label = QLabel(self)
+        self.brake_label.setPixmap(self.brake_pixmap_normal)
+        self.brake_label.setGeometry(20, 20, 200, 200)  # 왼쪽 20픽셀, 위쪽 20픽셀에서 위치
+
+        # 속도 텍스트 레이블 (중앙 하단, 하단 벽에서 40픽셀 떨어짐)
         self.speed_label = FlippedTextLabel("속도: 0", self)
-        self.speed_label.setGeometry(340, 5, 200, 50)  # (x, y, width, height)
+        self.speed_label.setGeometry(400, 520, 200, 50)  # 중앙 하단에서 40픽셀 위로 위치
 
         # 주기적으로 디스플레이 업데이트
         self.timer = QTimer()
