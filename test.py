@@ -132,6 +132,7 @@ class CarDisplay(QWidget):
 
         # 속도 텍스트 레이블 (중앙 하단)
         self.speed_label = FlippedTextLabel("속도: 0")
+        main_layout.addSpacing(50)
         main_layout.addWidget(self.speed_label, alignment=Qt.AlignCenter)
 
         self.setLayout(main_layout)
@@ -159,24 +160,26 @@ class CarDisplay(QWidget):
             self.brake_label.setPixmap(self.brake_pixmap_normal)
 
 def check_info(accel_value, brake_value, window):
-    global last_accel_time, is_accelerating, stop_sounds
-    window.update_images(accel_value, brake_value)
+    global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds, prev_mqtt_state
 
-    stop_sounds = True  # 이전 음성 재생 중단 플래그 설정
-
-    state = "Normal Driving"
     mqtt_state = None
 
     # 급발진 상태
     if accel_value > 200 and brake_value <= 30:
+        state = "Rapid Acceleration"
+        window.update_images(accel_value, brake_value)
+        mqtt_state = 1
+
         if not is_accelerating:
             last_accel_time = time.time()
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_accel_time
-            if elapsed_time >= 4:
-                state = "Rapid Acceleration"
-                mqtt_state = 1
+            if elapsed_time >= 4 and not is_playing_sounds:
+                stop_sounds = True  
+                time.sleep(0.2)  # 이전 스레드 종료 대기
+                
+                # 모든 음성 파일을 순차 재생
                 sounds = [
                     rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound,
                     nobrake_1_sound, nobrake_2_sound, nobrake_3_sound,
@@ -185,30 +188,39 @@ def check_info(accel_value, brake_value, window):
                 ]
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 last_accel_time = time.time()
-    else:
-        # 급발진 상태가 아니면 가속 중단
-        is_accelerating = False
 
-    # 브레이크를 밟았을 때 음성 중단
-    if brake_value > 200:
+    # 급정거 상태
+    elif brake_value > 200 and accel_value <= 30:
         state = "Rapid Braking"
+        window.update_images(accel_value, brake_value)
         mqtt_state = 2
-        stop_sounds = True
+        is_accelerating = False
+        stop_sounds = True  # 음성 중단
 
-    # 양발 운전 시 음성 중단
+    # 양발 운전 상태
     elif accel_value > 100 and brake_value > 100:
         state = "Both Feet Driving"
+        window.update_images(accel_value, brake_value)
         mqtt_state = 3
-        stop_sounds = True
+        is_accelerating = False
+        stop_sounds = True  # 음성 중단
 
-    # MQTT 메시지 전송
-    if mqtt_state is not None:
+    # 일반 주행 상태
+    else:
+        state = "Normal Driving"
+        window.update_images(accel_value, brake_value)
+        is_accelerating = False
+        stop_sounds = True  # 음성 중단
+
+    # 상태가 변경되고 mqtt_state가 None이 아닐 때만 MQTT 전송    
+    if mqtt_state is not None and mqtt_state != prev_mqtt_state:
         alert_data = {
             "carId": 1234,
             "state": mqtt_state
         }
         print(alert_data)
         client.publish('AbnormalDriving', json.dumps(alert_data), 0, retain=False)
+        prev_mqtt_state = mqtt_state  # 이전 상태 갱신
 
 # 음성 재생 함수 수정 (중단 기능 포함)
 def play_sounds_in_sequence(sounds):
@@ -220,12 +232,12 @@ def play_sounds_in_sequence(sounds):
         if stop_sounds:  # 상태 변화 시 재생 중단
             break
         sound.play()
-        while sound.get_busy():
+        while pygame.mixer.get_busy():  # 현재 믹서에서 사운드가 재생 중인지 확인
             if stop_sounds:
-                sound.stop()
+                pygame.mixer.stop()  # 재생 중단
                 break
-            time.sleep(0.1)
-        time.sleep(3)
+            time.sleep(0.1)  # 비차단 대기
+        time.sleep(3)  # 사운드 간 간격
 
     is_playing_sounds = False
 
