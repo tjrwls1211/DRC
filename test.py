@@ -1,6 +1,6 @@
 import sys
-import time
 import threading
+import time
 import RPi.GPIO as GPIO
 from datetime import datetime
 from hx711 import HX711
@@ -132,9 +132,6 @@ class CarDisplay(QWidget):
 
         # 상단 레이아웃 추가
         main_layout.addLayout(top_layout)
-
-        # 여유 공간 추가
-        #main_layout.addSpacing(20)  # 이미지와 텍스트 레이블 사이의 공간
 
         # 중앙 텍스트 레이아웃 (살짝 하단으로 배치)
         self.speed_label = FlippedTextLabel("속도: 0", self)
