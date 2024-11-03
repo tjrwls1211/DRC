@@ -90,7 +90,7 @@ class FlippedTextLabel(QLabel):
         self.text = text
         self.setFont(QFont("Arial", 40))
         self.setStyleSheet("background-color: black; color: white;")  # 배경과 텍스트 색상 설정
-
+        self.setFixedSize(160, 50)        
     def set_flipped_text(self, text):
         self.text = text
         self.update()
@@ -111,7 +111,6 @@ class CarDisplay(QWidget):
         self.setWindowTitle("Car Driving Display")
         self.setGeometry(100, 100, 1000, 600)
         self.setStyleSheet("background-color: black;")
-        self.setFixedSize(160, 50)
         # 메인 레이아웃
         main_layout = QVBoxLayout()
 
