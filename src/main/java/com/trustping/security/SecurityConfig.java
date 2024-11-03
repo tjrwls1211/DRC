@@ -26,10 +26,21 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // 세션 사용 안함 (Stateless)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/user/**").permitAll()  // 인증 없이 접근 가능
-                .requestMatchers("/api/abnormal/**").permitAll()
-                .anyRequest().authenticated()  // 그 외 요청은 인증 필요
-            )
+                    .requestMatchers("/api/user/check").permitAll() 
+                    .requestMatchers("/api/user/signUp").permitAll() 
+                    .requestMatchers("/api/user/login").permitAll()  
+                    .requestMatchers("/api/user/otp").hasRole("USER")
+                    .requestMatchers("/api/user/mfa").permitAll()
+                    .requestMatchers("/api/user/myData").hasRole("USER")  
+                    .requestMatchers("/api/user/modifyNickname").hasRole("USER")
+                    .requestMatchers("/api/user/verifyPassword").hasRole("USER")
+                    .requestMatchers("/api/user/modifyPassword").hasRole("USER")  
+                    .requestMatchers("/api/user/deleteUser").hasRole("USER") 
+                    .requestMatchers("/api/user/validate").permitAll() 
+            	    .requestMatchers("/api/abnormal/**").hasRole("USER")
+            	    .requestMatchers("/api/driveLog/**").hasRole("USER")
+            	    .anyRequest().authenticated()  // 그 외 요청은 인증 필요
+            	)
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);  // JWT 필터 추가
         	
         return http.build();

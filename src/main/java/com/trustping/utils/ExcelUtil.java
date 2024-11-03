@@ -26,7 +26,6 @@ public class ExcelUtil {
         try (ServletOutputStream outputStream = response.getOutputStream();
              PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"))) { // UTF-8로 인코딩 설정
             
-            // UTF-8 BOM 추가
             writer.write("\uFEFF"); // UTF-8 BOM
             
             // 헤더 작성

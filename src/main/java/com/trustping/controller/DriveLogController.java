@@ -22,7 +22,7 @@ import com.trustping.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api/pedalLog")
+@RequestMapping("/api/driveLog")
 public class DriveLogController {
 	
 	@Autowired
@@ -44,7 +44,7 @@ public class DriveLogController {
 		return ResponseEntity.ok(pedalLogs);
 	}
 
-	@GetMapping(value = "/excel/download")
+	@GetMapping(value = "/download")
 	public void excelDownload(@RequestHeader("Authorization") String token, HttpServletResponse response, @RequestParam(name = "date") String date) {
 	    LocalDate searchDate = LocalDate.parse(date); 
 	    String jwtToken = token.substring(7);
@@ -55,8 +55,6 @@ public class DriveLogController {
 	    List<DriveLogExcelDTO> driveLogs = driveLogService.exportDriveLog(carId, searchDate);
 
 	    // 다운로드 수행
-	    excelUtil.download(DriveLogExcelDTO.class, driveLogs, "DriveLogDownload", response);
+	    excelUtil.download(DriveLogExcelDTO.class, driveLogs,"DriveLog_"+searchDate, response);
 	}
-
-
 }

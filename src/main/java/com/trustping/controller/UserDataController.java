@@ -157,7 +157,6 @@ public class UserDataController {
 	    }
 	}
 
-
 	// JWT 토큰 유효성 검사
 	@GetMapping("/validate")
 	public ResponseEntity<TokenValidationDTO> validateToken(@RequestHeader(value = "Authorization") String token) {
