@@ -8,7 +8,6 @@ import PasswordChangeModal from '../components/Modal/PasswordChangeModal.js';
 import AccountDeletionModal from '../components/Modal/AccountDeletionModal.js';
 import LogoutModal from '../components/Modal/LogoutModal.js';
 import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차인증 필요 상태 Context import
-import QRCode from 'react-native-qrcode-svg'; // QR 코드 생성을 위한 라이브러리 추가
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
 import * as Clipboard from 'expo-clipboard'; // 클립보드 작업을 위한 라이브러리
@@ -41,7 +40,7 @@ const SettingsScreen = () => {
       setQrUrl(qrUrl); // QR URL을 상태에 저장
       setOtpKey(otpKey); 
       setModalVisible(true); // 모달을 열도록 설정
-      Alert.alert("QR 코드가 생성되었습니다.", "QR 코드를 스캔하여 OTP를 설정하세요."); // 알림 표시
+      Alert.alert("OTP 인증 정보가 생성되었습니다.", "QR 코드를 스캔하거나 설정 key를 사용하여 OTP 코드를 생성하세요."); // 알림 표시
     } else {
       console.log("2차인증 비활성");
       await disableTwoFactorAuth(); // 비활성화 함수 호출
@@ -68,7 +67,6 @@ const SettingsScreen = () => {
   const handlePasswordChange = (newPassword) => {
     console.log('New password:', newPassword);
     setPasswordModalVisible(false);
-    // 비밀번호 변경 로직 - 추후 구현
   };
 
   const handleLogout = async () => {
@@ -133,7 +131,7 @@ const SettingsScreen = () => {
           </TouchableOpacity>
           <Text style={styles.modalTitle}>2차 인증 정보</Text>
           <View style={styles.otpKeyContainer}>
-            <Text style={styles.otpKey}>OTP 키: {otpKey}</Text>
+            <Text style={styles.otpKey}>OTP 설정 키: {otpKey}</Text>
             <TouchableOpacity onPress={handleCopyOtpKey}>
               <MaterialIcons name="content-copy" size={24} color="#009688" />
             </TouchableOpacity>
@@ -166,7 +164,6 @@ const SettingsScreen = () => {
         visible={deleteModalVisible} 
         onClose={closeModal} // 모달 닫기
       />
-
       <NicknameChangeModal
         visible={nicknameModalVisible}
         onClose={() => setNicknameModalVisible(false)}
