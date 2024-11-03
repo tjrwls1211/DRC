@@ -110,12 +110,13 @@ accel_img_dark_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(accel_
 brake_img_normal_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(brake_img_normal)))
 brake_img_dark_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(brake_img_dark)))
 
-# 이미지 레이블 생성 (상하 좌우 반전된 이미지 적용)
+# 엑셀 이미지 레이블 생성 (상단 오른쪽 배치)
 accel_label = tk.Label(root, image=accel_img_normal_flipped, bg="black")
-accel_label.pack(side="top", padx=20, pady=10, anchor='n')  # 상단 배치
+accel_label.place(relx=0.8, rely=0.1, anchor='n')  # 오른쪽 상단 배치
 
+# 브레이크 이미지 레이블 생성 (상단 왼쪽 배치)
 brake_label = tk.Label(root, image=brake_img_normal_flipped, bg="black")
-brake_label.pack(side="top", padx=20, pady=10, anchor='n')  # 상단 배치
+brake_label.place(relx=0.2, rely=0.1, anchor='n')
 
 # 나중에 지울 데이터 예제
 data = {"driveState": "Drive Ready"}
