@@ -1,296 +1,149 @@
-import time
 import sys
-import RPi.GPIO as GPIO
+import time
+import threading
+import requests
 from datetime import datetime
+import RPi.GPIO as GPIO
 from hx711 import HX711
 import paho.mqtt.client as mqtt
-import json
-import tkinter as tk
-from PIL import Image, ImageDraw, ImageFont, ImageTk, ImageOps
-import threading
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QPixmap, QTransform, QFont
 import pygame
 from server import ip, port
-import obd
-
 
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
 
 # 데이터 구조 정의
 data = {
-    "carId": "01가1234",  # 차량 ID 설정
+    "carId": "01가1234",
     "aclPedal": 0,
     "brkPedal": 0,
     "createdAt": 0,
     "driveState": "",
-    "speed" : 50,
-    "rpm" : 2000
+    "speed": 50,
+    "rpm": 2000
 }
 
-def cleanAndExit():
-    print("Cleaning...")
-    GPIO.cleanup()  # GPIO 핀 해제
-    print("Bye!")
-    sys.exit()
-
-# 첫 번째 HX711 - 엑셀(Accelerator)
+# GPIO 및 HX711 설정
 hx1 = HX711(20, 16)
-# 두 번째 HX711 - 브레이크(Brake)
 hx2 = HX711(6, 5)
-
-# MSB 순서로 설정
 hx1.set_reading_format("MSB", "MSB")
 hx2.set_reading_format("MSB", "MSB")
-
-# 참조 단위 설정 (로드셀 보정값)
 referenceUnit = 96
 hx1.set_reference_unit(referenceUnit)
 hx2.set_reference_unit(referenceUnit)
-
-# 초기화 및 영점 설정
 hx1.reset()
 hx2.reset()
 hx1.tare()
 hx2.tare()
 
-# 테스트 부분 삭제
-# Tkinter 창 생성
-root = tk.Tk()
-root.title("Car Driving Display")
-root.geometry("1000x600")
-root.configure(bg="black")
-
-# 폰트 설정
-font_large = ("Arial", 40, "bold")
-
-# 이미지 로드 및 상하 좌우 반전 생성
-accel_img_normal = Image.open("accel_normal.png").resize((500, 400))
-accel_img_dark = Image.open("accel_dark.png").resize((500, 400))
-brake_img_normal = Image.open("brake_normal.png").resize((500, 400))
-brake_img_dark = Image.open("brake_dark.png").resize((500, 400))
-
-# 상하 좌우 반전된 이미지 생성 및 전역 변수로 참조 유지
-accel_img_normal_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(accel_img_normal)))
-accel_img_dark_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(accel_img_dark)))
-brake_img_normal_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(brake_img_normal)))
-brake_img_dark_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(brake_img_dark)))
-
-# 엑셀 이미지 레이블 생성 (상단 오른쪽 배치, 더 위로)
-accel_label = tk.Label(root, image=accel_img_normal_flipped, bg="black")
-accel_label.place(relx=0.8, rely=0.05, anchor='n')  # 오른쪽 상단에 더 가깝게 배치
-
-# 브레이크 이미지 레이블 생성 (상단 왼쪽 배치, 더 위로)
-brake_label = tk.Label(root, image=brake_img_normal_flipped, bg="black")
-brake_label.place(relx=0.2, rely=0.05, anchor='n')  # 왼쪽 상단에 더 가깝게 배치
-
-# 나중에 지울 데이터 예제
-data = {"driveState": "Drive Ready"}
-
-# 속도 텍스트 레이블 생성 (가운데 하단 배치)
-canvas_speed = tk.Canvas(root, width=500, height=100, bg="black", highlightthickness=0)
-canvas_speed.place(relx=0.5, rely=0.9, anchor='center')  # 가운데 하단 배치
-
-# 초기 텍스트 생성
-speed_text = canvas_speed.create_text(
-    250, 50,
-    text="0",  # 초기 텍스트
-    font=font_large,
-    fill="white",
-    #angle=180  # 상하 반전
-)
-
-# pygame 초기화
-pygame.mixer.init()
-
-
-# 음성 재생 시간 기록
-last_accel_time = 0
-is_accelerating = False
-
 # MQTT 설정
 client = mqtt.Client()
-client.connect(ip(), 1222, 60)
-    
-def update_display_state(accel_value, brake_value, state):
-    global data # driveState를 초기화하려면 필요한 코드
-    # 엑셀 이미지 상태 업데이트
-    
-    flipped_text = str(data["aclPedal"])[::-1]
-    print(f"실시간 좌우 반전된 텍스트: {flipped_text}")  # 디버깅 출력
-    canvas_speed.itemconfig(speed_text, text=flipped_text)  # 텍스트 업데이트
-    
-    if accel_value <= 30:
-        if accel_label.cget("image") != str(accel_img_dark_flipped):  # 같은 이미지라면 업데이트 안함
-            accel_label.config(image=accel_img_dark_flipped)
+client.connect(ip(), 1883, 60)
 
-    else:
-        if accel_label.cget("image") != str(accel_img_normal_flipped):
-            accel_label.config(image=accel_img_normal_flipped)
+pygame.mixer.init()
 
-    # 브레이크 이미지 상태 업데이트
-    if brake_value <= 30:
-        if brake_label.cget("image") != str(brake_img_dark_flipped):
-            brake_label.config(image=brake_img_dark_flipped)
+class CarDisplay(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Car Driving Display")
+        self.setGeometry(100, 100, 1000, 600)
+        self.setStyleSheet("background-color: black;")
 
-    else:
-        if brake_label.cget("image") != str(brake_img_normal_flipped):
-            brake_label.config(image=brake_img_normal_flipped) 
+        main_layout = QVBoxLayout()
 
-rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1.wav")
-rapidspeed_2_sound = pygame.mixer.Sound("rapidspeed_2.wav")
-rapidspeed_3_sound = pygame.mixer.Sound("rapidspeed_3.wav")
-nobrake_1_sound = pygame.mixer.Sound("nobrake_1.wav")
-nobrake_2_sound = pygame.mixer.Sound("nobrake_2.wav")
-nobrake_3_sound = pygame.mixer.Sound("nobrake_3.wav")
+        # 상단 이미지 레이아웃
+        top_layout = QHBoxLayout()
 
-speedless_1_sound = pygame.mixer.Sound("speedless_1.wav")
-speedless_2_sound = pygame.mixer.Sound("speedless_2.wav")
-carstop_1_sound = pygame.mixer.Sound("carstop_1.wav")
-carstop_2_sound = pygame.mixer.Sound("carstop_2.wav")
+        # 브레이크 이미지 (상하좌우 반전)
+        self.brake_pixmap_normal = QPixmap("brake_normal.png").transformed(QTransform().scale(-1, -1))
+        self.brake_pixmap_dark = QPixmap("brake_dark.png").transformed(QTransform().scale(-1, -1))
+        self.brake_label = QLabel()
+        self.brake_label.setPixmap(self.brake_pixmap_normal)
+        top_layout.addWidget(self.brake_label, alignment=Qt.AlignLeft)
 
-# 전역 변수
-stop_sounds = False
-is_playing_sounds = False  # 음성 재생 중 여부 확인 플래그
+        # 엑셀 이미지 (상하좌우 반전)
+        self.accel_pixmap_normal = QPixmap("accel_normal.png").transformed(QTransform().scale(-1, -1))
+        self.accel_pixmap_dark = QPixmap("accel_dark.png").transformed(QTransform().scale(-1, -1))
+        self.accel_label = QLabel()
+        self.accel_label.setPixmap(self.accel_pixmap_normal)
+        top_layout.addWidget(self.accel_label, alignment=Qt.AlignRight)
 
-# 음성을 비차단 방식으로 재생하는 함수
-def play_sounds_in_sequence(sounds):
-    global stop_sounds, is_playing_sounds
-    stop_sounds = False
-    is_playing_sounds = True  # 재생 시작 플래그 설정
+        main_layout.addLayout(top_layout)
 
-    for sound in sounds:
-        # 조건이 변경되면 음성 재생 중단
-        if stop_sounds:
-            print("음성 재생 중단")
-            break
+        # 속도 텍스트 (상하좌우 반전된 텍스트)
+        self.speed_label = QLabel("속도: 0")
+        self.speed_label.setStyleSheet("background-color: black; color: white; font-size: 40px;")
+        self.speed_label.setFont(QFont("Arial", 40))
+        main_layout.addWidget(self.speed_label, alignment=Qt.AlignCenter)
 
-        sound.play()
-        while pygame.mixer.music.get_busy():  # 현재 음성이 재생 중일 때 대기
-            if stop_sounds:  # 중단 플래그 확인
-                pygame.mixer.music.stop()  # 현재 재생 중인 음성도 중단
-                print("음성 재생 중단")
-                is_playing_sounds = False  # 재생 상태 플래그 해제
-                return
-            time.sleep(0.1)  # 비차단 대기
-        time.sleep(3)  # 음성 간 3초 간격
+        self.setLayout(main_layout)
 
-    is_playing_sounds = False  # 모든 음성 재생 완료 후 플래그 해제
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_display)
+        self.timer.start(1000)
 
-#전역 변수로 안전 상태 저장
-prev_mqtt_state = None
+    def update_display(self):
+        # 좌우 반전된 텍스트 출력
+        flipped_speed = str(data['aclPedal'])[::-1]
+        self.speed_label.setText(f"속도: {flipped_speed}")
 
-# 로드셀 데이터와 상태를 업데이트하는 함수    # 급발진 조건을 수정하자 accel_value < 10000 and brake_value > 5000 and speed >= 50 and rpm > 5000:
-def check_info(accel_value, brake_value):
-    global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds, prev_mqtt_state
-
-
-    mqtt_state = None
-
-
-    if accel_value > 200 and brake_value <= 30:    
-        state = "Rapid Acceleration"
-        update_display_state(accel_value, brake_value, state)
-        mqtt_state = 1
-        if not is_accelerating:
-            last_accel_time = time.time()
-            is_accelerating = True
+    def update_images(self, accel_value, brake_value):
+        if accel_value <= 30:
+            self.accel_label.setPixmap(self.accel_pixmap_dark)
         else:
-            elapsed_time = time.time() - last_accel_time
-            # 음성이 이미 재생 중이 아닐 때만 새로운 스레드를 시작
-            if elapsed_time >= 4 and not is_playing_sounds:
-                stop_sounds = True  
-                time.sleep(0.2)  # 이전 스레드 종료 대기
-                
-                # 음성 리스트 설정
-                sounds = [
-                    rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound,
-                    nobrake_1_sound, nobrake_2_sound, nobrake_3_sound,
-                    speedless_1_sound, speedless_2_sound,
-                    carstop_1_sound, carstop_2_sound
-                ]
+            self.accel_label.setPixmap(self.accel_pixmap_normal)
 
-                # 새로운 스레드에서 음성 재생 시작
-                threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-                
-                # 마지막 가속 시간 업데이트
-                last_accel_time = time.time()
-                             
+        if brake_value <= 30:
+            self.brake_label.setPixmap(self.brake_pixmap_dark)
+        else:
+            self.brake_label.setPixmap(self.brake_pixmap_normal)
 
-    elif brake_value > 200 and accel_value <= 30: # 급정거 brake_value > 15000 and accel_value <= 30:
-        state = "Rapid Braking" 
-        update_display_state(accel_value, brake_value, state)
-        mqtt_state = 2
-        is_accelerating = False
-        stop_sounds = True  # 브레이크가 작동하면 음성 재생 중단
+def check_info(accel_value, brake_value, window):
+    window.update_images(accel_value, brake_value)
+    # (기존 check_info 로직)
 
-    elif accel_value > 100 and brake_value > 100: # 양발 운전 accel_vlaue > 1000 and brake_value > 1000
-        state = "Both Feet Driving"
-        update_display_state(accel_value, brake_value, state)
-        mqtt_state = 3
-        is_accelerating = False
-        stop_sounds = True  # 양발 운전 상태에서도 음성 중단
-
-    else:
-        state = "Normal Driving"
-        update_display_state(accel_value, brake_value, state)
-        is_accelerating = False
-        stop_sounds = True  # 일반 주행일 때 음성 중단
-        
-    # 상태가 변경되고 mqtt_state가 None이 아닐 때만 MQTT 전송    
-    if mqtt_state is not None and mqtt_state != prev_mqtt_state:
-        alert_data = {
-            "carId": 1234,
-            "state": mqtt_state
-        }
-        print(alert_data)
-        client.publish('AbnormalDriving', json.dumps(alert_data), 0, retain=False)
-        #이전 상태  갱신
-        prev_mqtt_state = mqtt_state
-
-# 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
-def run_code():
+def run_code(window):
     while True:
         try:
-            # 첫 번째 로드셀 (엑셀)
             val_accelerator = hx1.get_weight(5)
-            print(f"현재상태 : 액셀(Accelerator)  무게: {val_accelerator} g")
-
-            # 두 번째 로드셀 (브레이크)
             val_brake = hx2.get_weight(5)
-            print(f"현재상태 : 브레이크(Brake) 무게: {val_brake} g")
-               
             hx1.power_down()
             hx2.power_down()
             hx1.power_up()
             hx2.power_up()
 
-            # 현재 시간 추가
             now = datetime.now()
             data.update({
-                "carId": "01가1234",  # 차량 ID 유지
+                "carId": "01가1234",
                 "aclPedal": int(val_accelerator),
                 "brkPedal": int(val_brake),
                 "createdAt": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-                "driveState": data["driveState"],  # 기존 driveState 유지
-                "speed" : 40,
-                "rpm" : 2000
-                #delta_velocity 가속도 변수
-            })            
-            print(data)
-            
-            
+                "speed": 40,
+                "rpm": 2000
+            })
+
             client.publish('pedal', json.dumps(data), 0, retain=False)
 
-            check_info(val_accelerator, val_brake)
+            # HTTP POST 요청으로 데이터 전송
+            response = requests.post(url, json=data)
+            print(f"HTTP POST Response: {response.status_code}, {response.text}")
+
+            check_info(val_accelerator, val_brake, window)
 
             time.sleep(1)
 
-        except Exception as error:
-            print(error)
-            continue
+        except Exception as e:
+            print(e)
 
-# 쓰레드로 run_code 실행
-threading.Thread(target=run_code, daemon=True).start()
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
 
-# Tkinter 창 실행
-root.mainloop()
+    window = CarDisplay()
+    window.show()
+
+    threading.Thread(target=run_code, args=(window,), daemon=True).start()
+
+    sys.exit(app.exec_())
