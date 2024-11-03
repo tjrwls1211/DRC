@@ -43,6 +43,8 @@ hx2.tare()
 client = mqtt.Client()
 client.connect(ip(), 1222, 60)
 
+data = {"driveState": "Drive Ready"}
+
 # 음성 초기화 및 파일 로드
 pygame.mixer.init()
 
@@ -109,7 +111,7 @@ class CarDisplay(QWidget):
         self.setWindowTitle("Car Driving Display")
         self.setGeometry(100, 100, 1000, 600)
         self.setStyleSheet("background-color: black;")
-
+        self.setFixedSize(120, 50)
         # 메인 레이아웃
         main_layout = QVBoxLayout()
 
@@ -138,7 +140,7 @@ class CarDisplay(QWidget):
 
         # 중앙 하단 텍스트 레이블
         self.speed_label = FlippedTextLabel("속도: 0", self)
-        self.speed_label.setStyleSheet("background-color: red; color: white;")  # 빨간색 배경으로 임시 확인
+        #self.speed_label.setStyleSheet("background-color: red; color: white;")  # 빨간색 배경으로 임시 확인
         main_layout.addWidget(self.speed_label, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
         # 레이아웃 설정
