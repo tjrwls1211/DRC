@@ -252,7 +252,7 @@ def run_code(window):
             })
 
             client.publish('pedal', json.dumps(data), 0, retain=False)
-
+            print(data)
             check_info(val_accelerator, val_brake, window)
 
             time.sleep(1)
