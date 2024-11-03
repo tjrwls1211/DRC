@@ -99,11 +99,6 @@ speed_text = canvas_speed.create_text(
     angle=180  # 상하 반전
 )
 
-def update_display_state(accel_value, brake_value, state):
-    # "aclPedal" 값을 텍스트로 출력
-    canvas_speed.itemconfig(speed_text, text=str(data["aclPedal"])[::-1])  # 좌우 반전된 값으로 업데이트
-
-
 # pygame 초기화
 pygame.mixer.init()
 
@@ -119,6 +114,9 @@ client.connect(ip(), 1222, 60)
 def update_display_state(accel_value, brake_value, state):
     global data # driveState를 초기화하려면 필요한 코드
     # 엑셀 이미지 상태 업데이트
+    
+    canvas_speed.itemconfig(speed_text, text=str(data["aclPedal"])[::-1])
+    
     if accel_value <= 30:
         if accel_label.cget("image") != str(accel_img_dark_flipped):  # 같은 이미지라면 업데이트 안함
             accel_label.config(image=accel_img_dark_flipped)
