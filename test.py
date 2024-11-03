@@ -133,10 +133,10 @@ class CarDisplay(QWidget):
         # 상단 레이아웃 추가
         main_layout.addLayout(top_layout)
 
-        # 중앙 텍스트 레이아웃 (살짝 하단으로 배치)
+        # 중앙 하단 텍스트 레이블 (살짝 하단으로 배치)
         self.speed_label = FlippedTextLabel("속도: 0", self)
         main_layout.addStretch()  # 위젯들 사이에 여백 추가
-        main_layout.addWidget(self.speed_label, alignment=Qt.AlignBottom | Qt.AlignHCenter)
+        main_layout.addWidget(self.speed_label, alignment=Qt.AlignBottom | Qt.AlignCenter)
 
         # 레이아웃 설정
         self.setLayout(main_layout)
@@ -265,6 +265,7 @@ def run_code(window):
                 "aclPedal": int(val_accelerator),
                 "brkPedal": int(val_brake),
                 "createdAt": now.strftime('%Y-%m-%dT%H:%M:%S'),
+                "driveState": data["driveState"],
                 "speed": 40,
                 "rpm": 2000
             })
