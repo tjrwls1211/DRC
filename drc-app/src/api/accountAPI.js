@@ -64,17 +64,19 @@ export const deleteUserAccount = async (password) => {
     const token = await AsyncStorage.getItem('token');
 
     // 서버에 회원 탈퇴 요청
-    const response = await apiClient.post("/user/deleteUser", { pw: password }, { // 파라미터 이름 수정
+    const response = await apiClient.delete("/user/deleteUser", {
       headers: {
-        'AuthAuthorization': `Bearer ${token}`, // 요청 스펙에 맞춰 헤더 이름 수정
-        'Content-Type': 'application/json' // Content-Type 추가
+        'AuthAuthorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
+      data: { pw: password } // 비밀번호를 body에 포함
     });
 
     console.log("회원 탈퇴 요청 반환 데이터: ", response.data);
-    return response.data; // 서버 반환 성공 여부
+    return response.data;
   } catch (error) {
-    console.error("회원 탈퇴 요청 오류:", error);
+    console.error("회원 탈퇴 요청 오류(api코드):", error);
     throw error;
   }
 };
+
