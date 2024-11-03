@@ -1,9 +1,8 @@
 import sys
 import time
 import threading
-import requests
-from datetime import datetime
 import RPi.GPIO as GPIO
+from datetime import datetime
 from hx711 import HX711
 import paho.mqtt.client as mqtt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout
@@ -12,14 +11,13 @@ from PyQt5.QtGui import QPixmap, QTransform, QFont, QPainter
 import pygame
 import json
 from server import ip, port
-import obd
 
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
 
 # 데이터 구조 정의
 data = {
-    "carId": 1234,
+    "carId": "01가1234",
     "aclPedal": 0,
     "brkPedal": 0,
     "createdAt": 0,
@@ -60,9 +58,11 @@ speedless_2_sound = pygame.mixer.Sound("speedless_2.wav")
 carstop_1_sound = pygame.mixer.Sound("carstop_1.wav")
 carstop_2_sound = pygame.mixer.Sound("carstop_2.wav")
 
-# 음성 재생 및 중단 제어
 stop_sounds = False
 is_playing_sounds = False
+
+last_accel_time = 0
+is_accelerating = False
 
 def play_sounds_in_sequence(sounds):
     global stop_sounds, is_playing_sounds
@@ -82,7 +82,6 @@ def play_sounds_in_sequence(sounds):
 
     is_playing_sounds = False
 
-# PyQt를 통한 GUI 구현
 class FlippedTextLabel(QLabel):
     def __init__(self, text, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -99,8 +98,8 @@ class FlippedTextLabel(QLabel):
         painter.setFont(self.font())
         painter.setRenderHint(QPainter.Antialiasing)
         painter.translate(self.width(), self.height())
-        painter.rotate(180)  # 상하 반전
-        painter.drawText(-self.width(), -self.height() + 50, self.text[::-1])  # 좌우 반전
+        painter.rotate(180)
+        painter.drawText(-self.width(), -self.height() + 50, self.text[::-1])
         painter.end()
 
 class CarDisplay(QWidget):
@@ -111,18 +110,14 @@ class CarDisplay(QWidget):
         self.setStyleSheet("background-color: black;")
 
         main_layout = QVBoxLayout()
-
-        # 상단 이미지 레이아웃
         top_layout = QHBoxLayout()
 
-        # 브레이크 이미지 (상하좌우 반전)
         self.brake_pixmap_normal = QPixmap("brake_normal.png").transformed(QTransform().scale(-1, -1))
         self.brake_pixmap_dark = QPixmap("brake_dark.png").transformed(QTransform().scale(-1, -1))
         self.brake_label = QLabel()
         self.brake_label.setPixmap(self.brake_pixmap_normal)
         top_layout.addWidget(self.brake_label, alignment=Qt.AlignLeft)
 
-        # 엑셀 이미지 (상하좌우 반전)
         self.accel_pixmap_normal = QPixmap("accel_normal.png").transformed(QTransform().scale(-1, -1))
         self.accel_pixmap_dark = QPixmap("accel_dark.png").transformed(QTransform().scale(-1, -1))
         self.accel_label = QLabel()
@@ -130,8 +125,6 @@ class CarDisplay(QWidget):
         top_layout.addWidget(self.accel_label, alignment=Qt.AlignRight)
 
         main_layout.addLayout(top_layout)
-
-        # 속도 텍스트 (상하좌우 반전된 텍스트)
         self.speed_label = FlippedTextLabel("속도: 0")
         main_layout.addWidget(self.speed_label, alignment=Qt.AlignCenter)
 
@@ -157,34 +150,43 @@ class CarDisplay(QWidget):
             self.brake_label.setPixmap(self.brake_pixmap_normal)
 
 def check_info(accel_value, brake_value, window):
+    global last_accel_time, is_accelerating, stop_sounds
     window.update_images(accel_value, brake_value)
 
-    global stop_sounds
-    stop_sounds = True  # 이전 음성 재생 중단
+    stop_sounds = True
 
-    # 상태 및 MQTT 메시지 전송
     state = "Normal Driving"
     mqtt_state = None
 
     if accel_value > 200 and brake_value <= 30:
-        state = "Rapid Acceleration"
-        mqtt_state = 1
-        sounds = [rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound]
-    elif brake_value > 200 and accel_value <= 30:
+        if not is_accelerating:
+            last_accel_time = time.time()
+            is_accelerating = True
+        else:
+            elapsed_time = time.time() - last_accel_time
+            if elapsed_time >= 4:
+                state = "Rapid Acceleration"
+                mqtt_state = 1
+                sounds = [rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound]
+                threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
+                last_accel_time = time.time()
+    else:
+        is_accelerating = False
+
+    if brake_value > 200 and accel_value <= 30:
         state = "Rapid Braking"
         mqtt_state = 2
         sounds = [carstop_1_sound, carstop_2_sound]
+        threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
     elif accel_value > 100 and brake_value > 100:
         state = "Both Feet Driving"
         mqtt_state = 3
         sounds = [nobrake_1_sound, nobrake_2_sound, nobrake_3_sound]
-
-    # 음성 재생
-    if mqtt_state is not None:
         threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
 
+    if mqtt_state is not None:
         alert_data = {
-            "carId": 1234,
+            "carId": "01가1234",
             "state": mqtt_state
         }
         print(alert_data)
@@ -200,7 +202,6 @@ def run_code(window):
             hx1.power_up()
             hx2.power_up()
 
-            # 현재 시간 추가
             now = datetime.now()
             data.update({
                 "carId": 1234,
@@ -210,12 +211,8 @@ def run_code(window):
                 "speed": 40,
                 "rpm": 2000
             })
-
+            print(data)
             client.publish('pedal', json.dumps(data), 0, retain=False)
-
-            # HTTP POST 요청으로 데이터 전송
-            response = requests.post(url, json=data)
-            print(f"HTTP POST Response: {response.status_code}, {response.text}")
 
             check_info(val_accelerator, val_brake, window)
 
