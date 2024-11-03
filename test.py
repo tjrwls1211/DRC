@@ -90,7 +90,7 @@ class FlippedTextLabel(QLabel):
         super().__init__(*args, **kwargs)
         self.text = text
         self.setFont(QFont("Arial", 40))
-        self.setStyleSheet("background-color: black; color: white;")
+        self.setStyleSheet("background-color: red; color: white;")
         self.setFixedSize(200, 100)  # 크기 조정
 
     def set_flipped_text(self, text):
@@ -101,9 +101,11 @@ class FlippedTextLabel(QLabel):
         painter = QPainter(self)
         painter.setFont(self.font())
         painter.setRenderHint(QPainter.Antialiasing)
-        painter.translate(self.width(), self.height())
+        painter.translate(self.width() // 2, self.height() // 2)
         painter.rotate(180)  # 상하 반전
-        painter.drawText(-self.width(), -self.height() + 30, self.text[::-1])  # 텍스트 위치 조정
+        # 텍스트 중앙에 출력
+        text_rect = painter.boundingRect(0, 0, self.width(), self.height(), Qt.AlignCenter, self.text[::-1])
+        painter.drawText(-text_rect.width() // 2, text_rect.height() // 2, self.text[::-1])  # 텍스트 위치 조정
         painter.end()
 
 # GUI 클래스에서 레이아웃
@@ -132,7 +134,6 @@ class CarDisplay(QWidget):
         self.accel_label.setPixmap(self.accel_pixmap_normal)
         top_layout.addWidget(self.accel_label, alignment=Qt.AlignRight | Qt.AlignTop)
 
-
         main_layout.addLayout(top_layout)
 
         # 여유 공간 추가
@@ -153,18 +154,11 @@ class CarDisplay(QWidget):
         self.timer.start(1000)
 
     def update_display(self):
-    # 'aclPedal' 값 가져오기
+        # 중앙 하단에 "aclPedal" 값 출력
         acl_pedal_value = data.get('aclPedal', 0)
         flipped_speed = str(int(acl_pedal_value))
-    
-        # 디버깅용 출력
-        print(f"Current aclPedal value: {flipped_speed}")
-    
-        # 텍스트 설정
         self.speed_label.set_flipped_text(f"{flipped_speed} km")
-    
-        # 레이블의 크기와 위치 출력
-        print(self.speed_label.geometry())
+
 
     def update_images(self, accel_value, brake_value):
         # 조건에 따라 엑셀 및 브레이크 이미지 업데이트
