@@ -111,7 +111,7 @@ class CarDisplay(QWidget):
         self.setWindowTitle("Car Driving Display")
         self.setGeometry(100, 100, 1000, 600)
         self.setStyleSheet("background-color: black;")
-        self.setFixedSize(120, 50)
+        self.setFixedSize(160, 50)
         # 메인 레이아웃
         main_layout = QVBoxLayout()
 
@@ -153,8 +153,9 @@ class CarDisplay(QWidget):
 
     def update_display(self):
         # 중앙 하단에 "aclPedal" 값 출력
-        flipped_speed = str(data['aclPedal'])
-        self.speed_label.set_flipped_text(f"속도: {flipped_speed}")
+        acl_pedal_value = data.get('aclPedal', 0)  # None 방지 및 기본값 설정
+        flipped_speed = str(int(acl_pedal_value))  # 정수로 변환 후 문자열로 변환
+        self.speed_label.set_flipped_text(f"{flipped_speed}km")
 
     def update_images(self, accel_value, brake_value):
         # 조건에 따라 엑셀 및 브레이크 이미지 업데이트
