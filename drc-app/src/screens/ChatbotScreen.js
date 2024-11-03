@@ -36,8 +36,7 @@ const ChatbotScreen = ({ navigation }) => {
       }
     };
   
-      // 자연어 입력 처리
-      const handleSend = async () => {
+    const handleSend = async () => {
       if (inputText.trim() === '') return;
   
       const newMessage = { text: inputText, isBot: false };
@@ -48,6 +47,16 @@ const ChatbotScreen = ({ navigation }) => {
   
       if (date && keyword) {
           // fetchData 호출
+          // 현재 시간과 비교하여 미래 시간인지 확인
+const currentDate = new Date();
+const inputDate = new Date(date); // date 변수를 Date 객체로 변환
+
+if (inputDate > currentDate) {
+    const errorMessage = '입력하신 날짜가 유효하지 않습니다.';
+    setMessages(prevMessages => [...prevMessages, { text: errorMessage, isBot: true }]);
+    return; // 이후 처리를 중단
+}
+
           console.log(date, keyword)
           try {
             console.log(date, keyword);
@@ -70,31 +79,6 @@ const ChatbotScreen = ({ navigation }) => {
       } else {
           // 각 키워드에 대한 처리
           const keywords = {
-          "급가속": [
-              "급가속 데이터 조회",
-              "급가속 데이터 확인",
-              "급가속 조회",
-              "급가속",
-              "급가속 횟수",
-              "최근 급가속",
-              "최근 급가속 조회해줘",
-              "최근 급가속 데이터 조회해줘",
-              "최근 급가속 데이터",
-              "급가속 데이터 조회해줘",
-              "급가속 데이터 확인해줘",
-              "급가속 데이터 찾아줘"
-          ],
-          "급제동": [
-              "급제동 데이터 조회",
-              "급제동 데이터 확인",
-              "급제동",
-              "급제동 데이터 조회해줘",
-              "급제동 데이터 찾아줘",
-              "최근 급제동 데이터 조회해줘",
-              "최근 급제동 데이터",
-              "급제동 데이터 확인해줘",
-              "급제동 조회"
-          ],
           "앱 도움말": [
               "앱도움말",
               "앱 도움말",
@@ -126,15 +110,6 @@ const ChatbotScreen = ({ navigation }) => {
               "급발진 데이터 확인해줘",
               "급발진 조회"
           ],
-          "주행정보": [
-              "주행정보 데이터 조회",
-              "주행정보 데이터 확인",
-              "주행정보",
-              "주행정보 데이터 조회해줘",
-              "주행정보 데이터 찾아줘",
-              "주행정보 데이터 확인해줘",
-              "주행정보 조회"
-          ]
           };
   
           // 각 키워드에 대한 처리
@@ -153,7 +128,7 @@ const ChatbotScreen = ({ navigation }) => {
       setInputText(''); // 입력 후 텍스트 초기화
           }
       };
-  
+
     // 버튼 클릭 처리
     const handleButtonPress = (buttonText) => {
       setActiveButton(buttonText); // 클릭한 버튼을 activeButton에 설정
@@ -234,7 +209,7 @@ const ChatbotScreen = ({ navigation }) => {
                       {message.isBot && (
                           <View style={styles.botMessageContainer}>
                               <View style={styles.iconContainer}>
-                                  <Image source={require('../../assets/free-icon-chatbot-5226034.png')} style={styles.icon} />
+                                  <Image source={require('../../assets/iconizer-free-icon-chatbot-5292342-_1_.png')} style={styles.icon} />
                               </View>
                               <View style={styles.messageContentContainer}>
                                   <Text style={styles.messageText}>
@@ -270,30 +245,27 @@ const ChatbotScreen = ({ navigation }) => {
                       </TouchableOpacity>
                   </View>
               ) : (
-                  <View style={styles.buttonsContainer}>
-                      <View style={styles.row}>
-                          <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급가속")}>
-                              <Text style={styles.buttonText}>급가속</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급제동")}>
-                              <Text style={styles.buttonText}>급제동</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("급발진")}>
-                              <Text style={styles.buttonText}>급발진</Text>
-                          </TouchableOpacity>
-                      </View>
-                      <View style={styles.row}>
-                          <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("주행정보")}>
-                              <Text style={styles.buttonText}>주행정보</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("앱 도움말")}>
-                              <Text style={styles.buttonText}>앱 도움말</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity style={styles.button} onPress={() => handleButtonPress("고객지원")}>
-                              <Text style={styles.buttonText}>고객지원</Text>
-                          </TouchableOpacity>
-                      </View>
-                  </View>
+                <View style={styles.buttonsContainer}>
+    <View style={styles.row}>
+        {/* 급발진 버튼 */}
+        <TouchableOpacity style={styles.largeButton} onPress={() => handleButtonPress("급발진")}>
+            <Text style={styles.buttonText}>급발진</Text>
+        </TouchableOpacity>
+        
+        {/* 앱 도움말 버튼 */}
+        <TouchableOpacity style={styles.largeButton} onPress={() => handleButtonPress("앱 도움말")}>
+            <Text style={styles.buttonText}>앱 도움말</Text>
+        </TouchableOpacity>
+        
+        {/* 고객지원 버튼 */}
+        <TouchableOpacity style={styles.largeButton} onPress={() => handleButtonPress("고객지원")}>
+            <Text style={styles.buttonText}>고객지원</Text>
+        </TouchableOpacity>
+    </View>
+</View>
+
+            
+
               )}
           </ScrollView>
   
@@ -338,7 +310,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     marginRight: 10, // 아이콘과 메시지 간의 간격
-    backgroundColor: '#009688', // 아이콘 배경색 설정
+    backgroundColor: '#fff', // 아이콘 배경색 설정
     borderRadius: 5, // 둥글게 설정 (선택 사항)
     padding: 5, // 패딩 추가 (선택 사항)
   },
@@ -386,14 +358,29 @@ sendIcon: {
     marginBottom: 10,
   },
   button: {
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 10, // 기본 패딩
     backgroundColor: '#009688',
     borderRadius: 5,
-  },
-  buttonText: {
-    fontSize: 16,
-    color: '#fff',
-  },
+},
+largeButton: {
+  width: 100, // 원하는 너비로 설정
+  height: 35, // 원하는 높이로 설정
+  backgroundColor: '#009688',
+  borderRadius: 5,
+  justifyContent: 'center', // 수직 중앙 정렬
+  alignItems: 'center', // 수평 중앙 정렬
+  marginHorizontal: 5, // 버튼 간의 간격을 조절
+},
+
+buttonText: {
+  fontSize: 16,
+  color: '#fff',
+  textAlign: 'center', // 수평 중앙 정렬
+  // flex: 1, // 이 줄은 제거하세요
+  lineHeight: 17.5, // 버튼의 높이에 맞춰서 수직 중앙 정렬
+},
+
   inputContainer: {
     flexDirection: 'row',
     padding: 10,

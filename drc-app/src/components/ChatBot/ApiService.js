@@ -1,6 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage import
 
+
 // 데이터 조회 요청
 export const fetchData = async (date, keyword) => {
   let url;
@@ -17,7 +18,7 @@ export const fetchData = async (date, keyword) => {
       dataField = 'sbrk'; // 급제동 데이터 필드
       break;
     case '양발운전':
-      url = ""; // 양발운전 URL
+      url = ""; // 양발운전 URL 
       dataField = 'bothPedal'; // 양발운전 데이터 필드
       break;
     default:
@@ -34,29 +35,29 @@ export const fetchData = async (date, keyword) => {
   try {
     // 로컬 스토리지에서 토큰 가져오기
     const token = await AsyncStorage.getItem('token');
-    console.log(token);
+    console.log('토큰 가져오기 성공:', token);
 
     // 서버에 데이터 조회 요청 (토큰 포함)
     const response = await axios.get(url, {
       headers: {
-        // Authorization: `Bearer ${token}`, // JWT 토큰을 Authorization 헤더에 추가
+        'Authorization': `Bearer ${token}`, // JWT 토큰을 Authorization 헤더에 추가
+        'Content-Type': 'application/json', // 요청 내용 타입 설정
       },
       params: {
-        carId: 1234, // carId를 쿼리 파라미터로 추가
         date: date, // 날짜를 쿼리 파라미터로 전달
       }
     });
 
     // 응답 데이터 확인
     if (response.data && response.data[dataField]) {
-      console.log('Data sent successfully:', response.data[dataField]);
+      console.log('데이터 전송 성공:', response.data[dataField]);
       return response.data[dataField]; // 결과값 반환
     } else {
-      console.error('No data found in response');
+      console.error('응답에서 데이터를 찾을 수 없습니다.');
       return null;
     }
   } catch (error) {
-    console.error('Error sending data:', error.message || error);
+    console.error('데이터 전송 오류:', error.message || error);
     return null; // 에러 발생 시 null 반환
   }
 };
