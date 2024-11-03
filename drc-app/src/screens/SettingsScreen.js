@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
 import * as Clipboard from 'expo-clipboard'; // 클립보드 작업을 위한 라이브러리
 import { Linking } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
 const SettingsScreen = () => {
   const navigation = useNavigation();
@@ -23,6 +23,7 @@ const SettingsScreen = () => {
   const [qrUrl, setQrUrl] = useState(null); // QR URL 상태
   const [otpKey, setOtpKey] = useState(null); // otpKey 상태
   const [isModalVisible, setModalVisible] = useState(false); // 모달 상태
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const { is2FAEnabled, setIs2FAEnabled } = useTwoFA(); // Context에서 2차인증 필요 상태 가져오기
   console.log("2차인증 전역 변수 상태 확인: ", is2FAEnabled);
@@ -93,23 +94,36 @@ const SettingsScreen = () => {
     }
   }; 
 
+  const toggleSwitch = () => {
+    setIsDarkMode(previousState => !previousState);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>설정</Text>
 
-      <Text style={styles.label}>계정</Text>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('PersonalInfoScreen')}>
+
+      <View style={[styles.section, { marginTop: 15 }]}>
+        <FontAwesome name="user-circle" size={24} color="#009688" />
+        <Text style={[styles.label, styles.labelSpacing]}>계정</Text>
+      </View>
+      <TouchableOpacity style={[styles.button, { marginTop: 5 }]} onPress={() => navigation.navigate('PersonalInfoScreen')}>
         <Text style={styles.buttonText}>개인정보</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => setNicknameModalVisible(true)}>
+      <TouchableOpacity style={[styles.button, { marginTop: 5 }]} onPress={() => setNicknameModalVisible(true)}>
         <Text style={styles.buttonText}>닉네임 수정</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => setPasswordModalVisible(true)}>
+      <TouchableOpacity style={[styles.button, { marginTop: 5 }]} onPress={() => setPasswordModalVisible(true)}>
         <Text style={styles.buttonText}>비밀번호 수정</Text>
       </TouchableOpacity>
 
+
+
       {/* 2차 인증 드롭다운 */}
-      <Text style={styles.label}>2차 인증 설정</Text>
+      <View style={[styles.section, { marginTop: 35 }]}>
+        <MaterialIcons name="lock" size={24} color="#009688" />
+        <Text style={[styles.label, styles.labelSpacing]}>2차 인증 설정</Text>
+      </View>
       <DropDownPicker
         open={open}
         value={is2FAEnabled}
@@ -118,9 +132,10 @@ const SettingsScreen = () => {
         setValue={setIs2FAEnabled} 
         setItems={setItems} 
         onChangeValue={handle2FAChange} 
-        style={styles.dropdown} 
+        style={[styles.dropdown, { marginTop: 5 }]}
         dropDownContainerStyle={styles.dropdownContainer}
-        labelStyle={{color: '#009688', fontSize: 18}}
+        labelStyle={{color: '#009688', fontSize: 18}} // 드롭다운의 기본 레이블 스타일
+        textStyle={{ color: '#009688', fontSize: 18 }} // 드롭다운의 텍스트 스타일 스타일
       />
 
       {/* OTP 키와 QR URL을 보여주는 모달 */}
@@ -141,12 +156,20 @@ const SettingsScreen = () => {
       </Modal>
 
 
-      <Text style={styles.label}>앱 설정</Text>
-      <View style={styles.darkModeContainer}>
+      <View style={[styles.section, { marginTop: 35 }]}>
+        <MaterialIcons name="settings" size={24} color="#009688" />
+        <Text style={[styles.label, styles.labelSpacing]}>앱 설정</Text>
+      </View>
+      <View style={[styles.darkModeContainer, { marginTop: 5 }]}> 
         <Text style={{fontSize: 18, color: 'white'}}>다크모드</Text>
-        <Switch value={false}/>
+        <Switch 
+          value={isDarkMode}
+          onValueChange={toggleSwitch}
+          trackColor={{ false: '#767577', true: '#000000' }} // 토글 전환 시 트랙 검정으로
+        />
       </View>
 
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
       <View style={styles.buttonContainer}>
         <Button 
           title="로그아웃" 
@@ -159,6 +182,7 @@ const SettingsScreen = () => {
           onPress={() => setDeleteModalVisible(true)} // 회원탈퇴 모달 표시
         />
       </View>
+    </View>
 
       <AccountDeletionModal 
         visible={deleteModalVisible} 
@@ -191,15 +215,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   title: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#2F4F4F',
     textAlign: 'center',
   },
+  labelSpacing: {
+    marginLeft: 10,
+  },
+  section: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10, // 섹션 간 간격 통일
+  },
   label: {
-    fontSize: 20,
-    marginBottom: 5,
+    fontSize: 24,
+    marginLeft: 10,
     color: '#2F4F4F', // 다크 슬레이트 그레이
     fontWeight: 'bold',
   },
@@ -261,6 +293,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#009688', // 기본색 청록
     borderRadius: 10,
+    paddingVertical: 12, // 높이 통일
     padding: 10,
     marginVertical: 5,
     width: '100%',
