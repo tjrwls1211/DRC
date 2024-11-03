@@ -18,7 +18,7 @@ url = f'http://{ip()}:{port()}/data'
 
 # 데이터 구조 정의
 data = {
-    "carId": 1234,  # 차량 ID 설정
+    "carId": "01가1234",  # 차량 ID 설정
     "aclPedal": 0,
     "brkPedal": 0,
     "createdAt": 0,
@@ -115,7 +115,9 @@ def update_display_state(accel_value, brake_value, state):
     global data # driveState를 초기화하려면 필요한 코드
     # 엑셀 이미지 상태 업데이트
     
-    canvas_speed.itemconfig(speed_text, text=str(data["aclPedal"])[::-1])
+    flipped_text = str(data["aclPedal"])[::-1]
+    print(f"실시간 좌우 반전된 텍스트: {flipped_text}")  # 디버깅 출력
+    canvas_speed.itemconfig(speed_text, text=flipped_text)  # 텍스트 업데이트
     
     if accel_value <= 30:
         if accel_label.cget("image") != str(accel_img_dark_flipped):  # 같은 이미지라면 업데이트 안함
@@ -265,7 +267,7 @@ def run_code():
             # 현재 시간 추가
             now = datetime.now()
             data.update({
-                "carId": 1234,  # 차량 ID 유지
+                "carId": "01가1234",  # 차량 ID 유지
                 "aclPedal": int(val_accelerator),
                 "brkPedal": int(val_brake),
                 "createdAt": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
