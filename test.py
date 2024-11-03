@@ -134,10 +134,11 @@ class CarDisplay(QWidget):
         main_layout.addLayout(top_layout)
 
         # 여유 공간 추가
-        main_layout.addSpacing(20)  # 이미지와 텍스트 레이블 사이의 공간
+        #main_layout.addSpacing(20)  # 이미지와 텍스트 레이블 사이의 공간
 
         # 중앙 텍스트 레이아웃 (살짝 하단으로 배치)
         self.speed_label = FlippedTextLabel("속도: 0", self)
+        main_layout.addStretch()  # 위젯들 사이에 여백 추가
         main_layout.addWidget(self.speed_label, alignment=Qt.AlignBottom | Qt.AlignHCenter)
 
         # 레이아웃 설정
