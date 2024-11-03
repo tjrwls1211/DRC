@@ -17,7 +17,7 @@ url = f'http://{ip()}:{port()}/data'
 
 # 데이터 구조 정의
 data = {
-    "carId": 1234,
+    "carId": "01가1234",
     "aclPedal": 0,
     "brkPedal": 0,
     "createdAt": 0,
@@ -110,32 +110,23 @@ class CarDisplay(QWidget):
         self.setGeometry(100, 100, 1000, 600)
         self.setStyleSheet("background-color: black;")
 
-        # 레이아웃 설정
-        main_layout = QVBoxLayout()
-        top_layout = QHBoxLayout()
-
         # 브레이크 이미지 (상하좌우 반전)
         self.brake_pixmap_normal = QPixmap("brake_normal.png").transformed(QTransform().scale(-1, -1))
         self.brake_pixmap_dark = QPixmap("brake_dark.png").transformed(QTransform().scale(-1, -1))
-        self.brake_label = QLabel()
+        self.brake_label = QLabel(self)
         self.brake_label.setPixmap(self.brake_pixmap_normal)
-        top_layout.addWidget(self.brake_label, alignment=Qt.AlignLeft)
+        self.brake_label.setGeometry(50, 10, 200, 200)  # (x, y, width, height)
 
         # 엑셀 이미지 (상하좌우 반전)
         self.accel_pixmap_normal = QPixmap("accel_normal.png").transformed(QTransform().scale(-1, -1))
         self.accel_pixmap_dark = QPixmap("accel_dark.png").transformed(QTransform().scale(-1, -1))
-        self.accel_label = QLabel()
+        self.accel_label = QLabel(self)
         self.accel_label.setPixmap(self.accel_pixmap_normal)
-        top_layout.addWidget(self.accel_label, alignment=Qt.AlignRight)
-
-        main_layout.addLayout(top_layout)
+        self.accel_label.setGeometry(750, 10, 200, 200)  # (x, y, width, height)
 
         # 속도 텍스트 레이블 (중앙 하단)
-        self.speed_label = FlippedTextLabel("속도: 0")
-        main_layout.addSpacing(50)
-        main_layout.addWidget(self.speed_label, alignment=Qt.AlignCenter)
-
-        self.setLayout(main_layout)
+        self.speed_label = FlippedTextLabel("속도: 0", self)
+        self.speed_label.setGeometry(400, 500, 200, 50)  # (x, y, width, height)
 
         # 주기적으로 디스플레이 업데이트
         self.timer = QTimer()
@@ -158,6 +149,8 @@ class CarDisplay(QWidget):
             self.brake_label.setPixmap(self.brake_pixmap_dark)
         else:
             self.brake_label.setPixmap(self.brake_pixmap_normal)
+
+prev_mqtt_state = None
 
 def check_info(accel_value, brake_value, window):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds, prev_mqtt_state
@@ -215,7 +208,7 @@ def check_info(accel_value, brake_value, window):
     # 상태가 변경되고 mqtt_state가 None이 아닐 때만 MQTT 전송    
     if mqtt_state is not None and mqtt_state != prev_mqtt_state:
         alert_data = {
-            "carId": 1234,
+            "carId": "01가1234",
             "state": mqtt_state
         }
         print(alert_data)
@@ -255,7 +248,7 @@ def run_code(window):
 
             now = datetime.now()
             data.update({
-                "carId": 1234,
+                "carId": "01가1234",
                 "aclPedal": int(val_accelerator),
                 "brkPedal": int(val_brake),
                 "createdAt": now.strftime('%Y-%m-%dT%H:%M:%S'),
