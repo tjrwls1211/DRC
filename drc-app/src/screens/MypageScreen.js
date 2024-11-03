@@ -1,14 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { fetchUserInfo } from '../api/userInfoAPI';
 
 const MypageScreen = () => {
   // 상태: 날짜, DateTimePicker 표시 여부, 유저 정보 (닉네임과 이메일)
   const [selectedDate, setSelectedDate] = useState(new Date()); 
   const [showPicker, setShowPicker] = useState(false); 
-  const [nickname, setNickname] = useState('OOO'); // 유저 닉네임은 DB에서 받아올 예정
-  const [email, setEmail] = useState('asdf_1234@gmail.com'); // 유저 이메일은 DB에서 받아올 예정
+  const [nickname, setNickname] = useState('OOO');
+  const [email, setEmail] = useState('asdf_1234@gmail.com');
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      try {
+        const userInfo = await fetchUserInfo();
+        setNickname(userInfo.nickname || '닉네임 없음');
+        setEmail(userInfo.email || '이메일 없음');
+      } catch (error) {
+        console.error('사용자 정보 가져오기 실패:', error);
+        // 에러 발생 시 기본값 유지
+      }
+    };
+
+    getUserInfo();
+  }, []);
 
   // 날짜가 선택되었을 때 호출되는 함수
   const handleDateChange = (event, newDate) => {
