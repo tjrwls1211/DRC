@@ -115,18 +115,18 @@ class CarDisplay(QWidget):
         self.brake_pixmap_dark = QPixmap("brake_dark.png").transformed(QTransform().scale(-1, -1))
         self.brake_label = QLabel(self)
         self.brake_label.setPixmap(self.brake_pixmap_normal)
-        self.brake_label.setGeometry(50, 10, 200, 200)  # (x, y, width, height)
+        self.brake_label.setGeometry(20, 10, 500, 400)  # (x, y, width, height)
 
         # 엑셀 이미지 (상하좌우 반전)
         self.accel_pixmap_normal = QPixmap("accel_normal.png").transformed(QTransform().scale(-1, -1))
         self.accel_pixmap_dark = QPixmap("accel_dark.png").transformed(QTransform().scale(-1, -1))
         self.accel_label = QLabel(self)
         self.accel_label.setPixmap(self.accel_pixmap_normal)
-        self.accel_label.setGeometry(750, 10, 200, 200)  # (x, y, width, height)
+        self.accel_label.setGeometry(730, 10, 500, 400)  # (x, y, width, height)
 
         # 속도 텍스트 레이블 (중앙 하단)
         self.speed_label = FlippedTextLabel("속도: 0", self)
-        self.speed_label.setGeometry(400, 500, 200, 50)  # (x, y, width, height)
+        self.speed_label.setGeometry(340, 5, 200, 50)  # (x, y, width, height)
 
         # 주기적으로 디스플레이 업데이트
         self.timer = QTimer()
