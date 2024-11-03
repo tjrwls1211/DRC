@@ -113,30 +113,40 @@ class CarDisplay(QWidget):
         self.setWindowTitle("Car Driving Display")
         self.setGeometry(100, 100, 1000, 600)
         self.setStyleSheet("background-color: black;")
+
+        # 메인 레이아웃
         main_layout = QVBoxLayout()
 
+        # 상단 레이아웃
         top_layout = QHBoxLayout()
 
+        # 브레이크 이미지 (왼쪽 상단)
         self.brake_pixmap_normal = QPixmap("brake_normal.png").transformed(QTransform().scale(-1, -1))
-        self.brake_pixmap_dark = QPixmap("brake_dark.png").transformed(QTransform().scale(-1, -1))
         self.brake_label = QLabel()
         self.brake_label.setPixmap(self.brake_pixmap_normal)
         top_layout.addWidget(self.brake_label, alignment=Qt.AlignLeft | Qt.AlignTop)
 
+        # 엑셀 이미지 (오른쪽 상단)
         self.accel_pixmap_normal = QPixmap("accel_normal.png").transformed(QTransform().scale(-1, -1))
-        self.accel_pixmap_dark = QPixmap("accel_dark.png").transformed(QTransform().scale(-1, -1))
         self.accel_label = QLabel()
         self.accel_label.setPixmap(self.accel_pixmap_normal)
         top_layout.addWidget(self.accel_label, alignment=Qt.AlignRight | Qt.AlignTop)
 
         main_layout.addLayout(top_layout)
 
+        # 여유 공간 추가
+        main_layout.addStretch()
+
         # 중앙 하단 텍스트 레이블
         self.speed_label = FlippedTextLabel("속도: 0", self)
-        main_layout.addWidget(self.speed_label, alignment=Qt.AlignCenter)  # 정중앙에 배치
+        self.speed_label.setStyleSheet("background-color: red; color: white;")  # 빨간색 배경으로 확인
+        self.speed_label.setFixedSize(200, 100)  # 크기 강제 설정
+        main_layout.addWidget(self.speed_label, alignment=Qt.AlignCenter)
 
+        # 레이아웃 설정
         self.setLayout(main_layout)
 
+        # 주기적으로 디스플레이 업데이트
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_display)
         self.timer.start(1000)
@@ -145,6 +155,7 @@ class CarDisplay(QWidget):
         acl_pedal_value = data.get('aclPedal', 0)
         flipped_speed = str(int(acl_pedal_value))
         self.speed_label.set_flipped_text(f"{flipped_speed}km")
+        print(self.speed_label.geometry())  # 디버깅을 위한 위치 및 크기 출력
 
     def update_images(self, accel_value, brake_value):
         # 조건에 따라 엑셀 및 브레이크 이미지 업데이트
