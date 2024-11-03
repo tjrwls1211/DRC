@@ -112,21 +112,29 @@ brake_img_dark_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(brake_
 
 # 이미지 레이블 생성 (상하 좌우 반전된 이미지 적용)
 accel_label = tk.Label(root, image=accel_img_normal_flipped, bg="black")
-accel_label.pack(side="right", padx=20, pady=10)
+accel_label.pack(side="top", padx=20, pady=10, anchor='n')  # 상단 배치
 
 brake_label = tk.Label(root, image=brake_img_normal_flipped, bg="black")
-brake_label.pack(side="left", padx=20, pady=10)
+brake_label.pack(side="top", padx=20, pady=10, anchor='n')  # 상단 배치
 
 # 나중에 지울 데이터 예제
 data = {"driveState": "Drive Ready"}
 
 # 상태 레이블 생성 (상하 좌우 반전 텍스트)
 canvas_status = tk.Canvas(root, width=500, height=100, bg="black", highlightthickness=0)
-canvas_status.place(relx=0.44, rely=0.05, anchor='center')
-status_text = canvas_status.create_text(250, 50, text=data["driveState"], font=font_large, fill="white", angle=180)
+canvas_status.place(relx=0.44, rely=0.9, anchor='center')  # 하단으로 배치
+
+# 텍스트 좌우 반전 후 상하 반전으로 출력
+status_text = canvas_status.create_text(
+    250, 50,
+    text=data["driveState"][::-1],  # 좌우 반전
+    font=font_large,
+    fill="white",
+    angle=180  # 상하 반전
+)
 
 canvas_speed = tk.Canvas(root, width=200, height=100, bg="black", highlightthickness=0)
-canvas_speed.place(relx=0.97, rely=0.05, anchor='ne')
+canvas_speed.place(relx=0.97, rely=0.9, anchor='ne')
 
 
 
