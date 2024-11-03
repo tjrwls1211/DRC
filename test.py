@@ -102,6 +102,7 @@ class FlippedTextLabel(QLabel):
         painter.drawText(-self.width(), -self.height() + 50, self.text[::-1])  # 좌우 반전
         painter.end()
 
+# GUI 클래스
 class CarDisplay(QWidget):
     def __init__(self):
         super().__init__()
@@ -132,10 +133,14 @@ class CarDisplay(QWidget):
         # 상단 레이아웃 추가
         main_layout.addLayout(top_layout)
 
-        # 속도 텍스트 레이블 (중앙 하단)
-        self.speed_label = FlippedTextLabel("속도: 0", self)
-        main_layout.addWidget(self.speed_label, alignment=Qt.AlignCenter)
+        # 여유 공간 추가
+        main_layout.addSpacing(20)  # 이미지와 텍스트 레이블 사이의 공간
 
+        # 중앙 텍스트 레이아웃 (살짝 하단으로 배치)
+        self.speed_label = FlippedTextLabel("속도: 0", self)
+        main_layout.addWidget(self.speed_label, alignment=Qt.AlignBottom | Qt.AlignHCenter)
+
+        # 레이아웃 설정
         self.setLayout(main_layout)
 
         # 주기적으로 디스플레이 업데이트
