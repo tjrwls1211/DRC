@@ -26,6 +26,16 @@ const PasswordChangeModal = ({ visible, onClose, onConfirm }) => {
 
   // 비밀번호 변경 요청 함수
   const handleConfirm = async () => {
+    if (!isVerified) {
+      Alert.alert("오류", "현재 비밀번호 인증이 필요합니다.");
+      return;
+    }
+
+    if (!newPassword || !confirmPassword) {
+      Alert.alert("오류", "새 비밀번호를 입력하지 않았습니다.");
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       Alert.alert("오류", "새 비밀번호 확인이 일치하지 않습니다.");
       return;

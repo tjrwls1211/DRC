@@ -16,7 +16,7 @@ const MypageScreen = () => {
       try {
         const userInfo = await fetchUserInfo();
         setNickname(userInfo.nickname || '닉네임 없음');
-        setEmail(userInfo.email || '이메일 없음');
+        setEmail(userInfo.id || '이메일 없음');
       } catch (error) {
         console.error('사용자 정보 가져오기 실패:', error);
         // 에러 발생 시 기본값 유지

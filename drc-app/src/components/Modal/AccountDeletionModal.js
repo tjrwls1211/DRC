@@ -13,8 +13,8 @@ const AccountDeletionModal = ({ visible, onClose }) => {
   // 비밀번호 검증 함수
   const handleCheckPassword = async () => {
     try {
-      //const isCorrect = await verifyPassword(password);
-      const isCorrect = true; // 테스트용
+      const isCorrect = await verifyPassword(password);
+      //const isCorrect = true; // 테스트용
       if (isCorrect) {
         setVerificationMessage("인증되었습니다.");
         setIsVerified(true);
@@ -44,6 +44,14 @@ const AccountDeletionModal = ({ visible, onClose }) => {
       console.error('회원 탈퇴 과정에서 오류 발생:', error);
       Alert.alert("회원 탈퇴 실패", "회원 탈퇴 중 오류가 발생했습니다.");
     }
+  };
+
+  // 모달 닫기 시 상태 초기화
+  const handleClose = () => {
+    setPassword(''); // 비밀번호 초기화
+    setIsVerified(false); // 인증 상태 초기화
+    setVerificationMessage(''); // 메시지 초기화
+    onClose(); // 부모 컴포넌트의 onClose 호출
   };
 
   return (
@@ -78,7 +86,7 @@ const AccountDeletionModal = ({ visible, onClose }) => {
             </Text>
           ) : null}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
+            <TouchableOpacity onPress={handleClose} style={styles.cancelButton}>
               <Text style={styles.cancelText}>취소</Text>
             </TouchableOpacity>
             <TouchableOpacity 

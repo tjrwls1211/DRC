@@ -19,12 +19,12 @@ export const verifyPassword = async (password) => {
       { pw: password },
       {
           headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           }
       }
   );
-    console.log("비밀번호 확인 서버 반환 데이터: ", response.data);
+    console.log("비밀번호 확인 서버 반환 데이터: ", response);
     return response.data.success;
   } catch (error) {
     console.error('비밀번호 확인 오류:', error);
@@ -66,8 +66,8 @@ export const deleteUserAccount = async (password) => {
     // 서버에 회원 탈퇴 요청
     const response = await apiClient.delete("/user/deleteUser", {
       headers: {
-        'AuthAuthorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
       data: { pw: password } // 비밀번호를 body에 포함
     });
