@@ -53,7 +53,8 @@ hx2.reset()
 hx1.tare()
 hx2.tare()
 
-# Tkinter 창생성
+# 테스트 부분 삭제
+# Tkinter 창 생성
 root = tk.Tk()
 root.title("Car Driving Display")
 root.geometry("1000x600")
@@ -62,41 +63,50 @@ root.configure(bg="black")
 # 폰트 설정
 font_large = ("Arial", 40, "bold")
 
-# 이미지 로드
-accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((500, 400)))
-accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((500, 400)))
-brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((500, 400)))
-brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((500, 400)))
+# 이미지 로드 및 상하 좌우 반전 생성
+accel_img_normal = Image.open("accel_normal.png").resize((500, 400))
+accel_img_dark = Image.open("accel_dark.png").resize((500, 400))
+brake_img_normal = Image.open("brake_normal.png").resize((500, 400))
+brake_img_dark = Image.open("brake_dark.png").resize((500, 400))
 
-# 이미지 레이블 생성
-accel_label = tk.Label(root, image=accel_img_dark, bg="black")
-accel_label.pack(side="right", padx=20, pady=10)
+# 상하 좌우 반전된 이미지 생성 및 전역 변수로 참조 유지
+accel_img_normal_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(accel_img_normal)))
+accel_img_dark_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(accel_img_dark)))
+brake_img_normal_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(brake_img_normal)))
+brake_img_dark_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(brake_img_dark)))
 
-brake_label = tk.Label(root, image=brake_img_dark, bg="black")
-brake_label.pack(side="left", padx=20, pady=10)
+# 엑셀 이미지 레이블 생성 (상단 오른쪽 배치, 더 위로)
+accel_label = tk.Label(root, image=accel_img_normal_flipped, bg="black")
+accel_label.place(relx=0.8, rely=0.05, anchor='n')  # 오른쪽 상단에 더 가깝게 배치
 
-#나중에 지울꺼
+# 브레이크 이미지 레이블 생성 (상단 왼쪽 배치, 더 위로)
+brake_label = tk.Label(root, image=brake_img_normal_flipped, bg="black")
+brake_label.place(relx=0.2, rely=0.05, anchor='n')  # 왼쪽 상단에 더 가깝게 배치
+
+# 나중에 지울 데이터 예제
 data = {"driveState": "Drive Ready"}
 
+# 속도 텍스트 레이블 생성 (가운데 하단 배치)
+canvas_speed = tk.Canvas(root, width=500, height=100, bg="black", highlightthickness=0)
+canvas_speed.place(relx=0.5, rely=0.9, anchor='center')  # 가운데 하단 배치
 
-status_label = tk.Label(root, text=data["driveState"], font=font_large, bg="black", fg="white", padx=10, pady=10, width=25)
-status_label.place(relx=0.44, rely=0.05, anchor='center')
+# 초기 텍스트 생성
+speed_text = canvas_speed.create_text(
+    250, 50,
+    text="0",  # 초기 텍스트
+    font=font_large,
+    fill="white",
+    angle=180  # 상하 반전
+)
 
-#나중에 지울꺼
-#data부분을 나중에 속도 데이터로 넣으면될꺼같음 
-text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
-text_label.place(relx=0.97, rely=0.05, anchor='ne')
+def update_display_state(accel_value, brake_value, state):
+    # "aclPedal" 값을 텍스트로 출력
+    canvas_speed.itemconfig(speed_text, text=str(data["aclPedal"])[::-1])  # 좌우 반전된 값으로 업데이트
 
 
 # pygame 초기화
 pygame.mixer.init()
 
-#OBD 연결 및 데이터 요청 
-#connection = obd.OBD()
-
-#테스트 출력 확인
-#print("Speed:", speed_response.value)  # km/h 단위
-#print("RPM:", rpm_response.value)      # RPM 단위
 
 # 음성 재생 시간 기록
 last_accel_time = 0
@@ -105,37 +115,26 @@ is_accelerating = False
 # MQTT 설정
 client = mqtt.Client()
 client.connect(ip(), 1222, 60)
-
-# 상태 업데이트 및 이미지 전환 함수
+    
 def update_display_state(accel_value, brake_value, state):
     global data # driveState를 초기화하려면 필요한 코드
     # 엑셀 이미지 상태 업데이트
     if accel_value <= 30:
-        if accel_label.cget("image") != str(accel_img_dark):  # 같은 이미지라면 업데이트 안함
-            accel_label.config(image=accel_img_dark)
+        if accel_label.cget("image") != str(accel_img_dark_flipped):  # 같은 이미지라면 업데이트 안함
+            accel_label.config(image=accel_img_dark_flipped)
 
     else:
-        if accel_label.cget("image") != str(accel_img_normal):
-            accel_label.config(image=accel_img_normal)
+        if accel_label.cget("image") != str(accel_img_normal_flipped):
+            accel_label.config(image=accel_img_normal_flipped)
 
     # 브레이크 이미지 상태 업데이트
     if brake_value <= 30:
-        if brake_label.cget("image") != str(brake_img_dark):
-            brake_label.config(image=brake_img_dark)
+        if brake_label.cget("image") != str(brake_img_dark_flipped):
+            brake_label.config(image=brake_img_dark_flipped)
 
     else:
-        if brake_label.cget("image") != str(brake_img_normal):
-            brake_label.config(image=brake_img_normal)
-    
-    ##나중에 지울꺼
-    #상태업데이트 : 이전 상태와 비교하여 변화가 있을 때만 업데이트 테스트 텍스트 
-    if data["driveState"] != state:
-        data["driveState"] = state
-        status_label.config(text=data["driveState"])
-    ##나중에 지울꺼
-    # accel_value 레이블 업데이트 (정수 형식)
-    text_label.config(text=f"현재 : {int(accel_value)}")
-    #나중에 obd스피드 입력넣을때 accel_value대신에 speed_response.value 로 교체
+        if brake_label.cget("image") != str(brake_img_normal_flipped):
+            brake_label.config(image=brake_img_normal_flipped) 
 
 rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1.wav")
 rapidspeed_2_sound = pygame.mixer.Sound("rapidspeed_2.wav")
@@ -259,28 +258,11 @@ def run_code():
             # 두 번째 로드셀 (브레이크)
             val_brake = hx2.get_weight(5)
             print(f"현재상태 : 브레이크(Brake) 무게: {val_brake} g")
-            
-            #speed_cmd = obd.commands.speed
-            #rpm_cmd = obd.commands.RPM
-
-            #데이터 요청 및 출력
-            #speed_response = connection.query(speed_cmd)
-            #rpm_response = connection.query(rpm_cmd)
-            
-            
-            
+               
             hx1.power_down()
             hx2.power_down()
             hx1.power_up()
             hx2.power_up()
-                     
-             # 속도 및 RPM 데이터 추가
-           # if speed_response.value is not None:
-                #speed_kmh = speed_response.value.to("km/h")
-                #data["speed"] = float(speed_kmh)
-                #text_label.config(text=f"현재 속도: {int(speed_kmh)} km/h") #이거 쓰면 될꺼같네 
-            #if rpm_response.value is not None:
-                #data["rpm"] = int(rpm_response.value)
 
             # 현재 시간 추가
             now = datetime.now()
@@ -298,8 +280,7 @@ def run_code():
             
             
             client.publish('pedal', json.dumps(data), 0, retain=False)
-            #client.publish('AbnormalDriving', json.dumps(''), 0, retain=False)
-            # Tkinter UI 업데이트
+
             check_info(val_accelerator, val_brake)
 
             time.sleep(1)
