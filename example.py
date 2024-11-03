@@ -6,7 +6,7 @@ from hx711 import HX711
 import paho.mqtt.client as mqtt
 import json
 import tkinter as tk
-from PIL import Image, ImageDraw, ImageFont, ImageTk
+from PIL import Image, ImageDraw, ImageFont, ImageTk, ImageOps
 import threading
 import pygame
 from server import ip, port
@@ -105,18 +105,10 @@ brake_img_normal = Image.open("brake_normal.png").resize((500, 400))
 brake_img_dark = Image.open("brake_dark.png").resize((500, 400))
 
 # 상하 좌우 반전된 이미지 생성 및 전역 변수로 참조 유지
-accel_img_normal_flipped = ImageTk.PhotoImage(
-    accel_img_normal.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT)
-)
-accel_img_dark_flipped = ImageTk.PhotoImage(
-    accel_img_dark.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT)
-)
-brake_img_normal_flipped = ImageTk.PhotoImage(
-    brake_img_normal.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT)
-)
-brake_img_dark_flipped = ImageTk.PhotoImage(
-    brake_img_dark.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT)
-)
+accel_img_normal_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(accel_img_normal)))
+accel_img_dark_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(accel_img_dark)))
+brake_img_normal_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(brake_img_normal)))
+brake_img_dark_flipped = ImageTk.PhotoImage(ImageOps.mirror(ImageOps.flip(brake_img_dark)))
 
 # 이미지 레이블 생성 (상하 좌우 반전된 이미지 적용)
 accel_label = tk.Label(root, image=accel_img_normal_flipped, bg="black")
@@ -215,8 +207,8 @@ def update_display_state(accel_value, brake_value, state):
         canvas_status.itemconfig(status_text, text=data["driveState"][::-1])  # 텍스트 좌우 반전
 
     # accel_value 레이블 업데이트 (정수 형식으로 상하좌우 반전된 텍스트 표시)
-    canvas_speed.itemconfig(speed_text, text=f"현재 속도: {int(accel_value)}"[::-1])  # 속도 텍스트 좌우 반전
-    #나중에 obd스피드 입력넣을때 accel_value대신에 speed_response.value 로 교체    
+    canvas_speed.delete("all")  # 기존 텍스트 삭제
+    canvas_speed.create_text(100, 50, text=str(int(accel_value))[::-1], font=font_large, fill="white", angle=180)
 
 def simulate_update():
     # 예제 값으로 상태를 변경하며 업데이트
