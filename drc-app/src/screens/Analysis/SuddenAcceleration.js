@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions} from 'react-native';
+import { View, StyleSheet, Dimensions, Text} from 'react-native';
 import AnalysisCard from '../../components/Card/AnalysisCard';
 import { LineChart } from 'react-native-chart-kit';
 import { getAcceleration } from '../../api/driveInfoAPI';
 
 const SuddenAcceleration = () => {
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [{ data: [] }], // 초기 데이터 배열을 빈 배열로 설정
+  });
+  const [loading, setLoading] = useState(true);
+  
+
   // 날짜 계산 함수
   const getDates = () => {
     const currentDate = new Date(); // 현재 날짜
@@ -38,22 +45,32 @@ const SuddenAcceleration = () => {
         const result = await getAcceleration(twoWeeksAgo, currentDate);
         console.log("가속 데이터 요청", result);
         
-        // // 결과 처리: 날짜와 주행 가속 횟수 추출
-        // const labels = result.map(item => item.date); // 날짜
-        // const data = result.map(item => item.accelerationCount); // 가속 횟수
+        // 날짜와 sacl 추출 및 형식 변경
+        const labels = result.map(item => item.date.replace('2024-', '').replace('-', '.'));
+        const data = result.map(item => item.sacl);
 
-        // setChartData({
-        //   labels,
-        //   datasets: [{ data }],
-        // });
+        // 상태 업데이트
+        setChartData({
+          labels,
+          datasets: [{ data }],
+        });
+
+        // 콘솔에 결과 출력
+        console.log("Labels:", labels);
+        console.log("Data:", data);
       } catch (error) {
         console.error("데이터 가져오기 오류: ", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, [currentDate, twoWeeksAgo]); // 컴포넌트가 마운트될 때 데이터 가져오기
 
+  if (loading) {
+    return <View><Text>Loading...</Text></View>; // 로딩 중일 때 표시할 컴포넌트
+  }
 
   // LineChart 크기 조정용
   const chartWidth = Dimensions.get('window').width - 32; // 화면 너비보다 32 픽셀 줄임
@@ -65,22 +82,18 @@ const SuddenAcceleration = () => {
 
       <LineChart
         data={{
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-          datasets: [
-            {
-              data: [20, 45, 28, 80, 99, 43],
-            },
-          ],
+          labels: chartData.labels,
+          datasets: chartData.datasets,
         }}
         width={chartWidth}
         height={chartHeight}
-        yAxisLabel="$"
-        yAxisSuffix="k"
+        yAxisLabel=""
+        yAxisSuffix="회"
         chartConfig={{
           backgroundColor: '#ffffff',
           backgroundGradientFrom: '#ffffff',
           backgroundGradientTo: '#ffffff',
-          decimalPlaces: 2,
+          decimalPlaces: 1,
           color: (opacity = 1) => `rgba(47, 79, 79, ${opacity})`,
           labelColor: () => `#2F4F4F`,
           style: {
