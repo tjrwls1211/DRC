@@ -22,8 +22,8 @@ public class DriveLog {
 	private int brkPedal;
 	private int speed;
 	private int rpm;
-	@Column(name = "createdAt", columnDefinition = "TIMESTAMP")
-	private LocalDateTime createdAt;
+	@Column(name = "createDate", columnDefinition = "TIMESTAMP")
+	private LocalDateTime createDate;
 	private String driveState;
 	
 }

@@ -21,6 +21,7 @@ public class UserData {
     private String pw;
     private String nickname;
     private LocalDate birthDate;
+    @Column(unique = true)
     private String carId;
     private String otpKey;
     @Column(nullable = false) 

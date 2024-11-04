@@ -26,7 +26,7 @@ public class DriveLogServiceImpl implements DriveLogService {
 
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteOldNormalLogs(LocalDateTime targetDate) {
-		driveLogRepository.deleteByDriveStateAndCreatedAtBefore("Normal Driving", targetDate);
+		driveLogRepository.deleteByDriveStateAndCreateDateBefore("Normal Driving", targetDate);
 	}
 
 	@Transactional(readOnly = true)
@@ -36,7 +36,7 @@ public class DriveLogServiceImpl implements DriveLogService {
 	    LocalDateTime endOfDay = date.atTime(LocalTime.MAX); // 하루의 종료 시간 - 23:59:59999
 
 	    // 해당 범위 데이터 조회
-	    List<DriveLog> driveLogs = driveLogRepository.findByCarIdAndCreatedAtBetween(carId, startOfDay, endOfDay);
+	    List<DriveLog> driveLogs = driveLogRepository.findByCarIdAndCreateDateBetween(carId, startOfDay, endOfDay);
 
 	    // 데이터 리스트를 DTO로 변환
 	    List<DriveLogExcelDTO> driveLogExcelDTOs = driveLogs.stream()
@@ -46,7 +46,7 @@ public class DriveLogServiceImpl implements DriveLogService {
 	                    driveLog.getBrkPedal(),
 	                    driveLog.getSpeed(),
 	                    driveLog.getRpm(),
-	                    driveLog.getCreatedAt()))
+	                    driveLog.getCreateDate()))
 	            .collect(Collectors.toList());
 
 	    // 변환된 DTO 리스트 반환

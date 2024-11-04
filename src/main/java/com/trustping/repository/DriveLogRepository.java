@@ -16,7 +16,7 @@ public interface DriveLogRepository extends JpaRepository<DriveLog, Long> {
 
 	void deleteByCarId(String carId);
 
-	void deleteByDriveStateAndCreatedAtBefore(String driveState, LocalDateTime targetDate);
+	void deleteByDriveStateAndCreateDateBefore(String driveState, LocalDateTime targetDate);
 
-	List<DriveLog> findByCarIdAndCreatedAtBetween(String carId, LocalDateTime start, LocalDateTime end);
+	List<DriveLog> findByCarIdAndCreateDateBetween(String carId, LocalDateTime start, LocalDateTime end);
 }
