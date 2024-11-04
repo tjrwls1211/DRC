@@ -101,6 +101,9 @@ pygame.mixer.init()
 # 음성 재생 시간 기록
 last_accel_time = 0
 is_accelerating = False
+last_brake_time = 0
+last_both_time = 0
+last_speed_time = 0
 
 # MQTT 설정
 client = mqtt.Client()
@@ -223,65 +226,64 @@ def check_info(accel_value, brake_value):
                 last_accel_time = time.time()
                              
 
-    elif brake_value > 200 and accel_value <= 30: # 급정거 brake_value > 15000 and accel_value <= 30:
-        state = "Rapid Braking" 
+    elif brake_value > 200 and accel_value <= 30:
+        state = "Rapid Braking"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 2
-        is_accelerating = False
-        #급정거 음성
-        if not is_accelerating:
-            last_accel_time = time.time()
+    
+        if not is_accelerating:  # 급정거 시작 시
+            last_brake_time = time.time()
             is_accelerating = True
         else:
-            elapsed_time = time.time() - last_accel_time
+            elapsed_time = time.time() - last_brake_time
             if elapsed_time >= 4 and not is_playing_sounds:
                 stop_sounds = True
                 time.sleep(0.2)
-            
-                # accelaccel.wav 파일만 재생
-                threading.Thread(target=play_sounds_in_sequence, args=(["brakebrake.wav"],), daemon=True).start()
-                last_accel_time = time.time()         
-        stop_sounds = True  # 브레이크가 작동하면 음성 재생 중단
 
-    elif accel_value > 100 and brake_value > 100: # 양발 운전 accel_vlaue > 1000 and brake_value > 1000
+                sounds = ["brakebrake.wav"]  # Example file
+                print("Rapid Braking 음성 재생 시작")
+                threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
+                last_brake_time = time.time()
+
+        stop_sounds = True
+
+    # Both Feet Driving
+    elif accel_value > 100 and brake_value > 100:
         state = "Both Feet Driving"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 3
-        is_accelerating = False
-       
-        #양발운전 음성
         if not is_accelerating:
-            last_accel_time = time.time()
+            last_both_time = time.time()
             is_accelerating = True
         else:
-            elapsed_time = time.time() - last_accel_time
+            elapsed_time = time.time() - last_both_time
             if elapsed_time >= 4 and not is_playing_sounds:
                 stop_sounds = True
                 time.sleep(0.2)
-            
-                # accelaccel.wav 파일만 재생
-                threading.Thread(target=play_sounds_in_sequence, args=(["bothdrive.wav"],), daemon=True).start()
-                last_accel_time = time.time()        
-        stop_sounds = True  # 양발 운전 상태에서도 음성 중단
-        
-    #급가속 상황    
+
+                sounds = ["bothdrive.wav"]  # Example file
+                print("Both Feet Driving 음성 재생 시작")
+                threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
+                last_both_time = time.time()
+
+    # Rapid Acceleration
     elif accel_value > 1000 and brake_value <= 30:
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 1
-
         if not is_accelerating:
-            last_accel_time = time.time()
+            last_speed_time = time.time()
             is_accelerating = True
         else:
-            elapsed_time = time.time() - last_accel_time
+            elapsed_time = time.time() - last_speed_time
             if elapsed_time >= 4 and not is_playing_sounds:
                 stop_sounds = True
                 time.sleep(0.2)
-            
-                # accelaccel.wav 파일만 재생
-                threading.Thread(target=play_sounds_in_sequence, args=(["accelaccel.wav"],), daemon=True).start()
-                last_accel_time = time.time()
+
+                sounds = ["accelaccel.wav"]  # Example file
+                print("Rapid Acceleration 음성 재생 시작")
+                threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
+                last_speed_time = time.time()
 
         is_accelerating = False
     else:
