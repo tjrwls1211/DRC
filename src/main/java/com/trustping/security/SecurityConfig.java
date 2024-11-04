@@ -36,7 +36,8 @@ public class SecurityConfig {
                     .requestMatchers("/api/user/verifyPassword").hasRole("USER")
                     .requestMatchers("/api/user/modifyPassword").hasRole("USER")  
                     .requestMatchers("/api/user/deleteUser").hasRole("USER") 
-                    .requestMatchers("/api/user/validate").permitAll() 
+                    .requestMatchers("/api/user/validate").permitAll()
+                    .requestMatchers("/api/user/disableMfa").hasRole("USER")
             	    .requestMatchers("/api/abnormal/**").hasRole("USER")
             	    .requestMatchers("/api/driveLog/**").hasRole("USER")
             	    .anyRequest().authenticated()  // 그 외 요청은 인증 필요
