@@ -101,15 +101,12 @@ class FlippedTextLabel(QLabel):
         painter = QPainter(self)
         painter.setFont(self.font())
         painter.setRenderHint(QPainter.Antialiasing)
+        painter.translate(self.width() // 2, self.height() // 2)
+        painter.rotate(180)  # 상하 반전
 
-    # 좌우 반전을 위한 변환 설정
-        transform = QTransform()
-        transform.scale(-1, 1)  # X축 반전 (좌우 반전)
-        painter.setTransform(transform, True)
-
-    # 텍스트 중앙에 출력
+    # 텍스트 중앙에 출력 (좌우 반전 포함)
         text_rect = painter.boundingRect(0, 0, self.width(), self.height(), Qt.AlignCenter, self.text)
-        painter.drawText(-self.width() // 2, self.height() // 2, self.text)
+        painter.drawText(-text_rect.width() // 2, text_rect.height() // 2, self.text)  # 이미 반전된 텍스트 출력
 
         painter.end()
 
