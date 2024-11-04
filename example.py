@@ -21,7 +21,7 @@ data = {
     "carId": "01나2345",  # 차량 ID 설정
     "aclPedal": 0,
     "brkPedal": 0,
-    "createdAt": 0,
+    "createDate": 0,
     "driveState": "",
     "speed" : 50,
     "rpm" : 2000
@@ -329,7 +329,7 @@ def run_code():
                 "carId": "01나2345",  # 차량 ID 유지
                 "aclPedal": int(val_accelerator),
                 "brkPedal": int(val_brake),
-                "createdAt": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+                "createDate": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                 "driveState": data["driveState"],  # 기존 driveState 유지
                 "speed" : 40,
                 "rpm" : 2000
