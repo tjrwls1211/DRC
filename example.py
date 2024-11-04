@@ -225,13 +225,13 @@ def check_info(accel_value, brake_value):
                 # 마지막 가속 시간 업데이트
                 last_accel_time = time.time()
                              
-
+    # Rapid Braking
     elif brake_value > 200 and accel_value <= 30:
         state = "Rapid Braking"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 2
     
-        if not is_accelerating:  # 급정거 시작 시
+        if not is_accelerating:
             last_brake_time = time.time()
             is_accelerating = True
         else:
@@ -239,13 +239,10 @@ def check_info(accel_value, brake_value):
             if elapsed_time >= 4 and not is_playing_sounds:
                 stop_sounds = True
                 time.sleep(0.2)
-
-                sounds = ["brakebrake.wav"]  # Example file
+                sounds = [brakebrake_sound]
                 print("Rapid Braking 음성 재생 시작")
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 last_brake_time = time.time()
-
-        stop_sounds = True
 
     # Both Feet Driving
     elif accel_value > 100 and brake_value > 100:
@@ -260,8 +257,7 @@ def check_info(accel_value, brake_value):
             if elapsed_time >= 4 and not is_playing_sounds:
                 stop_sounds = True
                 time.sleep(0.2)
-
-                sounds = ["bothdrive.wav"]  # Example file
+                sounds = [bothdrive_sound]
                 print("Both Feet Driving 음성 재생 시작")
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 last_both_time = time.time()
@@ -279,8 +275,7 @@ def check_info(accel_value, brake_value):
             if elapsed_time >= 4 and not is_playing_sounds:
                 stop_sounds = True
                 time.sleep(0.2)
-
-                sounds = ["accelaccel.wav"]  # Example file
+                sounds = [accelaccel_sound]
                 print("Rapid Acceleration 음성 재생 시작")
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 last_speed_time = time.time()
