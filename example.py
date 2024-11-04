@@ -197,35 +197,29 @@ prev_mqtt_state = None
 def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds, prev_mqtt_state, last_brake_time, last_both_time, last_speed_time
     mqtt_state = None
+
+    # Unintended Acceleration
     if 200 < accel_value < 1000 and brake_value <= 30:    
         state = "Unintended Acceleration"
         update_display_state(accel_value, brake_value, state)
-        #mqtt_state = 1 아직 필요없을꺼같아성 
         if not is_accelerating:
             last_accel_time = time.time()
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_accel_time
-            # 음성이 이미 재생 중이 아닐 때만 새로운 스레드를 시작
             if elapsed_time >= 4 and not is_playing_sounds:
                 stop_sounds = True  
-                time.sleep(0.2)  # 이전 스레드 종료 대기
-                
-                # 음성 리스트 설정
+                time.sleep(0.2)
                 sounds = [
                     rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound,
                     nobrake_1_sound, nobrake_2_sound, nobrake_3_sound,
                     speedless_1_sound, speedless_2_sound,
                     carstop_1_sound, carstop_2_sound
                 ]
-
-                # 새로운 스레드에서 음성 재생 시작
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-                # 마지막 가속 시간 업데이트
                 last_accel_time = time.time()
-                
-        is_accelerating = False     
-    # 급가속 (Rapid Acceleration) - 조건을 더 명확히 분리
+
+    # Rapid Acceleration
     elif accel_value > 1000 and brake_value <= 30:
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
@@ -243,15 +237,11 @@ def check_info(accel_value, brake_value):
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 last_speed_time = time.time()
 
-        is_accelerating = False
-    
-                            
     # Rapid Braking
     elif brake_value > 200 and accel_value <= 30:
         state = "Rapid Braking"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 2
-    
         if not is_accelerating:
             last_brake_time = time.time()
             is_accelerating = True
@@ -264,9 +254,7 @@ def check_info(accel_value, brake_value):
                 print("Rapid Braking 음성 재생 시작")
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 last_brake_time = time.time()
-                
-        is_accelerating = False
-        
+
     # Both Feet Driving
     elif accel_value > 100 and brake_value > 100:
         state = "Both Feet Driving"
@@ -284,8 +272,6 @@ def check_info(accel_value, brake_value):
                 print("Both Feet Driving 음성 재생 시작")
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 last_both_time = time.time()
-                
-        is_accelerating = False
     else:
         state = "Normal Driving"
         update_display_state(accel_value, brake_value, state)
