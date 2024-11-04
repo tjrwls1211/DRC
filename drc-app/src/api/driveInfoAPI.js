@@ -16,7 +16,7 @@ export const getAcceleration = async (twoWeeksAgo, currentDate) => {
         console.log("가속 횟수 가져오기 함수 들어옴");
 
         // 쿼리 매개변수로 날짜를 포함하여 API 요청
-        const response = await apiClient.get("api/abnormal/weeklySAcl", {
+        const response = await apiClient.get("/abnormal/weeklySAcl", {
             params: {
                 startDate: twoWeeksAgo,
                 endDate: currentDate,
