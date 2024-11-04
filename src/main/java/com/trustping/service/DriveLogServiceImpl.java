@@ -32,8 +32,8 @@ public class DriveLogServiceImpl implements DriveLogService {
 	@Transactional(readOnly = true)
 	public List<DriveLogExcelDTO> exportDriveLog(String carId, LocalDate date) {
 	    // 특정 날짜의 시작 시간과 종료 시간 생성
-	    LocalDateTime startOfDay = date.atStartOfDay();
-	    LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+	    LocalDateTime startOfDay = date.atStartOfDay(); // 하루의 시작 시간 - 00:00:00
+	    LocalDateTime endOfDay = date.atTime(LocalTime.MAX); // 하루의 종료 시간 - 23:59:59999
 
 	    // 해당 범위 데이터 조회
 	    List<DriveLog> driveLogs = driveLogRepository.findByCarIdAndCreatedAtBetween(carId, startOfDay, endOfDay);

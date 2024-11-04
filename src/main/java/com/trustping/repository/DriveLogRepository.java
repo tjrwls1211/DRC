@@ -13,9 +13,10 @@ import com.trustping.entity.DriveLog;
 @Repository
 public interface DriveLogRepository extends JpaRepository<DriveLog, Long> {
 	List<DriveLog> findByCarId(String carId);
+
 	void deleteByCarId(String carId);
-	
+
 	void deleteByDriveStateAndCreatedAtBefore(String driveState, LocalDateTime targetDate);
-	
-	 List<DriveLog> findByCarIdAndCreatedAtBetween(String carId, LocalDateTime start, LocalDateTime end);
+
+	List<DriveLog> findByCarIdAndCreatedAtBetween(String carId, LocalDateTime start, LocalDateTime end);
 }

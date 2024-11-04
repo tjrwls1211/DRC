@@ -27,4 +27,5 @@ public interface UserDataService {
 	public ResponseDTO verifyPassword(String jwtToken, PasswordDTO passwordDTO);
 	public ResponseDTO modifyPassword(String jwtToken, PasswordDTO passwordDTO);
 	public String getCarIdById(String id);
+	public ResponseDTO disableMfa(String jwtToken);
 }

@@ -1,6 +1,7 @@
 package com.trustping.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trustping.DTO.BothPedalDTO;
 import com.trustping.DTO.SAclDTO;
 import com.trustping.DTO.SBrkDTO;
+import com.trustping.DTO.WeeklyBothPedalDTO;
+import com.trustping.DTO.WeeklySAclDTO;
+import com.trustping.DTO.WeeklySBrkDTO;
 import com.trustping.service.AbnormalDataService;
 import com.trustping.utils.JwtUtil;
 
@@ -27,13 +31,12 @@ public class AbnormalDataController {
 	@Autowired
 	private JwtUtil jwtUtil;
 	
-	// 급가속 날짜로 조회
+	// 급가속 하루 단위 조회
 	@GetMapping("/sacl")
-	public ResponseEntity<SAclDTO> getSacl(@RequestHeader(value = "Authorization") String token, @RequestParam(name = "date") String date) {
-	    LocalDate searchDate = LocalDate.parse(date); 
+	public ResponseEntity<SAclDTO> getSacl(@RequestHeader("Authorization") String token, @RequestParam("date") LocalDate date) {
 	    String jwtToken = token.substring(7);
 	    String id = jwtUtil.extractUsername(jwtToken);
-	    SAclDTO result = abnormalDataService.getSAclByCarIdAndDate(id, searchDate);
+	    SAclDTO result = abnormalDataService.getSAclByCarIdAndDate(id, date);
 	    if (result == null) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
 	    }
@@ -41,29 +44,57 @@ public class AbnormalDataController {
 	}
 
 	
-	// 급정거 날짜로 조회
+	// 급정거 하루 단위 조회
 	@GetMapping("/sbrk")
-	public ResponseEntity<SBrkDTO> getSbrk(@RequestHeader(value = "Authorization") String token, @RequestParam(name = "date") String date) {
-	    LocalDate searchDate = LocalDate.parse(date); 
+	public ResponseEntity<SBrkDTO> getSbrk(@RequestHeader("Authorization") String token, @RequestParam("date") LocalDate date) {
 	    String jwtToken = token.substring(7);
 	    String id = jwtUtil.extractUsername(jwtToken);
-	    SBrkDTO result = abnormalDataService.getSBrkByCarIdAndDate(id, searchDate);
+	    SBrkDTO result = abnormalDataService.getSBrkByCarIdAndDate(id, date);
 	    if (result == null) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
 	    }
 	    return ResponseEntity.ok(result);
 	}
 	
-	// 양발 운전 날짜로 조회
+	// 양발 운전 하루 단위 조회
 	@GetMapping("/bothPedal")
-	public ResponseEntity<BothPedalDTO> getBothPedal(@RequestHeader(value = "Authorization") String token, @RequestParam(name = "date") String date) {
-	    LocalDate searchDate = LocalDate.parse(date); 
+	public ResponseEntity<BothPedalDTO> getBothPedal(@RequestHeader("Authorization") String token, @RequestParam("date") LocalDate date) {
 	    String jwtToken = token.substring(7);
 	    String id = jwtUtil.extractUsername(jwtToken);
-	    BothPedalDTO result = abnormalDataService.getBothPedalByCarIdAndDate(id, searchDate);
+	    BothPedalDTO result = abnormalDataService.getBothPedalByCarIdAndDate(id, date);
 	    if (result == null) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
 	    }
 	    return ResponseEntity.ok(result);
+	}
+	
+	// 날짜 두 개 정해서 그 사이 급가속 조회
+	@GetMapping("weeklySAcl")
+	public ResponseEntity<List<WeeklySAclDTO>> getWeeklySAcl(@RequestHeader("Authorization") String token, @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate) {
+		List<WeeklySAclDTO> result = abnormalDataService.getWeeklySAcl(token, startDate, endDate);
+		if (result == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		return ResponseEntity.ok(result);
+	}
+	
+	// 날짜 두 개 정해서 그 사이 급정거 조회
+	@GetMapping("weeklySBrk")
+	public ResponseEntity<List<WeeklySBrkDTO>> getWeeklySBrk(@RequestHeader("Authorization") String token, @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate) {
+		List<WeeklySBrkDTO> result = abnormalDataService.getWeeklySBrk(token, startDate, endDate);
+		if (result == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		return ResponseEntity.ok(result);
+	}
+	
+	// 날짜 두 개 정해서 그 사이 양발 운전 조회
+	@GetMapping("weeklyBothPedal")
+	public ResponseEntity<List<WeeklyBothPedalDTO>> getWeeklyBothPeal(@RequestHeader("Authorization") String token, @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate) {
+		List<WeeklyBothPedalDTO> result = abnormalDataService.getWeeklyBothPedal(token, startDate, endDate);
+		if (result == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		return ResponseEntity.ok(result);
 	}
 }

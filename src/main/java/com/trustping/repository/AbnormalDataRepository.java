@@ -1,6 +1,7 @@
 package com.trustping.repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,6 @@ public interface AbnormalDataRepository extends JpaRepository<AbnormalData, Long
     Optional<BothPedalDTO> findBothPedalByCarIdAndDate(@Param("carId") String carId, @Param("date") LocalDate date);
 	
 	Optional<AbnormalData> findByCarIdAndDate(@Param("carId") String carId, @Param("date") LocalDate date);
+	
+	List<AbnormalData> findByCarIdAndDateBetween(String carId, LocalDate startDate, LocalDate endDate);	
 }

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -159,11 +158,20 @@ public class UserDataController {
 
 	// JWT 토큰 유효성 검사
 	@GetMapping("/validate")
-	public ResponseEntity<TokenValidationDTO> validateToken(@RequestHeader(value = "Authorization") String token) {
+	public ResponseEntity<TokenValidationDTO> validateToken(@RequestHeader("Authorization") String token) {
 		String jwtToken = token.substring(7);
 		boolean isValid = jwtUtil.validateToken(jwtToken);
 
 		String message = isValid ? "토큰이 유효합니다" : "토큰이 유효하지 않습니다";
 		return ResponseEntity.ok(new TokenValidationDTO(isValid, message));
+	}
+	
+	// 2차 인증 비활성화
+	@PostMapping("disableMfa")
+	public ResponseEntity<ResponseDTO> disableOtp(@RequestHeader("Authorization") String token) {
+	    String jwtToken = token.substring(7);
+	    ResponseDTO response = userDataService.disableMfa(jwtToken);
+	    System.out.println(response);
+	    return ResponseEntity.ok(response);
 	}
 }

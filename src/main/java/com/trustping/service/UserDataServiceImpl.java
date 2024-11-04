@@ -86,8 +86,13 @@ public class UserDataServiceImpl implements UserDataService {
 		}
 
 		String hashedPassword = passwordEncoder.encode(request.getPw());
-		UserData userData = new UserData(request.getId(), hashedPassword, request.getNickname(), request.getBirthDate(),
-				request.getCarId(), null, // OTP 키 초기값
+		UserData userData = new UserData(
+				request.getId(), 
+				hashedPassword, 
+				request.getNickname(), 
+				request.getBirthDate(),
+				request.getCarId(), 
+				null, // OTP 키 초기값
 				"ROLE_USER");
 
 		userDataRepository.save(userData);
@@ -296,6 +301,23 @@ public class UserDataServiceImpl implements UserDataService {
 		// 사용자 삭제
 		userDataRepository.delete(userData);
 		return new ResponseDTO(true, "회원 탈퇴 되었습니다");
+	}
+	
+	// 2차 인증 비활성화
+	public ResponseDTO disableMfa(String jwtToken) {
+		String userId = jwtUtil.extractUsername(jwtToken);
+		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
+
+		// 사용자가 존재하지 않을 경우 처리
+		if (userDataOptional.isEmpty()) {
+			return new ResponseDTO(false, "ID가 존재하지 않습니다 : " + userId);
+		}
+		
+		UserData userData = userDataOptional.get();
+		userData.setOtpKey(null);
+		userDataRepository.save(userData);
+		
+		return new ResponseDTO(true, "2차 인증 비활성화 되었습니다");
 	}
 
 }

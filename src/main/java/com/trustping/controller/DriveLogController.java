@@ -44,8 +44,8 @@ public class DriveLogController {
 		return ResponseEntity.ok(pedalLogs);
 	}
 
-	@GetMapping(value = "/download")
-	public void excelDownload(@RequestHeader("Authorization") String token, HttpServletResponse response, @RequestParam(name = "date") String date) {
+	@GetMapping("/download")
+	public void excelDownload(@RequestHeader("Authorization") String token, HttpServletResponse response, @RequestParam("date") String date) {
 	    LocalDate searchDate = LocalDate.parse(date); 
 	    String jwtToken = token.substring(7);
 	    String id = jwtUtil.extractUsername(jwtToken);
