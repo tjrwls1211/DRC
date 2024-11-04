@@ -30,7 +30,8 @@ const ViewCard = ({ name, score }) => {
 
 const styles = StyleSheet.create({
     customCard: {
-        height: '30%',
+        top: "-30%",
+        height: '40%',
         justifyContent: 'center',
         alignItems: 'center',
         shadowOffset: {
@@ -40,6 +41,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 4,
         elevation: 4,
+        borderWidth:1,
+        borderColor: '#009688'
     },
     name: {
         fontSize: 20,
