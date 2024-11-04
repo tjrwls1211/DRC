@@ -29,12 +29,11 @@ const MainScreen = () => {
             {/* 헤더 부분 */} 
             <View style={styles.headerContainer}> 
                 <View style={styles.header}> 
-                    
                     <Icon4 name="user-circle" size={27} color="#ffffff" onPress={() => navigation.navigate('MypageScreen')} /> 
+                    <Image source={require('../../assets/DRCLogo-text.png')} style={styles.logo} />
                     <Icon3 name="settings-outline" size={27} color="#ffffff" onPress={() => navigation.navigate('SettingsScreen')} /> 
                     
                 </View> 
-                <Text style={{ fontSize: 30, fontWeight: 'bold', color: "white" }}>DRC</Text>
             </View> 
  
             <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 20 }}> 
@@ -89,7 +88,7 @@ const styles = StyleSheet.create({
         position: 'absolute', 
         bottom: 20, 
         right: 30, 
-        backgroundColor: '#007AFF', 
+        backgroundColor: '#009688', 
         width: 60, 
         height: 60, 
         borderRadius: 30, 
@@ -107,6 +106,12 @@ const styles = StyleSheet.create({
         marginTop: -5,
         marginLeft: -5
     },
+    logo: {
+        width: 130,                 // 로고의 너비 설정
+        height: 130,                // 로고의 높이 설정
+        resizeMode: 'contain',     // 로고 크기 조정
+        opacity: 0.8,
+      },
 }); 
 
 export default MainScreen;
