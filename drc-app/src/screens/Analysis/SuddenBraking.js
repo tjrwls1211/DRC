@@ -4,6 +4,9 @@ import AnalysisCard from '../../components/Card/AnalysisCard';
 import { LineChart } from 'react-native-chart-kit';
 
 const SuddenBraking = () => {
+  const chartWidth = Dimensions.get('window').width - 32; // 화면 너비보다 32 픽셀 줄임
+  const chartHeight = 300; // 기존 높이보다 낮게 조정
+
   return (
     <View style={styles.container}>
         <AnalysisCard num="2" /> 
@@ -17,30 +20,31 @@ const SuddenBraking = () => {
             },
           ],
         }}
-        width={Dimensions.get('window').width - 16} // 화면 너비에 맞게 조정
-        height={330}
+        width={chartWidth}
+        height={chartHeight}
         yAxisLabel="$"
         yAxisSuffix="k"
         chartConfig={{
-          backgroundColor: '#e26a00',
-          backgroundGradientFrom: '#fb8c00',
-          backgroundGradientTo: '#ffa726',
-          decimalPlaces: 2, // 소수점 자리수
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+          backgroundColor: '#ffffff',
+          backgroundGradientFrom: '#ffffff',
+          backgroundGradientTo: '#ffffff',
+          decimalPlaces: 2,
+          color: (opacity = 1) => `rgba(47, 79, 79, ${opacity})`,
+          labelColor: () => `#2F4F4F`,
           style: {
             borderRadius: 16,
           },
           propsForDots: {
-            r: '6',
-            strokeWidth: '2',
-            stroke: '#ffa726',
+            r: '4', // 점 크기 줄이기
+            strokeWidth: '1.5', // 점 외곽선 크기 줄이기
+            stroke: '#0095A1',
           },
         }}
-        bezier // 부드러운 곡선 형태로 표시
+        bezier
         style={{
           marginVertical: 8,
           borderRadius: 16,
+          marginHorizontal:7,
         }}
       />
     </View>
@@ -49,10 +53,10 @@ const SuddenBraking = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, // 부모 컨테이너가 화면 전체를 차지하도록 설정
-    padding: 20, // 전체 화면에 여백 추가
-    justifyContent: 'center', // 자식 요소들을 위에서부터 정렬
-    backgroundColor: '#f8f8f8', // 전체 배경 색상
+    flex: 1,
+    padding: 10, // 화면 여백 조정
+    justifyContent: 'center',
+    backgroundColor: '#0095A1',
   },
 });
 
