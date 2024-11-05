@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, Text} from 'react-native';
 import AnalysisCard from '../../components/Card/AnalysisCard';
 import { LineChart } from 'react-native-chart-kit';
-
+import { getWeeklySAcl } from '../../api/driveInfoAPI';
 
 const SuddenAcceleration = () => {
   const [chartData, setChartData] = useState({
@@ -42,7 +42,7 @@ const SuddenAcceleration = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getAcceleration(twoWeeksAgo, currentDate);
+        const result = await getWeeklySAcl(twoWeeksAgo, currentDate);
         console.log("가속 데이터 요청", result);
         
         // 날짜와 sacl 추출 및 형식 변경
@@ -60,7 +60,8 @@ const SuddenAcceleration = () => {
         console.log("Data:", data);
       } catch (error) {
         console.error("데이터 가져오기 오류: ", error);
-      } finally {
+      } 
+      finally {
         setLoading(false);
       }
     };
