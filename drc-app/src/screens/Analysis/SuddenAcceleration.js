@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions} from 'react-native';
 import AnalysisCard from '../../components/Card/AnalysisCard';
 import { LineChart } from 'react-native-chart-kit';
-import { getAcceleration } from '../../api/driveInfoAPI';
+
 
 const SuddenAcceleration = () => {
   
