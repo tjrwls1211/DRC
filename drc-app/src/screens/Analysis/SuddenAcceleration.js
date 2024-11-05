@@ -3,6 +3,7 @@ import { View, StyleSheet, Dimensions, Text} from 'react-native';
 import AnalysisCard from '../../components/Card/AnalysisCard';
 import { LineChart } from 'react-native-chart-kit';
 import { getWeeklySAcl } from '../../api/driveInfoAPI';
+import { getDate } from '../../utils/getDate';
 
 const SuddenAcceleration = () => {
   const [chartData, setChartData] = useState({
@@ -11,34 +12,10 @@ const SuddenAcceleration = () => {
   });
   const [loading, setLoading] = useState(true);
   
-
-  // 날짜 계산 함수
-  const getDates = () => {
-    const currentDate = new Date(); // 현재 날짜
-    const twoWeeksAgo = new Date(currentDate); // 현재 날짜 복사
-
-    // 2주 전 날짜 계산
-    twoWeeksAgo.setDate(currentDate.getDate() - 14);
-
-    // 날짜 포맷팅 (년-월-일 형식)
-    const formatDate = (date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // 0부터 시작하므로 +1
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
-
-    return {
-      currentDate: formatDate(currentDate),
-      twoWeeksAgo: formatDate(twoWeeksAgo),
-    };
-  };
-
-  const { currentDate, twoWeeksAgo } = getDates(); // 날짜 가져오기
+  const { currentDate, twoWeeksAgo } = getDate(); // 날짜 가져오기
   console.log("날짜 계산 결과 - (오늘):", currentDate, "(2주전): ", twoWeeksAgo);
 
-  //const result = await getAcceleration(currentDate, twoWeeksAgo);
-  // 데이터 가져오기
+  // 급가속 분석 결과 조회
   useEffect(() => {
     const fetchData = async () => {
       try {
