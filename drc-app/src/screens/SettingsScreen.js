@@ -44,9 +44,19 @@ const SettingsScreen = () => {
       Alert.alert("OTP 인증 정보가 생성되었습니다.", "QR 코드를 스캔하거나 설정 key를 사용하여 OTP 코드를 생성하세요."); // 알림 표시
     } else {
       console.log("2차인증 비활성");
-      await disableTwoFactorAuth(); // 비활성화 함수 호출
-      setQrUrl(null);
-      setOtpKey(null);
+      try {
+        const response = await disableTwoFactorAuth(); // 비활성화 함수 호출
+        setQrUrl(null);
+        setOtpKey(null);
+        
+        // 2차 인증 비활성화 성공 시 Alert 표시
+        if (response.success) {
+          Alert.alert("성공", response.message); // Alert로 성공 메시지 표시
+        }
+      } catch (error) {
+        console.error("2차 인증 비활성화 오류:", error);
+        Alert.alert("오류", "2차 인증 비활성화 중 문제가 발생했습니다.");
+      }
     }
     setIs2FAEnabled(value); // Context를 통해 2차 인증 상태 업데이트
     console.log("2차인증 전역상태 업데이트: ", is2FAEnabled);

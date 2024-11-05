@@ -162,15 +162,26 @@ export const enableTwoFactorAuth = async () => {
 };
 
 // 2차 인증 비활성화 요청 - TODO: 백엔드 개발 후 그에 맞게 수정
-// export const disableTwoFactorAuth = async () => {
-//   try {
-//     // 서버에 2차 인증 비활성화 요청
-//     await apiClient.post("/2fa/disable");
-//   } catch (error) {
-//     console.error("2차 인증 비활성화 오류:", error);
-//     throw error;
-//   }
-// };
+export const disableTwoFactorAuth = async () => {
+  try {
+    console.log("2차인증 비활성 함수 들어옴");
+    const token = await AsyncStorage.getItem('token');
+
+    const response = await apiClient.post("/user/disableMfa", {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    console.log("2차인증 비활성화 반환 데이터: ", response.data);
+    
+    return response.data; // 성공 여부와 메시지 반환
+  } catch (error) {
+    console.error("2차 인증 비활성화 오류(API 함수):", error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
 
 // OTP 검증 요청
 export const checkOTP = async (email, otp) => {
