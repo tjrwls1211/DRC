@@ -26,7 +26,7 @@ public class DriveLogSubscribeService implements MqttCallback {
     private EnvConfig envConfig; // 구독 토픽도 가져옴
     
     @Autowired
-    private DriveLogStorageService pedalLogStorageService;
+    private DriveLogStorageService driveLogStorageService;
     
     @PostConstruct
     public void subscribeToTopic() {
@@ -87,7 +87,7 @@ public class DriveLogSubscribeService implements MqttCallback {
     	String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
         System.out.println("Message received on topic " + topic + ": " + payload);
         
-        pedalLogStorageService.saveMessage(payload);
+        driveLogStorageService.saveData(payload);
     }
     
     @Override

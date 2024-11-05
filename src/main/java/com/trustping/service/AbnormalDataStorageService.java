@@ -19,7 +19,7 @@ public class AbnormalDataStorageService {
 	private AbnormalDataRepository abnormalDataRepository;
 
 	// 비정상 주행 데이터 저장
-	public void saveMessage(String message) {
+	public void saveData(String message) {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			DriveStateDTO driveStateDTO = objectMapper.readValue(message, DriveStateDTO.class);

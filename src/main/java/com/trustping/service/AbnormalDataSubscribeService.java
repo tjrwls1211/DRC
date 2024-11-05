@@ -87,7 +87,7 @@ public class AbnormalDataSubscribeService implements MqttCallback {
     	String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
         System.out.println("Message received on topic " + topic + ": " + payload);
         
-        abnormalDataStorageService.saveMessage(payload);
+        abnormalDataStorageService.saveData(payload);
     }
     
     @Override

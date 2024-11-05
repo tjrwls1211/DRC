@@ -23,26 +23,26 @@ import com.trustping.repository.DriveLogRepository;
 public class DriveLogStorageService {
 
 	@Autowired
-	private DriveLogRepository pedalLogRepository;
+	private DriveLogRepository driveLogRepository;
 
 	@Autowired
-	private DriveLogService pedalLogService;
+	private DriveLogService	driveLogService;
 
 	// 정상 주행 데이터 삭제
 	@Scheduled(fixedRate = 10000)
 	public void deleteOldNormalLogs() {
 		LocalDateTime targetTime = LocalDateTime.now().minusMinutes(5);
-		pedalLogService.deleteOldNormalLogs(targetTime);
+		driveLogService.deleteOldNormalLogs(targetTime);
 	}
 
-	// 페달 로그 저장
-	public void saveMessage(String message) {
+	// 주행 로그 저장
+	public void saveData(String message) {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			objectMapper.registerModule(new JavaTimeModule());
-			DriveLog pedalLog = objectMapper.readValue(message, DriveLog.class);
-		
-			pedalLogRepository.save(pedalLog);
+			DriveLog driveLog = objectMapper.readValue(message, DriveLog.class);
+			
+			driveLogRepository.save(driveLog);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
