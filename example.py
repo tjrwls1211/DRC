@@ -11,7 +11,7 @@ import threading
 import pygame
 from server import ip, port
 import obd
-
+import random
 
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
@@ -76,17 +76,10 @@ accel_label.pack(side="right", padx=20, pady=10)
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
 brake_label.pack(side="left", padx=20, pady=10)
 
-#나중에 지울꺼
-data = {"driveState": "Drive Ready"}
 
-
-status_label = tk.Label(root, text=data["driveState"], font=font_large, bg="black", fg="white", padx=10, pady=10, width=25)
-status_label.place(relx=0.44, rely=0.05, anchor='center')
-
-#나중에 지울꺼
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
 text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
-text_label.place(relx=0.97, rely=0.05, anchor='ne')
+text_label.place(relx=0.45, rely=0.05, anchor='center')
 
 
 # pygame 초기화
@@ -110,6 +103,25 @@ last_speed_time = 0
 client = mqtt.Client()
 client.connect(ip(), 1222, 60)
 
+# 테스트 예시 
+def generate_random_speed(min_speed=0, max_speed=120):
+    """
+    랜덤 속도를 생성하는 함수
+    
+    Parameters:
+    min_speed (int): 최소 속도 (기본값 0 km/h)
+    max_speed (int): 최대 속도 (기본값 120 km/h)
+    
+    Returns:
+    int: 랜덤하게 생성된 속도 (km/h)
+    """
+    return random.randint(min_speed, max_speed)
+
+# 사용 예시
+for _ in range(5):
+    random_speed = generate_random_speed()
+    print(f"랜덤 속도: {random_speed} km/h")
+
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
     global data # driveState를 초기화하려면 필요한 코드
@@ -131,14 +143,9 @@ def update_display_state(accel_value, brake_value, state):
         if brake_label.cget("image") != str(brake_img_normal):
             brake_label.config(image=brake_img_normal)
     
-    ##나중에 지울꺼
-    #상태업데이트 : 이전 상태와 비교하여 변화가 있을 때만 업데이트 테스트 텍스트 
-    if data["driveState"] != state:
-        data["driveState"] = state
-        status_label.config(text=data["driveState"])
-    ##나중에 지울꺼
-    # accel_value 레이블 업데이트 (정수 형식)
-    text_label.config(text=f"현재 : {int(accel_value)}")
+
+    #레이블 업데이트 (정수 형식)
+    text_label.config(text=f"현재 : {random_speed}")
     #나중에 obd스피드 입력넣을때 accel_value대신에 speed_response.value 로 교체
 
 #급발진 음성
@@ -378,7 +385,7 @@ def run_code():
                 data["speed"] = float(speed_kmh)
                 
                 acceleration_kmh2 = calculate_acceleration_kmh2(speed_kmh)
-                data["delta_velocity"] = acceleration_kmh2
+                data["acceleration"] = acceleration_kmh2
                 
                 text_label.config(text=f"현재 속도: {int(speed_kmh)} km/h") #이거 쓰면 될꺼같네 
             if rpm_response.value is not None:
