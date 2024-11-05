@@ -141,7 +141,7 @@ def update_display_state(accel_value, brake_value, state):
     
 
     #레이블 업데이트 (정수 형식)
-    text_label.config(text=f"현재 : {random_speed}")
+    #text_label.config(text=f"현재 : {random_speed}")
     #나중에 obd스피드 입력넣을때 accel_value대신에 speed_response.value 로 교체
 
 #급발진 음성
@@ -404,7 +404,8 @@ def run_code():
                 "acceleration" : acceleration #가속도 변수
             })            
             print(data)
-            
+            #레이블 업데이트 (정수 형식)
+            text_label.config(text=f"현재 : {random_speed}")    
             
             client.publish('pedal', json.dumps(data), 0, retain=False)
             check_info(val_accelerator, val_brake)
