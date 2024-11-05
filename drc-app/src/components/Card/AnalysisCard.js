@@ -9,7 +9,7 @@ const AnalysisCard = ({ num }) => {
                 {/* 상단에 카드에 걸쳐진 사진이 들어간 원 */}
                 <View style={styles.circle}>
                     <Image 
-                        source={require('C:/DRC/drc-app/assets/LOGO.png')} 
+                        source={require('../../../assets/LOGO.png')} 
                         style={styles.logo} 
                     />
                 </View>

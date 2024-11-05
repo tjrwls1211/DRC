@@ -70,8 +70,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#009688', 
         padding: 20, 
         marginTop: 25, 
-        height: "35%", 
-        opacity: 0.9
+        height: "35%"
     }, 
     header: { 
         flexDirection: 'row', 
