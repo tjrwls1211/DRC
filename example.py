@@ -289,6 +289,62 @@ def check_info(accel_value, brake_value):
         #이전 상태  갱신
         prev_mqtt_state = mqtt_state
 
+# 초기 값 설정
+previous_speed = 0  # 이전 속도 (km/h)
+previous_time = time.time()
+
+""" def calculate_acceleration_kmh2(current_speed):
+    global previous_speed, previous_time
+
+    current_time = time.time()    # 현재 시간 
+    delta_speed = current_speed - previous_speed  # 속도 변화 (km/h)
+    delta_time = current_time - previous_time  # 시간 변화 (초)
+
+    if delta_time > 0:
+        # 가속도 계산 (m/s² -> km/h²로 변환)
+        acceleration = (delta_speed / delta_time) * 12960  # km/h² 단위로 변환
+    else:
+        acceleration = 0  # 시간 간격이 0일 경우 가속도 0
+
+    # 이전 속도와 시간 업데이트
+    previous_speed = current_speed
+    previous_time = current_time
+
+    return acceleration """
+
+# 예시문 
+def calculate_acceleration_kmh2(current_speed):
+    global previous_speed, previous_time
+
+    current_time = time.time()
+    delta_speed = current_speed - previous_speed  # 속도 변화 (km/h)
+    delta_time = current_time - previous_time  # 시간 변화 (초)
+
+    if delta_time > 0:
+        # 가속도 계산 (m/s² -> km/h² 변환)
+        acceleration = (delta_speed / delta_time) * 12960  # km/h² 단위
+    else:
+        acceleration = 0  # 시간 간격이 0일 경우 가속도 0
+
+    # 이전 속도와 시간 업데이트
+    previous_speed = current_speed
+    previous_time = current_time
+
+    return acceleration
+
+# 속도 예시 입력
+current_speeds = [0, 20, 40, 60, 80]  # 속도를 순차적으로 증가시킴 (km/h)
+
+# 가속도 출력
+for speed in current_speeds:
+    time.sleep(1)  # 1초 간격으로 속도 변경
+    acceleration = calculate_acceleration_kmh2(speed)
+    data["delta_velocity"] = acceleration
+    print(f"속도: {speed} km/h, 가속도: {acceleration:.2f} km/h²")
+
+
+
+
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
 def run_code():
     while True:
@@ -301,28 +357,33 @@ def run_code():
             val_brake = hx2.get_weight(5)
             print(f"현재상태 : 브레이크(Brake) 무게: {val_brake} g")
             
-            #speed_cmd = obd.commands.speed
-            #rpm_cmd = obd.commands.RPM
-
-            #데이터 요청 및 출력
-            #speed_response = connection.query(speed_cmd)
-            #rpm_response = connection.query(rpm_cmd)
-            
-            
-            
             hx1.power_down()
             hx2.power_down()
             hx1.power_up()
             hx2.power_up()
-                     
-             # 속도 및 RPM 데이터 추가
-           # if speed_response.value is not None:
-                #speed_kmh = speed_response.value.to("km/h")
-                #data["speed"] = float(speed_kmh)
-                #text_label.config(text=f"현재 속도: {int(speed_kmh)} km/h") #이거 쓰면 될꺼같네 
-            #if rpm_response.value is not None:
-                #data["rpm"] = int(rpm_response.value)
+        
+                        
+            """ speed_cmd = obd.commands.speed
+            rpm_cmd = obd.commands.RPM
 
+            #데이터 요청 및 출력
+            speed_response = connection.query(speed_cmd)
+            rpm_response = connection.query(rpm_cmd)
+                          
+             # 속도 및 RPM 데이터 추가
+            if speed_response.value is not None:
+                #현재속도("km/h")
+                speed_kmh = speed_response.value.to("km/h")
+                data["speed"] = float(speed_kmh)
+                
+                acceleration_kmh2 = calculate_acceleration_kmh2(speed_kmh)
+                data["delta_velocity"] = acceleration_kmh2
+                
+                text_label.config(text=f"현재 속도: {int(speed_kmh)} km/h") #이거 쓰면 될꺼같네 
+            if rpm_response.value is not None:
+                data["rpm"] = int(rpm_response.value) """
+
+            
             # 현재 시간 추가
             now = datetime.now()
             data.update({
@@ -331,16 +392,14 @@ def run_code():
                 "brkPedal": int(val_brake),
                 "createDate": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                 "driveState": data["driveState"],  # 기존 driveState 유지
-                "speed" : 40,
-                "rpm" : 2000
-                #delta_velocity 가속도 변수
+                "speed" : 40, #40 대신에 들어갈 값 : int(speed_response.value)
+                "rpm" : 2000,  #2000 대신에 들어갈 값 : int(rpm_response.value)
+                "acceleration" : acceleration #가속도 변수
             })            
             print(data)
             
             
             client.publish('pedal', json.dumps(data), 0, retain=False)
-            #client.publish('AbnormalDriving', json.dumps(''), 0, retain=False)
-            # Tkinter UI 업데이트
             check_info(val_accelerator, val_brake)
 
             time.sleep(1)
