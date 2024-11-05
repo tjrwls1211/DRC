@@ -24,7 +24,8 @@ data = {
     "createDate": 0,
     "driveState": "",
     "speed" : 50,
-    "rpm" : 2000
+    "rpm" : 2000,
+    "acceleration" : 0
 }
 
 def cleanAndExit():
@@ -339,7 +340,7 @@ current_speeds = [0, 20, 40, 60, 80]  # 속도를 순차적으로 증가시킴 (
 for speed in current_speeds:
     time.sleep(1)  # 1초 간격으로 속도 변경
     acceleration = calculate_acceleration_kmh2(speed)
-    data["delta_velocity"] = acceleration
+    data["acceleration"] = acceleration
     print(f"속도: {speed} km/h, 가속도: {acceleration:.2f} km/h²")
 
 
