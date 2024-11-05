@@ -117,10 +117,6 @@ def generate_random_speed(min_speed=0, max_speed=120):
     """
     return random.randint(min_speed, max_speed)
 
-# 사용 예시
-for _ in range(5):
-    random_speed = generate_random_speed()
-    print(f"랜덤 속도: {random_speed} km/h")
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
@@ -370,7 +366,10 @@ def run_code():
             hx1.power_up()
             hx2.power_up()
         
-                        
+            random_speed = generate_random_speed()
+            print(f"랜덤 속도: {random_speed} km/h")            
+            
+            
             """ speed_cmd = obd.commands.speed
             rpm_cmd = obd.commands.RPM
 
