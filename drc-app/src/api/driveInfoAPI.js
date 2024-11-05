@@ -9,11 +9,17 @@ const apiClient = axios.create({
     },
 });
 
-// 그래프용 분석 결과 가져오기
-export const getAcceleration = async (twoWeeksAgo, currentDate) => {
+// 토큰 포함 헤더 인스턴스
+const getTokenHeader = async () => {
+    const token = await AsyncStorage.getItem('token');
+    return { Authorization: `Bearer ${token}`};
+}
+
+// 급가속 조회(일정 기간)
+export const getWeeklySAcl = async (twoWeeksAgo, currentDate) => {
     try {
         const token = await AsyncStorage.getItem('token');
-        console.log("가속 횟수 가져오기 함수 들어옴");
+        console.log("급가속 분석결과 조회 함수 들어옴");
 
         // 쿼리 매개변수로 날짜를 포함하여 API 요청
         const response = await apiClient.get("/abnormal/weeklySAcl", {
@@ -35,23 +41,104 @@ export const getAcceleration = async (twoWeeksAgo, currentDate) => {
     }
 }
 
-// // 전주 대비 급가속 횟수 조회
-// export const getWeeklyAcceleration = async () => {
+//< 토큰 헤더 공통 인스턴스 작동 잘되면 급가속 이 함수로 변경 >
+// 급가속 조회 (일정 기간)
+// export const getWeeklySAcl = async (startDate, endDate) => {
 //     try {
-//         const token = await AsyncStorage.getItem('token');
-
-//         const response = await apiClient.get("/user/acceleration",
-//             {
-//                 headers: {
-//                     Authorization: `Bearer ${token}`,
-//             },
+//         const headers = await getTokenHeader();
+//         const response = await apiClient.get(`/abnormal/weeklySAcl`, {
+//             headers,
+//             params: { startDate, endDate }
 //         });
-
-//         console.log("급가속 전주 대비 반환값", response.data);
-
-//         return response.date;
+//         console.log("급가속 조회 결과:", response.data);
+//         return response.data;
 //     } catch (error) {
-//         console.error("급가속 그래프용 값 호출 오류: ", error.response.data);
+//         console.error("급가속 조회 오류:", error.response?.data || error.message);
 //         throw error;
 //     }
-// }
+// };
+
+// 급정거 조회(일정기간)
+export const getWeeklySBrk = async (startDate, endDate) => {
+    try {
+        console.log("급정거 분석결과 조회 함수 들어옴");
+        const headers = await getTokenHeader();
+        console.log("급정거 분석결과 조회 함수 들어옴");
+        const response = await apiClient.get(`/abnormal/weeklySBrk`, {
+            headers,
+            params: { startDate, endDate }
+        });
+        console.log("급정거 조회 결과:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("급정거 조회 오류:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+// 양발운전 조회(일정기간)
+export const getWeeklySPedal = async (startDate, endDate) => {
+    try {
+        const headers = await getTokenHeader();
+        console.log("양발운전 분석결과 조회 함수 들어옴");
+        const response = await apiClient.get(`/abnormal/weeklyBothPedal`, {
+            headers,
+            params: { startDate, endDate }
+        });
+        console.log("양발 운전 조회 결과:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("양발 운전 조회 오류:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+//-----여기서부터 하루 데이터 조회
+
+// 급가속 조회 (하루)
+export const getSAcl = async (date) => {
+    try {
+        const headers = await getTokenHeader();
+        const response = await apiClient.get(`/abnormal/sacl`, {
+            headers,
+            params: { date }
+        });
+        console.log("급가속 조회 결과:", response.data);
+        return response.data; // { sacl: int }
+    } catch (error) {
+        console.error("급가속 조회 오류:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+// 급정거 조회(하루)
+export const getSBrk = async (date) => {
+    try {
+        const headers = await getTokenHeader();
+        const response = await apiClient.get(`/abnormal/sbrk`, {
+            headers,
+            params: { date }
+        });
+        console.log("급정거 조회 결과:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("급정거 조회 오류:", error.response?.data || error.message);
+        throw error;
+    }
+}
+
+// 양발 운전 조회(하루)
+export const getSPedal = async (date) => {
+    try {
+        const headers = await getTokenHeader();
+        const response = await apiClient.get(`/abnormal/bothPedal`, {
+            headers,
+            params: { date }
+        });
+        console.log("양발 운전 조회 결과:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("양발 운전 조회 오류:", error.response?.data || error.message);
+        throw error;
+    }
+};
