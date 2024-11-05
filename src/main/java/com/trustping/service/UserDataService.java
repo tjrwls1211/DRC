@@ -1,5 +1,7 @@
 package com.trustping.service;
 
+import java.util.Optional;
+
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.trustping.DTO.LoginRequestDTO;
@@ -8,6 +10,7 @@ import com.trustping.DTO.MfaRequestDTO;
 import com.trustping.DTO.MfaResponseDTO;
 import com.trustping.DTO.UpdateNicknameDTO;
 import com.trustping.DTO.UpdateResponseDTO;
+import com.trustping.entity.UserData;
 import com.trustping.DTO.MyDataResponseDTO;
 import com.trustping.DTO.OtpResponseDTO;
 import com.trustping.DTO.PasswordDTO;
@@ -27,5 +30,8 @@ public interface UserDataService {
 	public ResponseDTO verifyPassword(String jwtToken, PasswordDTO passwordDTO);
 	public ResponseDTO modifyPassword(String jwtToken, PasswordDTO passwordDTO);
 	public String getCarIdById(String id);
+	public String getIdByCarId(String carId);
 	public ResponseDTO disableMfa(String jwtToken);
+	public Optional<UserData> getUserDataById(String id);
+	public Optional<UserData> getUserDataByCarId(String carId);
 }

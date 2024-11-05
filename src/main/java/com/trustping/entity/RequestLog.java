@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,15 +23,17 @@ import lombok.Setter;
 public class RequestLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long logId;
-    private String userId;
+    private Long logId;    
     private String method;
     private String uri;
-    @Column(name = "createdAt", columnDefinition = "TIMESTAMP")
-    private LocalDateTime created_At;
+    @Column(name = "create_Date", columnDefinition = "TIMESTAMP")
+    private LocalDateTime createDate;
     @PrePersist
     public void prePersist() {
-        this.created_At = LocalDateTime.now().withNano(0);
+        this.createDate = LocalDateTime.now().withNano(0);
     }
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "userId") // UserData의 id를 참조
+    private UserData userData; // UserData 엔티티 참조
 
 }

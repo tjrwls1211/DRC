@@ -58,7 +58,8 @@ public class UserDataServiceImpl implements UserDataService {
 		return userDataRepository.findById(id).map(UserData::getOtpKey);
 	}
 
-	// 차 번호 조회
+	// id로 차 번호 조회
+	@Override
 	public String getCarIdById(String id) {
 		Optional<UserData> userData = userDataRepository.findById(id);
 
@@ -66,6 +67,31 @@ public class UserDataServiceImpl implements UserDataService {
 		if (userData.isPresent()) {
 			String carId = userData.get().getCarId();
 			return carId;
+		} else {
+			return null;
+		}
+	}
+	
+	// UserData 가져오기
+	public Optional<UserData> getUserDataById(String id) {
+	    return userDataRepository.findById(id); // Optional<UserData>를 직접 반환
+	}
+
+	
+	// UserData 가져오기 carId
+	public Optional<UserData> getUserDataByCarId(String carId) {
+	    return userDataRepository.findByCarId(carId);
+	}
+
+	// 차 번호로 id 조회
+	@Override
+	public String getIdByCarId(String carId) {
+		Optional<UserData> userData = userDataRepository.findByCarId(carId);
+
+		// UserData가 존재하는지 확인
+		if (userData.isPresent()) {
+			String id = userData.get().getUserId();
+			return id;
 		} else {
 			return null;
 		}
@@ -121,35 +147,35 @@ public class UserDataServiceImpl implements UserDataService {
 		}
 
 		// JWT 토큰 생성
-		String jwtToken = jwtUtil.generateToken(userData.getId());
+		String jwtToken = jwtUtil.generateToken(userData.getUserId());
 		return new LoginResponseDTO(jwtToken, 2, "로그인 성공");
 	}
 
 	// 유저 필터 추가
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<UserData> userDataOptional = userDataRepository.findById(username);
+	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+		Optional<UserData> userDataOptional = userDataRepository.findById(id);
 
 		UserData userData = userDataOptional
-				.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + username));
+				.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + id));
 
 		// 권한 리스트 생성 및 추가
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(new SimpleGrantedAuthority(userData.getRole()));
 
 		// UserDetails 객체 반환
-		return new org.springframework.security.core.userdetails.User(userData.getId(), userData.getPw(), authorities);
+		return new org.springframework.security.core.userdetails.User(userData.getUserId(), userData.getPw(), authorities);
 	}
 
 	// Google OTP 생성
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public OtpResponseDTO generateGoogleMFA(String jwtToken) {
-		String userId = jwtUtil.extractUsername(jwtToken);
+		String id = jwtUtil.extractUsername(jwtToken);
 
-		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
+		Optional<UserData> userDataOptional = userDataRepository.findById(id);
 
-		UserData userData = userDataOptional.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다 : " + userId));
+		UserData userData = userDataOptional.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다 : " + id));
 
 		OtpResponseDTO otpDTO = new OtpResponseDTO();
 
@@ -158,7 +184,7 @@ public class UserDataServiceImpl implements UserDataService {
 			GoogleAuthenticatorKey googleAuthenticatorKey = googleAuthenticator.createCredentials();
 
 			String otpKey = googleAuthenticatorKey.getKey();
-			String QRUrl = GoogleAuthenticatorQRGenerator.getOtpAuthURL("DRC", userData.getId(),
+			String QRUrl = GoogleAuthenticatorQRGenerator.getOtpAuthURL("DRC", userData.getUserId(),
 					googleAuthenticatorKey);
 
 			userData.setOtpKey(otpKey);
@@ -208,13 +234,13 @@ public class UserDataServiceImpl implements UserDataService {
 	// 닉네임 변경
 	@Override
 	public UpdateResponseDTO modifyNickname(String jwtToken, UpdateNicknameDTO updateNicknameDTO) {
-		String userId = jwtUtil.extractUsername(jwtToken);
+		String id = jwtUtil.extractUsername(jwtToken);
 		String newNickname = updateNicknameDTO.getNickname();
-		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
+		Optional<UserData> userDataOptional = userDataRepository.findById(id);
 
 		// 사용자가 존재하지 않을 경우 처리
 		if (userDataOptional.isEmpty()) {
-			return new UpdateResponseDTO(false, "ID가 존재하지 않습니다 : " + userId, null);
+			return new UpdateResponseDTO(false, "ID가 존재하지 않습니다 : " + id, null);
 		}
 
 		UserData userData = userDataOptional.get();
@@ -272,7 +298,7 @@ public class UserDataServiceImpl implements UserDataService {
 		String userId = jwtUtil.extractUsername(jwtToken);
 		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
 		UserData userData = userDataOptional.orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다 : " + userId));
-		MyDataResponseDTO data = new MyDataResponseDTO(userData.getId(), userData.getNickname(),
+		MyDataResponseDTO data = new MyDataResponseDTO(userData.getUserId(), userData.getNickname(),
 				userData.getBirthDate(), userData.getCarId());
 
 		return data;

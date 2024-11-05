@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.trustping.entity.UserData;
 import com.trustping.service.RequestLogService;
+import com.trustping.service.UserDataService;
 import com.trustping.utils.JwtUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +19,9 @@ public class LogInterceptor implements HandlerInterceptor{
 	private RequestLogService requestLogService;
 	
 	@Autowired
+	private UserDataService userDataService;
+	
+	@Autowired
 	private JwtUtil jwtUtil;
 
     public LogInterceptor(RequestLogService requestLogService) {
@@ -26,7 +31,7 @@ public class LogInterceptor implements HandlerInterceptor{
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String uri = request.getRequestURI();
-        String userId = null; 
+        UserData userId = null;
         
         if (uri.startsWith("/api/user")) {
         	String method = request.getMethod();
@@ -38,7 +43,8 @@ public class LogInterceptor implements HandlerInterceptor{
         
         if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
             jwtToken = jwtToken.substring(7);
-            userId = jwtUtil.extractUsername(jwtToken); 
+            String id = jwtUtil.extractUsername(jwtToken); 
+            userId = userDataService.getUserDataById(id).orElse(null);
         }
         
     	String method = request.getMethod();

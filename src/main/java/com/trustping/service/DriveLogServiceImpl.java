@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.trustping.DTO.DriveLogExcelDTO;
 import com.trustping.entity.DriveLog;
+import com.trustping.entity.UserData;
 import com.trustping.repository.DriveLogRepository;
 
 @Service
@@ -20,17 +21,13 @@ public class DriveLogServiceImpl implements DriveLogService {
 	@Autowired
 	private DriveLogRepository driveLogRepository;
 
-	public List<DriveLog> findByCarId(String carId) {
-		return driveLogRepository.findByCarId(carId);
-	}
-
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteOldNormalLogs(LocalDateTime targetDate) {
 		driveLogRepository.deleteByDriveStateAndCreateDateBefore("Normal Driving", targetDate);
 	}
 
 	@Transactional(readOnly = true)
-	public List<DriveLogExcelDTO> exportDriveLog(String carId, LocalDate date) {
+	public List<DriveLogExcelDTO> exportDriveLog(UserData carId, LocalDate date) {
 	    // 특정 날짜의 시작 시간과 종료 시간 생성
 	    LocalDateTime startOfDay = date.atStartOfDay(); // 하루의 시작 시간 - 00:00:00
 	    LocalDateTime endOfDay = date.atTime(LocalTime.MAX); // 하루의 종료 시간 - 23:59:59999
@@ -41,7 +38,7 @@ public class DriveLogServiceImpl implements DriveLogService {
 	    // 데이터 리스트를 DTO로 변환
 	    List<DriveLogExcelDTO> driveLogExcelDTOs = driveLogs.stream()
 	            .map(driveLog -> new DriveLogExcelDTO(
-	                    driveLog.getCarId(),
+	                    driveLog.getCarId().getCarId(),
 	                    driveLog.getAclPedal(),
 	                    driveLog.getBrkPedal(),
 	                    driveLog.getSpeed(),

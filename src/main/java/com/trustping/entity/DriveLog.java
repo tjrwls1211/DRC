@@ -17,7 +17,6 @@ public class DriveLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long logId;
-	private String carId;
 	private int aclPedal;
 	private int brkPedal;
 	private int speed;
@@ -26,5 +25,7 @@ public class DriveLog {
 	@Column(name = "createDate", columnDefinition = "TIMESTAMP")
 	private LocalDateTime createDate;
 	private String driveState;
-	
+	@ManyToOne
+	@JoinColumn(name = "car_id", referencedColumnName = "carId")
+	private UserData carId;
 }

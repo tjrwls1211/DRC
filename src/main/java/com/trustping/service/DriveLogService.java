@@ -5,10 +5,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.trustping.DTO.DriveLogExcelDTO;
-import com.trustping.entity.DriveLog;
+import com.trustping.entity.UserData;
 
 public interface DriveLogService {
-	public List<DriveLog> findByCarId(String carId);
 	public void deleteOldNormalLogs(LocalDateTime targetDate);
-	public List<DriveLogExcelDTO> exportDriveLog(String carId, LocalDate date);
+	public List<DriveLogExcelDTO> exportDriveLog(UserData carId, LocalDate date);
 }

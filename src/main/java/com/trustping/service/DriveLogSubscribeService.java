@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.trustping.config.EnvConfig;
+import com.trustping.entity.DriveLog;
 
 import jakarta.annotation.PostConstruct;
 
@@ -27,6 +30,9 @@ public class DriveLogSubscribeService implements MqttCallback {
     
     @Autowired
     private DriveLogStorageService driveLogStorageService;
+    
+    @Autowired
+    private DriveScoreService driveScoreService;
     
     @PostConstruct
     public void subscribeToTopic() {
@@ -87,7 +93,11 @@ public class DriveLogSubscribeService implements MqttCallback {
     	String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
         System.out.println("Message received on topic " + topic + ": " + payload);
         
-        driveLogStorageService.saveData(payload);
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+		DriveLog driveLog = objectMapper.readValue(payload, DriveLog.class);
+        
+        driveLogStorageService.saveData(driveLog);
     }
     
     @Override

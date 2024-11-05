@@ -12,15 +12,15 @@ import com.trustping.DTO.WeeklySBrkDTO;
 
 public interface AbnormalDataService {
 	
-	public SAclDTO getSAclByCarIdAndDate(String id, LocalDate date);
+	public SAclDTO getSAclByUserIdAndDate(String id, LocalDate date);
 
-	public SBrkDTO getSBrkByCarIdAndDate(String id, LocalDate date);
+	public SBrkDTO getSBrkByUserIdAndDate(String id, LocalDate date);
 
-	public BothPedalDTO getBothPedalByCarIdAndDate(String id, LocalDate date);
+	public BothPedalDTO getBothPedalByUserIdAndDate(String id, LocalDate date);
 	
-	public List<WeeklySAclDTO> getWeeklySAcl(String token, LocalDate startDate, LocalDate endDate);
+	public List<WeeklySAclDTO> getWeeklySAcl(String id, LocalDate startDate, LocalDate endDate);
 
-	public List<WeeklySBrkDTO> getWeeklySBrk(String token, LocalDate startDate, LocalDate endDate);
+	public List<WeeklySBrkDTO> getWeeklySBrk(String id, LocalDate startDate, LocalDate endDate);
 
-	public List<WeeklyBothPedalDTO> getWeeklyBothPedal(String token, LocalDate startDate, LocalDate endDate);
+	public List<WeeklyBothPedalDTO> getWeeklyBothPedal(String id, LocalDate startDate, LocalDate endDate);
 }

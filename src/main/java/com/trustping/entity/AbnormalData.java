@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +23,9 @@ public class AbnormalData {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long logId;
-	private String carId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "userId") // UserData의 id를 참조
+    private UserData userData; // UserData 엔티티 참조
 	@Column(columnDefinition = "TIMESTAMP")
 	private LocalDate date;
 	private int sAcl;

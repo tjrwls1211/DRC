@@ -11,8 +11,10 @@ import com.trustping.entity.UserData;
 
 @Repository
 public interface UserDataRepository extends JpaRepository<UserData, String> {
-    boolean existsById(String id);  
     
-    Optional<UserData> findByIdAndPw(@Param("id") String id, @Param("pw") String pw);
-
+	boolean existsByUserId(String userId);  
+    
+    Optional<UserData> findByUserIdAndPw(String userId, String pw);
+    
+    Optional<UserData> findByCarId(String carId);
 }

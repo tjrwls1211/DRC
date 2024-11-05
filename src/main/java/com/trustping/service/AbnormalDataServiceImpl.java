@@ -1,6 +1,7 @@
 package com.trustping.service;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,120 +38,87 @@ public class AbnormalDataServiceImpl implements AbnormalDataService{
 	
 	// 하루 단위 급가속 조회
 	@Override
-	public SAclDTO getSAclByCarIdAndDate(String id, LocalDate date) {
-	    Optional<UserData> userData = userDataRepository.findById(id);
-	    
-	    // UserData가 존재하는지 확인
-	    if (userData.isPresent()) {
-	        String carId = userData.get().getCarId();
-	        Optional<SAclDTO> result = abnormalDataRepository.findSAclByCarIdAndDate(carId, date);
-	        if (result.isEmpty()) {
-	            return null; 
-	        }
-	        
-	        return result.get(); 
-	    } else {
-	        return null; 
-	    }
+	public SAclDTO getSAclByUserIdAndDate(String id, LocalDate date) {
+	   Optional<AbnormalData> abnormalDataOpt = abnormalDataRepository.findByUserData_UserIdAndDate(id, date);
+	   if (abnormalDataOpt.isPresent()) {
+		   AbnormalData abnormalData = abnormalDataOpt.get();
+		   return new SAclDTO(abnormalData.getSAcl());
+	   } else {
+		   return null;
+	   }
 	}
 
 	// 하루 단위 급정거 조회
 	@Override
-	public SBrkDTO getSBrkByCarIdAndDate(String id, LocalDate date) {
-	    Optional<UserData> userData = userDataRepository.findById(id);
-	    
-	    // UserData가 존재하는지 확인
-	    if (userData.isPresent()) {
-	        String carId = userData.get().getCarId();
-	        Optional<SBrkDTO> result = abnormalDataRepository.findSBrkByCarIdAndDate(carId, date);
-	        if (result.isEmpty()) {
-	            return null; 
-	        }
-	        
-	        return result.get(); 
-	    } else {
-	        return null; 
-	    }
-	}
+	public SBrkDTO getSBrkByUserIdAndDate(String id, LocalDate date) {
+		   Optional<AbnormalData> abnormalDataOpt = abnormalDataRepository.findByUserData_UserIdAndDate(id, date);
+		   if (abnormalDataOpt.isPresent()) {
+			   AbnormalData abnormalData = abnormalDataOpt.get();
+			   return new SBrkDTO(abnormalData.getSBrk());
+		   } else {
+			   return null;
+		   }
+		}
 	
 	// 하루 단위 양발 운전 조회
 	@Override
-	public BothPedalDTO getBothPedalByCarIdAndDate(String id, LocalDate date) {
-	    Optional<UserData> userData = userDataRepository.findById(id);
-	    
-	    // UserData가 존재하는지 확인
-	    if (userData.isPresent()) {
-	        String carId = userData.get().getCarId();
-	        Optional<BothPedalDTO> result = abnormalDataRepository.findBothPedalByCarIdAndDate(carId, date);
-	        if (result.isEmpty()) {
-	            return null; 
-	        }
-	        
-	        return result.get(); 
-	    } else {
-	        return null; 
-	    }
+	public BothPedalDTO getBothPedalByUserIdAndDate(String id, LocalDate date) {
+		   Optional<AbnormalData> abnormalDataOpt = abnormalDataRepository.findByUserData_UserIdAndDate(id, date);
+		   if (abnormalDataOpt.isPresent()) {
+			   AbnormalData abnormalData = abnormalDataOpt.get();
+			   return new BothPedalDTO(abnormalData.getBothPedal());
+		   } else {
+			   return null;
+		   }
 	}
 	
 	// 2주 단위 급가속 조회
 	@Override
-	public List<WeeklySAclDTO> getWeeklySAcl(String token, LocalDate startDate, LocalDate endDate){
-	    String jwtToken = token.substring(7);
-	    String id = jwtUtil.extractUsername(jwtToken);
-	    String carId = userDataService.getCarIdById(id);
-		
-		List<AbnormalData> weeklyData = abnormalDataRepository.findByCarIdAndDateBetween(carId, startDate, endDate);
+	public List<WeeklySAclDTO> getWeeklySAcl(String id, LocalDate startDate, LocalDate endDate) {
+	        List<AbnormalData> weeklyData = abnormalDataRepository.findByUserData_UserIdAndDateBetween(id, startDate, endDate);
 
-	    // 데이터 리스트를 DTO로 변환
-	    List<WeeklySAclDTO> weeklySAcl = weeklyData.stream()
-	            .map(sAclLog -> new WeeklySAclDTO(
-	                    sAclLog.getDate(),
-	                    sAclLog.getSAcl()))
-	            .collect(Collectors.toList());
+	        // 데이터 리스트를 DTO로 변환
+	        List<WeeklySAclDTO> weeklySAcl = weeklyData.stream()
+	                .map(sAclLog -> new WeeklySAclDTO(
+	                        sAclLog.getDate(),
+	                        sAclLog.getSAcl()))
+	                .collect(Collectors.toList());
 
-	    // 변환된 DTO 리스트 반환
-	    return weeklySAcl;
+	        // 변환된 DTO 리스트 반환
+	        return weeklySAcl;
 	}
+
 	
 	// 2주 단위 급정거 조회
 	@Override
-	public List<WeeklySBrkDTO> getWeeklySBrk(String token, LocalDate startDate, LocalDate endDate){
-	    String jwtToken = token.substring(7);
-	    String id = jwtUtil.extractUsername(jwtToken);
-	    String carId = userDataService.getCarIdById(id);
-		
-		List<AbnormalData> weeklyData = abnormalDataRepository.findByCarIdAndDateBetween(carId, startDate, endDate);
+	public List<WeeklySBrkDTO> getWeeklySBrk(String id, LocalDate startDate, LocalDate endDate){
+		List<AbnormalData> weeklyData = abnormalDataRepository.findByUserData_UserIdAndDateBetween(id, startDate, endDate);
 
-	    // 데이터 리스트를 DTO로 변환
-	    List<WeeklySBrkDTO> weeklySBrk = weeklyData.stream()
-	            .map(sBrkLog -> new WeeklySBrkDTO(
-	                    sBrkLog.getDate(),
-	                    sBrkLog.getSBrk()))
-	            .collect(Collectors.toList());
+        // 데이터 리스트를 DTO로 변환
+        List<WeeklySBrkDTO> weeklySBrk = weeklyData.stream()
+                .map(sBrkLog -> new WeeklySBrkDTO(
+                        sBrkLog.getDate(),
+                        sBrkLog.getSAcl()))
+                .collect(Collectors.toList());
 
-	    // 변환된 DTO 리스트 반환
-	    return weeklySBrk;
+        // 변환된 DTO 리스트 반환
+        return weeklySBrk;
 	}
 	
 	// 2주 단위 양발 운전
 	@Override
-	public List<WeeklyBothPedalDTO> getWeeklyBothPedal(String token, LocalDate startDate, LocalDate endDate){
-	    String jwtToken = token.substring(7);
-	    String id = jwtUtil.extractUsername(jwtToken);
-	    String carId = userDataService.getCarIdById(id);
-		
-		List<AbnormalData> weeklyData = abnormalDataRepository.findByCarIdAndDateBetween(carId, startDate, endDate);
+	public List<WeeklyBothPedalDTO> getWeeklyBothPedal(String id, LocalDate startDate, LocalDate endDate){
+		List<AbnormalData> weeklyData = abnormalDataRepository.findByUserData_UserIdAndDateBetween(id, startDate, endDate);
 
-	    // 데이터 리스트를 DTO로 변환
-	    List<WeeklyBothPedalDTO> weeklyBothPedal = weeklyData.stream()
-	            .map(BothPedalLog -> new WeeklyBothPedalDTO(
-	                    BothPedalLog.getDate(),
-	                    BothPedalLog.getBothPedal()))
-	            .collect(Collectors.toList());
+        // 데이터 리스트를 DTO로 변환
+        List<WeeklyBothPedalDTO> weeklyBothPedal = weeklyData.stream()
+                .map(BothPedalLog -> new WeeklyBothPedalDTO(
+                        BothPedalLog.getDate(),
+                        BothPedalLog.getSAcl()))
+                .collect(Collectors.toList());
 
-	    // 변환된 DTO 리스트 반환
-	    return weeklyBothPedal;
+        // 변환된 DTO 리스트 반환
+        return weeklyBothPedal;
 	}
-		
 	
 }

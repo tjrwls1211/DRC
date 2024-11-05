@@ -17,7 +17,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserData {	
     @Id
-    private String id;
+    private String userId;
     private String pw;
     private String nickname;
     private LocalDate birthDate;

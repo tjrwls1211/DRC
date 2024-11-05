@@ -36,7 +36,8 @@ public class AbnormalDataController {
 	public ResponseEntity<SAclDTO> getSacl(@RequestHeader("Authorization") String token, @RequestParam("date") LocalDate date) {
 	    String jwtToken = token.substring(7);
 	    String id = jwtUtil.extractUsername(jwtToken);
-	    SAclDTO result = abnormalDataService.getSAclByCarIdAndDate(id, date);
+	    SAclDTO result = abnormalDataService.getSAclByUserIdAndDate(id, date);
+	    System.out.println(result);
 	    if (result == null) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
 	    }
@@ -49,7 +50,7 @@ public class AbnormalDataController {
 	public ResponseEntity<SBrkDTO> getSbrk(@RequestHeader("Authorization") String token, @RequestParam("date") LocalDate date) {
 	    String jwtToken = token.substring(7);
 	    String id = jwtUtil.extractUsername(jwtToken);
-	    SBrkDTO result = abnormalDataService.getSBrkByCarIdAndDate(id, date);
+	    SBrkDTO result = abnormalDataService.getSBrkByUserIdAndDate(id, date);
 	    if (result == null) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
 	    }
@@ -61,7 +62,7 @@ public class AbnormalDataController {
 	public ResponseEntity<BothPedalDTO> getBothPedal(@RequestHeader("Authorization") String token, @RequestParam("date") LocalDate date) {
 	    String jwtToken = token.substring(7);
 	    String id = jwtUtil.extractUsername(jwtToken);
-	    BothPedalDTO result = abnormalDataService.getBothPedalByCarIdAndDate(id, date);
+	    BothPedalDTO result = abnormalDataService.getBothPedalByUserIdAndDate(id, date);
 	    if (result == null) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
 	    }
@@ -71,7 +72,10 @@ public class AbnormalDataController {
 	// 날짜 두 개 정해서 그 사이 급가속 조회
 	@GetMapping("weeklySAcl")
 	public ResponseEntity<List<WeeklySAclDTO>> getWeeklySAcl(@RequestHeader("Authorization") String token, @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate) {
-		List<WeeklySAclDTO> result = abnormalDataService.getWeeklySAcl(token, startDate, endDate);
+	    String jwtToken = token.substring(7); // "Bearer " 부분 제거
+	    String id = jwtUtil.extractUsername(jwtToken); // 사용자 ID 추출
+	    
+		List<WeeklySAclDTO> result = abnormalDataService.getWeeklySAcl(id, startDate, endDate);
 		if (result == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
@@ -81,7 +85,9 @@ public class AbnormalDataController {
 	// 날짜 두 개 정해서 그 사이 급정거 조회
 	@GetMapping("weeklySBrk")
 	public ResponseEntity<List<WeeklySBrkDTO>> getWeeklySBrk(@RequestHeader("Authorization") String token, @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate) {
-		List<WeeklySBrkDTO> result = abnormalDataService.getWeeklySBrk(token, startDate, endDate);
+		String jwtToken = token.substring(7); // "Bearer " 부분 제거
+		String id = jwtUtil.extractUsername(jwtToken); // 사용자 ID 추출
+		List<WeeklySBrkDTO> result = abnormalDataService.getWeeklySBrk(id, startDate, endDate);
 		if (result == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
@@ -91,7 +97,9 @@ public class AbnormalDataController {
 	// 날짜 두 개 정해서 그 사이 양발 운전 조회
 	@GetMapping("weeklyBothPedal")
 	public ResponseEntity<List<WeeklyBothPedalDTO>> getWeeklyBothPeal(@RequestHeader("Authorization") String token, @RequestParam("startDate") LocalDate startDate, @RequestParam("endDate") LocalDate endDate) {
-		List<WeeklyBothPedalDTO> result = abnormalDataService.getWeeklyBothPedal(token, startDate, endDate);
+		String jwtToken = token.substring(7); // "Bearer " 부분 제거
+		String id = jwtUtil.extractUsername(jwtToken); // 사용자 ID 추출
+		List<WeeklyBothPedalDTO> result = abnormalDataService.getWeeklyBothPedal(id, startDate, endDate);
 		if (result == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
