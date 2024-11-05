@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon1 from 'react-native-vector-icons/Ionicons'; 
 import { fetchUserInfo } from '../api/userInfoAPI';
 
 const MypageScreen = () => {
@@ -34,20 +35,38 @@ const MypageScreen = () => {
     }
   };
 
+  // 날짜 형식을 "YYYY-MM-DD"로 변환하는 함수
+  const formatDate = (date) => {
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
 
   return (
     <View style={styles.container}>
+      
       {/* 유저 정보 표시 */}
       <Text style={styles.title}>{nickname}님 안녕하세요!</Text>
       <Text style={styles.email}>{email}</Text>
 
+      <View style={styles.headerVar} />
+
+      <View style={styles.dateContainer}>
+        <Icon1 name="calendar-outline" size={27} color={"#009688"} onPress={() => setShowPicker(true)} />
+        <Text style={styles.dateText}>{formatDate(selectedDate)}</Text>
+      </View>
+
       {/* 날짜 선택기 */}
-      <DateTimePicker
+      {showPicker && (
+        <DateTimePicker
           value={selectedDate}
           mode="date"
           display="default"
           onChange={handleDateChange}
-      />
+        />
+      )}
 
 
       {/* 주행 기록 및 데이터 */}
@@ -71,7 +90,7 @@ const MypageScreen = () => {
         <Text style={styles.buttonText}>주행 기록 조회하기</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.downloadButton}>
-        <Icon name="download" size={16} color="#007AFF" />
+        <Icon name="download" size={16} color="#009688" />
         <Text style={styles.downloadButtonText}>주행 기록 다운로드</Text>
       </TouchableOpacity>
     </View>
@@ -88,26 +107,35 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    marginTop: 10,
     marginBottom: 5,
+    color: '#2F4F4F',
   },
   email: {
     fontSize: 16,
-    color: '#555',
-    marginBottom: 20,
+    color: '#495c5c',
+    marginBottom: 30,
+  },
+  headerVar:{
+    backgroundColor: '#009688',
+    height: 3,
+    marginBottom: 35,
   },
   dateContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginBottom: 20,
+    marginBottom: 15,
   },
   dateText: {
     marginLeft: 10,
     fontSize: 16,
-    color: '#000',
-    backgroundColor: '#EEE',
+    color: '#FFF',
+    backgroundColor: '#009688',
     padding: 5,
-    borderRadius: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderRadius: 7,
   },
   recordContainer: {
     flexDirection: 'row',
@@ -118,19 +146,24 @@ const styles = StyleSheet.create({
   },
   recordBox: {
     alignItems: 'center',
+    backgroundColor: '#d5e3e2',
+    width: 105,
+    height: 125,
+    borderRadius: 5,
+    justifyContent: 'center',
   },
   recordTitle: {
     fontSize: 16,
-    color: '#000',
-    marginBottom: 5,
+    color: '#2F4F4F',
+    marginBottom: 13,
   },
   recordValue: {
-    fontSize: 24,
+    fontSize: 27,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#2F4F4F',
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#009688',
     paddingVertical: 10,
     borderRadius: 5,
     marginBottom: 10,
@@ -144,13 +177,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: '#007AFF',
+    borderColor: '#009688',
     borderWidth: 1,
     paddingVertical: 10,
     borderRadius: 5,
   },
   downloadButtonText: {
-    color: '#007AFF',
+    color: '#009688',
     fontSize: 16,
     marginLeft: 5,
   },

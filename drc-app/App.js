@@ -25,16 +25,20 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName="SplashScreen" // 초기 화면을 스플래시 스크린으로 설정
-          screenOptions={{ headerShown: false }} // 모든 화면에서 헤더 숨기기
+          screenOptions={{ headerShown: false, headerTintColor: '#2F4F4F', 
+            headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 20,
+          }, }} // 모든 화면 헤더 스타일 적용
         >
-          <Stack.Screen
-            name="SplashScreen"
-            component={SplashScreenComponent} // 스플래시 스크린 추가
-          />
-          <Stack.Screen
-            name="LoginScreen"
-            component={MainScreen} // 메인 화면 추가
-          />
+        <Stack.Screen
+          name="SplashScreen"
+          component={SplashScreenComponent} // 스플래시 스크린 추가
+        />
+        <Stack.Screen
+          name="LoginScreen"
+          component={MainScreen} // 메인 화면 추가
+        />
         <Stack.Screen
           name="DrivingScoreEvaluator"
           component={DrivingScoreEvaluator}
