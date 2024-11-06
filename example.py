@@ -401,7 +401,7 @@ def run_code():
                 "driveState": data["driveState"],  # 기존 driveState 유지
                 "speed" : 40, #40 대신에 들어갈 값 : int(speed_response.value)
                 "rpm" : 2000,  #2000 대신에 들어갈 값 : int(rpm_response.value)
-                "acceleration" : acceleration #가속도 변수
+                "acceleration" : f"{acceleration:.1f}" #가속도 변수
             })            
             print(data)
             #레이블 업데이트 (정수 형식)
