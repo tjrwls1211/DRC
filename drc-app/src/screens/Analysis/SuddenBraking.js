@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ActivityIndicator, Image } from 'react-native';
 import AnalysisCard from '../../components/Card/AnalysisCard';
 import { LineChart } from 'react-native-chart-kit';
 import { getDate } from '../../utils/getDate';
@@ -67,9 +67,14 @@ const SuddenBraking = () => {
 
   return (
     <View style={styles.container}>
-        <AnalysisCard num="2" /> 
+      <View style={styles.headerBar}>
+        <Image source={require("../../../assets/LOGO.png")} style={styles.logo} />
+        <Text style={styles.headerText}>급가속 분석</Text>
+      </View>
 
-        <LineChart
+      <AnalysisCard num="2" /> 
+
+      <LineChart
         data={{
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
           datasets: [
@@ -101,8 +106,12 @@ const SuddenBraking = () => {
         bezier
         style={{
           marginVertical: 8,
-          borderRadius: 16,
+          // /borderRadius: 16,
           marginHorizontal:7,
+          borderWidth: 1, // 테두리 두께 추가
+          borderColor: '#000000', // 검정색 테두리 추가
+          borderRadius: 16, // 둥근 모서리 추가
+          overflow: 'hidden', // 자식 요소가 테두리를 넘지 않도록 설정
         }}
       />
     </View>
@@ -115,6 +124,33 @@ const styles = StyleSheet.create({
     padding: 10, // 화면 여백 조정
     justifyContent: 'center',
     backgroundColor: '#0095A1',
+  },
+  headerBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    height: 50,
+    paddingHorizontal: 10,
+    borderRadius: 8, // 라운드 효과 추가
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    width: '95%', // 카드와 동일한 너비로 설정
+    alignSelf: 'center', // 중앙 정렬
+  },
+  logo: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
+  },
+  headerText: {
+    color: '#0095A1',
+    fontSize: 18,
+    textAlign: 'center',
+    flex: 1,
+    fontWeight: 'bold', // 볼드체로 변경
   },
   loadingContainer: {
     flex: 1,

@@ -6,13 +6,13 @@ const AnalysisCard = ({ num }) => {
     return (
         <View style={styles.customCard}>
             <View style={styles.innerCard}>
-                {/* 상단에 카드에 걸쳐진 사진이 들어간 원 */}
+                {/* 상단에 카드에 걸쳐진 사진이 들어간 원
                 <View style={styles.circle}>
                     <Image 
                         source={require('../../../assets/LOGO.png')} 
                         style={styles.logo} 
                     />
-                </View>
+                </View> */}
                 <Text style={styles.subText}>🚗 저번주 대비</Text>
                 <View style={styles.row}>
                     <Text style={styles.num}>{num}회</Text>
@@ -27,19 +27,19 @@ const AnalysisCard = ({ num }) => {
 const styles = StyleSheet.create({
     customCard: {
         height: '35%',
-        width: '90%', // 카드 너비 설정
+        width: '95%', // 카드 너비 설정
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#ffffff', // 청록색 배경
+        backgroundColor: '#ffffff',
         borderRadius: 15, // 둥근 모서리
         padding: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 6,
-        margin: 20, // 카드 간격
+        margin: 10, // 카드 간격
+        marginBottom: 20,
         elevation: 5, // 안드로이드 그림자 효과
-        marginTop: 50,
     },
     innerCard: {
         flex: 1,
@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5, // 그림자 투명도
         shadowRadius: 4, // 그림자 흐림 효과
         elevation: 5, // 안드로이드에서 그림자 효과
+        marginTop: 20,
     },
     logo: {
         width: 40,

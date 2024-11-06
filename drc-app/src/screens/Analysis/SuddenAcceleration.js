@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions, Text, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Dimensions, Text, ActivityIndicator, Image } from 'react-native';
 import AnalysisCard from '../../components/Card/AnalysisCard';
 import { LineChart } from 'react-native-chart-kit';
 import { getWeeklySAcl } from '../../api/driveInfoAPI';
@@ -66,40 +66,55 @@ const SuddenAcceleration = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.headerBar}>
+        <Image source={require("../../../assets/LOGO.png")} style={styles.logo} />
+        <Text style={styles.headerText}>급가속 분석</Text>
+      </View>
+      
       <AnalysisCard num="5" />
 
-      <LineChart
-        data={{
-          labels: chartData.labels,
-          datasets: chartData.datasets,
-        }}
-        width={chartWidth}
-        height={chartHeight}
-        yAxisLabel=""
-        yAxisSuffix="회"
-        chartConfig={{
-          backgroundColor: '#ffffff',
-          backgroundGradientFrom: '#ffffff',
-          backgroundGradientTo: '#ffffff',
-          decimalPlaces: 1,
-          color: (opacity = 1) => `rgba(47, 79, 79, ${opacity})`,
-          labelColor: () => `#2F4F4F`,
-          style: {
+      <View style={styles.chartContainer}>
+        <LineChart
+          data={{
+            labels: chartData.labels,
+            datasets: chartData.datasets,
+          }}
+          width={chartWidth}
+          height={chartHeight}
+          yAxisLabel=""
+          yAxisSuffix="회"
+          chartConfig={{
+            backgroundColor: '#ffffff',
+            backgroundGradientFrom: '#ffffff',
+            backgroundGradientTo: '#ffffff',
+            decimalPlaces: 1,
+            color: (opacity = 1) => `rgba(47, 79, 79, ${opacity})`,
+            labelColor: () => `#2F4F4F`,
+            style: {
+              borderRadius: 16,
+            },
+            propsForDots: {
+              r: '4',
+              strokeWidth: '1.5',
+              stroke: '#009688',
+            },
+          }}
+          bezier
+          style={{
+            marginVertical: 8,
             borderRadius: 16,
-          },
-          propsForDots: {
-            r: '4', // 점 크기 줄이기
-            strokeWidth: '1.5', // 점 외곽선 크기 줄이기
-            stroke: '#009688',
-          },
-        }}
-        bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
-          marginHorizontal:7,
-        }}
-      />
+            // marginHorizontal: 7,
+            elevation: 4, // 안드로이드 그림자 효과
+            shadowColor: "#000", // iOS 그림자 효과
+            shadowOffset: {
+              width: -2,
+              height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.5,
+          }}
+        />
+      </View>
     </View>
   );
 };
@@ -107,20 +122,51 @@ const SuddenAcceleration = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10, // 화면 여백 조정
+    padding: 10,
     justifyContent: 'center',
+    //backgroundColor: '#009688',
+    backgroundColor: '#ffffff',
+  },
+  headerBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#009688',
+    height: 50,
+    paddingHorizontal: 10,
+    borderRadius: 8, // 라운드 효과 추가
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    width: '95%', // 카드와 동일한 너비로 설정
+    alignSelf: 'center', // 중앙 정렬
+  },
+  logo: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
+  },
+  headerText: {
+    color: '#ffffff',
+    fontSize: 18,
+    textAlign: 'center',
+    flex: 1,
+    fontWeight: 'bold', // 볼드체로 변경
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff', // 로딩 화면 배경색
+    backgroundColor: '#ffffff',
   },
   loadingText: {
     marginTop: 10,
-    color: '#009688', // 로딩 텍스트 색상
+    color: '#009688',
     fontSize: 18,
+  },
+  chartContainer: {
+    marginHorizontal: 7, // 카드 UI와 동일한 간격
   },
 });
 
