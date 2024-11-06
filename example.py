@@ -76,7 +76,7 @@ accel_label.place(relx=0.4, rely=0.5, anchor="center")  # 윈도우 중앙에 �
 
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
 brake_label.config(width=brake_img_normal.width(), height=brake_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
-brake_label.place(relx=-0.1, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
+brake_label.place(relx=-0.05, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
 
 
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
@@ -346,7 +346,7 @@ for speed in current_speeds:
     time.sleep(1)  # 1초 간격으로 속도 변경
     acceleration = calculate_acceleration_kmh2(speed)
     data["acceleration"] = acceleration
-    print(f"속도: {speed} km/h, 가속도: {acceleration:.2f} km/h²")
+    #print(f"속도: {speed} km/h, 가속도: {acceleration:.2f} km/h²")
 
 
 
