@@ -23,12 +23,12 @@ public class AbnormalData {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long logId;
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "userId") // UserData의 id를 참조
-    private UserData userData; // UserData 엔티티 참조
 	@Column(columnDefinition = "TIMESTAMP")
 	private LocalDate date;
 	private int sAcl;
 	private int sBrk;
 	private int bothPedal;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "userId") // UserData의 id를 참조
+    private UserData userData; // UserData 엔티티 참조
 }

@@ -16,7 +16,6 @@ public class LoginRequestDTO {
 	@NotBlank(message = "아이디(Email) 입력")
 	@Email(message = "올바른 이메일 형식이 아닙니다.")
 	private String id;
-	
 	@NotBlank(message = "패스워드 입력")
 	@Pattern(
 			regexp="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",

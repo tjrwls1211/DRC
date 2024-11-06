@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.trustping.DTO.DriveLogReceiveDTO;
 import com.trustping.config.EnvConfig;
 import com.trustping.entity.DriveLog;
 
@@ -22,8 +23,8 @@ import jakarta.annotation.PostConstruct;
 public class DriveLogSubscribeService implements MqttCallback {
 
     @Autowired
-    @Qualifier("pedalLogMqttClient")
-    private MqttClient pedalLogMqttClient; // 구성에서 mqttclient 받아옴
+    @Qualifier("driveLogMqttClient")
+    private MqttClient driveLogMqttClient; // 구성에서 mqttclient 받아옴
     
     @Autowired
     private EnvConfig envConfig; // 구독 토픽도 가져옴
@@ -37,15 +38,15 @@ public class DriveLogSubscribeService implements MqttCallback {
     @PostConstruct
     public void subscribeToTopic() {
         String mqttTopic = envConfig.getMqttPedalTopic();
-        if (pedalLogMqttClient == null) {
+        if (driveLogMqttClient == null) {
             System.out.println("MQTT 연결 불가, 클라이언트가 null");
             return;
         }
 
         try {
-        	pedalLogMqttClient.setCallback(this);
-            if (pedalLogMqttClient.isConnected()) {
-            	pedalLogMqttClient.subscribe(mqttTopic);
+        	driveLogMqttClient.setCallback(this);
+            if (driveLogMqttClient.isConnected()) {
+            	driveLogMqttClient.subscribe(mqttTopic);
                 System.out.println("Subscribed to topic: " + mqttTopic);
             } else {
                 System.out.println("MQTT 연결 불가");
@@ -68,9 +69,9 @@ public class DriveLogSubscribeService implements MqttCallback {
         while (retryCount < 5) { 
             try {
                 System.out.println("Attempting to reconnect");
-                pedalLogMqttClient.connect(); 
+                driveLogMqttClient.connect(); 
                 String mqttTopic = envConfig.getMqttPedalTopic();
-                pedalLogMqttClient.subscribe(mqttTopic); 
+                driveLogMqttClient.subscribe(mqttTopic); 
                 System.out.println("Reconnected and subscribed to topic: " + mqttTopic);
                 return; 
             } catch (MqttException e) {
@@ -95,9 +96,8 @@ public class DriveLogSubscribeService implements MqttCallback {
         
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.registerModule(new JavaTimeModule());
-		DriveLog driveLog = objectMapper.readValue(payload, DriveLog.class);
-        
-        driveLogStorageService.saveData(driveLog);
+		DriveLogReceiveDTO ReceiveDriveLog = objectMapper.readValue(payload, DriveLogReceiveDTO.class);
+		driveLogStorageService.saveData(ReceiveDriveLog);
     }
     
     @Override

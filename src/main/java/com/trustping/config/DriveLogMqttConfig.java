@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class PedalLogMqttConfig {
+public class DriveLogMqttConfig {
 
     @Autowired
     private EnvConfig envConfig;
 
     @Bean
-    public MqttClient pedalLogMqttClient() {
-        return createMqttClient(envConfig.getMqttBrokerUrl(), envConfig.getMqttClientId() + "_pedalLog");
+    public MqttClient driveLogMqttClient() {
+        return createMqttClient(envConfig.getMqttBrokerUrl(), envConfig.getMqttClientId() + "_dirveLog");
     }
 
     private MqttClient createMqttClient(String brokerUrl, String clientId) {

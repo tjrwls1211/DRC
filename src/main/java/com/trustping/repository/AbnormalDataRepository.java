@@ -17,6 +17,7 @@ import com.trustping.entity.UserData;
 
 @Repository
 public interface AbnormalDataRepository extends JpaRepository<AbnormalData, Long> {
+	
     Optional<AbnormalData> findByUserData_UserIdAndDate(String userId, LocalDate date);
     
     List<AbnormalData> findByUserData_UserIdAndDateBetween(String userId, LocalDate startDate, LocalDate endDate);
