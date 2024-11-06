@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform, Modal } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Icon1 from 'react-native-vector-icons/Ionicons';
+import Icon1 from 'react-native-vector-icons/Ionicons'; 
 import { getSAcl,getSBrk, getSPedal } from '../api/driveInfoAPI';
 import { formatDate } from '../utils/formatDate';
 
 const MypageScreen = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date()); // 현재 날짜로 초기화
+  // 상태: 날짜, DateTimePicker 표시 여부, 유저 정보 (닉네임과 이메일)
+  const [selectedDate, setSelectedDate] = useState(new Date()); 
+  const [showPicker, setShowPicker] = useState(false); 
   const [nickname, setNickname] = useState('OOO');
   const [email, setEmail] = useState('asdf_1234@gmail.com');
   const [sacl, setSacl] = useState(0);
   const [sbrk, setSbrk] = useState(0);
   const [bothPedal, setBothPedal] = useState(0);
-
+  
   // 데이터 조회 함수
   const fetchData = async () => {
     try {
-      const dateString = formatDate(selectedDate); // 선택된 날짜를 YYYY-MM-DD 형식으로 변환
+      const dateString = formatDate(selectedDate); // 날짜 형식을 "YYYY-MM-DD"로 변환하는 함수
       const saclData = await getSAcl(dateString);
       const sbrkData = await getSBrk(dateString);
       const bothPedalData = await getSPedal(dateString);
@@ -35,10 +37,23 @@ const MypageScreen = () => {
 
   // 날짜가 선택되었을 때 호출되는 함수
   const handleDateChange = (event, newDate) => {
-    if (newDate && event.type !== 'dismissed') { 
-      setSelectedDate(new Date(newDate)); // 선택된 날짜를 상태에 저장
+    if (newDate && event.type !== 'dismissed') {
+      setSelectedDate(new Date(newDate));
       console.log("선택된 날짜:", formatDate(newDate));
     }
+  };
+
+  // 날짜 형식을 "MM DD, YYYY"로 변환하는 함수
+  const dateNotation = (date) => {
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
+  const openDatePicker = () => {
+    setShowPicker(true);
   };
 
   return (
@@ -51,15 +66,48 @@ const MypageScreen = () => {
       <View style={styles.headerVar} />
 
       <View style={styles.dateContainer}>
-        <Icon1 name="calendar-outline" size={27} color={"#009688"} />
-        <DateTimePicker
-          value={selectedDate}
-          mode="date"
-          display="default"
-          onChange={handleDateChange}
-          style={styles.datePicker} // 스타일 적용
-        />
+        <Icon1 name="calendar-outline" size={27} color={"#009688"} onPress={openDatePicker} />
+        <View style={styles.dateTextContainer}>
+          <Text style={styles.dateText}>{dateNotation(selectedDate)}</Text>
+        </View>
       </View>
+
+      {/* iOS인 경우 DateTimePicker를 모달로 표시 */}
+      {Platform.OS === 'ios' ? (
+        <Modal
+          transparent={true}
+          visible={showPicker}
+          animationType="slide"
+          onRequestClose={() => setShowPicker(false)}
+        >
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <DateTimePicker
+                value={selectedDate}
+                mode="date"
+                display="spinner"
+                onChange={handleDateChange}
+              />
+              <TouchableOpacity onPress={() => setShowPicker(false)} style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>확인</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      ) : (
+        // Android인 경우 기본 DateTimePicker 표시
+        showPicker && (
+          <DateTimePicker
+            value={selectedDate}
+            mode="date"
+            display="default"
+            onChange={(event, date) => {
+              handleDateChange(event, date);
+              setShowPicker(false); // Android의 경우 날짜 선택 후 바로 닫기
+            }}
+          />
+        )
+      )}
 
 
       {/* 주행 기록 및 데이터 */}
@@ -90,7 +138,7 @@ const MypageScreen = () => {
   );
 };
 
-// 스타일링
+// 스타일 정의
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -109,7 +157,7 @@ const styles = StyleSheet.create({
     color: '#495c5c',
     marginBottom: 30,
   },
-  headerVar:{
+  headerVar: {
     backgroundColor: '#009688',
     height: 3,
     marginBottom: 60,
@@ -120,15 +168,39 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     marginBottom: 15,
   },
-  dateText: {
-    marginLeft: 10,
-    fontSize: 16,
-    color: '#FFF',
+  dateTextContainer: {
     backgroundColor: '#009688',
+    marginLeft: 10,
     padding: 5,
     paddingLeft: 10,
     paddingRight: 10,
-    borderRadius: 7,
+    borderRadius: 7
+  },
+  dateText: {
+    fontSize: 16,
+    color: '#FFF',
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 모달 배경을 어둡게 설정
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  closeButton: {
+    marginTop: 15,
+    padding: 10,
+    backgroundColor: '#009688',
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
   recordContainer: {
     flexDirection: 'row',
