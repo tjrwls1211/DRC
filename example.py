@@ -74,7 +74,7 @@ accel_label = tk.Label(root, image=accel_img_dark, bg="black", padx=0, pady=0)
 accel_label.place(relx=0.5, rely=0.5, anchor="center")  # 윈도우 중앙에 배치
 
 brake_label = tk.Label(root, image=brake_img_dark, bg="black", padx=0, pady=0)
-brake_label.place(relx=0, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
+brake_label.place(relx=-0.1, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
 
 
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
