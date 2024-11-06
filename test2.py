@@ -196,6 +196,27 @@ def play_sounds_in_sequence(sounds):
 
     is_playing_sounds = False  # 모든 음성 재생 완료 후 플래그 해제 
 
+# RPM 증가 및 감소 테스트 함수
+def test_rpm_sequence():
+    rpm = 0  # 초기 RPM 설정
+
+    # 5000까지 RPM 증가
+    while rpm < 5000:
+        rpm += 1000
+        print(f"현재 RPM (증가): {rpm}")
+        check_info(accel_value=500, brake_value=10, rpm_value=rpm)  # 가상의 accel_value와 brake_value 설정
+        time.sleep(1)  # 1초 대기
+
+    # 1000씩 RPM 감소
+    while rpm > 0:
+        rpm -= 1000
+        print(f"현재 RPM (감소): {rpm}")
+        check_info(accel_value=500, brake_value=10, rpm_value=rpm)  # 가상의 accel_value와 brake_value 설정
+        time.sleep(1)  # 1초 대기
+
+# 테스트 실행
+test_rpm_sequence()
+
 # RPM 조건에 따라 음성을 재생하는 함수# 테스트용 이여서 한번 해보면될듯
 def check_info(accel_value, brake_value, rpm_value):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds, prev_mqtt_state
