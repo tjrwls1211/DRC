@@ -48,7 +48,7 @@ const MypageScreen = () => {
     <View style={styles.container}>
       
       {/* 유저 정보 표시 */}
-      <Text style={styles.title}>{nickname}님 안녕하세요!</Text>
+      <Text style={styles.title}>{nickname} 님 안녕하세요!</Text>
       <Text style={styles.email}>{email}</Text>
 
       <View style={styles.headerVar} />
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginTop: 10,
+    marginTop: 15,
     marginBottom: 5,
     color: '#2F4F4F',
   },
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   headerVar:{
     backgroundColor: '#009688',
     height: 3,
-    marginBottom: 35,
+    marginBottom: 60,
   },
   dateContainer: {
     flexDirection: 'row',
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#009688',
     paddingVertical: 10,
     borderRadius: 5,
-    marginBottom: 10,
+    marginBottom: 15,
   },
   buttonText: {
     color: '#fff',
