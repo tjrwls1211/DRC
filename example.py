@@ -326,7 +326,7 @@ def calculate_acceleration_kmh2(current_speed):
 
     if delta_time > 0:
         # 가속도 계산 (m/s² -> km/h² 변환)
-        acceleration = (delta_speed / delta_time) * 12960  # km/h² 단위
+        acceleration = (delta_speed / delta_time)  # km/h² 단위
     else:
         acceleration = 0  # 시간 간격이 0일 경우 가속도 0
 
