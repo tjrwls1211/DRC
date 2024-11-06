@@ -98,8 +98,9 @@ export const getWeeklySPedal = async (startDate, endDate) => {
 // 급가속 조회 (하루)
 export const getSAcl = async (date) => {
     try {
+        console.log("(하루)급가속 조회 함수 들어옴");
         const headers = await getTokenHeader();
-        const response = await apiClient.get(`/abnormal/sacl`, {
+        const response = await apiClient.get("/abnormal/sacl", {
             headers,
             params: { date }
         });
@@ -114,6 +115,7 @@ export const getSAcl = async (date) => {
 // 급정거 조회(하루)
 export const getSBrk = async (date) => {
     try {
+        console.log("(하루)급정거 조회 함수 들어옴");
         const headers = await getTokenHeader();
         const response = await apiClient.get(`/abnormal/sbrk`, {
             headers,
@@ -130,6 +132,7 @@ export const getSBrk = async (date) => {
 // 양발 운전 조회(하루)
 export const getSPedal = async (date) => {
     try {
+        console.log("(하루)양발운전 조회 함수 들어옴");
         const headers = await getTokenHeader();
         const response = await apiClient.get(`/abnormal/bothPedal`, {
             headers,
