@@ -64,17 +64,17 @@ root.configure(bg="black")
 font_large = ("Arial", 40, "bold")
 
 # 이미지 로드
-accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((500, 400)))
-accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((500, 400)))
-brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((500, 400)))
-brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((500, 400)))
+accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((500, 300)))
+accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((500, 300)))
+brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((500, 300)))
+brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((500, 300)))
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
-accel_label.pack(side="right", padx=20, pady=10)
+accel_label.place(relx=0.5, rely=0.5, anchor="center")  # 윈도우 중앙에 배치
 
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
-brake_label.pack(side="left", padx=20, pady=10)
+brake_label.pack(side="left", padx=5, pady=5)
 
 
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
