@@ -18,7 +18,7 @@ url = f'http://{ip()}:{port()}/data'
 
 # 데이터 구조 정의
 data = {
-    "carId": "01나2345",  # 차량 ID 설정
+    "carId": "01가1234",  # 차량 ID 설정
     "aclPedal": 0,
     "brkPedal": 0,
     "createDate": 0,
@@ -285,7 +285,7 @@ def check_info(accel_value, brake_value):
     # 상태가 변경되고 mqtt_state가 None이 아    닐 때만 MQTT 전송    
     if mqtt_state is not None and mqtt_state != prev_mqtt_state:
         alert_data = {
-            "carId": "01나2345",
+            "carId": "01가1234",
             "state": mqtt_state
         }
         print(alert_data)
@@ -394,7 +394,7 @@ def run_code():
             # 현재 시간 추가
             now = datetime.now()
             data.update({
-                "carId": "01나2345",  # 차량 ID 유지
+                "carId": "01가1234",  # 차량 ID 유지
                 "aclPedal": int(val_accelerator),
                 "brkPedal": int(val_brake),
                 "createDate": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
