@@ -37,7 +37,7 @@ export default function App() {
         />
         <Stack.Screen
           name="LoginScreen"
-          component={MainScreen} // 메인 화면 추가
+          component={LoginScreen}
         />
         <Stack.Screen
           name="DrivingScoreEvaluator"
