@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ActivityIndicator, Image } from 'react-native';
 import AnalysisCard from '../../components/Card/AnalysisCard';
 import { LineChart } from 'react-native-chart-kit';
 import { getWeeklySPedal } from '../../api/driveInfoAPI';
@@ -67,35 +67,36 @@ const SamePedal = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.headerBar}>
+        <Image source={require("../../../assets/LOGO.png")} style={styles.logo} />
+        <Text style={styles.headerText}>양발운전 분석</Text>
+      </View>
+
       <AnalysisCard num="0" />
 
       <LineChart
         data={{
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-          datasets: [
-            {
-              data: [20, 45, 28, 80, 99, 43],
-            },
-          ],
+          labels: chartData.labels,
+          datasets: chartData.datasets,
         }}
         width={chartWidth}
         height={chartHeight}
-        yAxisLabel="$"
-        yAxisSuffix="k"
+        yAxisLabel=""
+        yAxisSuffix="회"
         chartConfig={{
           backgroundColor: '#ffffff',
           backgroundGradientFrom: '#ffffff',
           backgroundGradientTo: '#ffffff',
-          decimalPlaces: 2,
+          decimalPlaces: 1,
           color: (opacity = 1) => `rgba(47, 79, 79, ${opacity})`,
           labelColor: () => `#2F4F4F`,
           style: {
             borderRadius: 16,
           },
           propsForDots: {
-            r: '4', // 점 크기 줄이기
-            strokeWidth: '1.5', // 점 외곽선 크기 줄이기
-            stroke: '#009B77',
+            r: '4',
+            strokeWidth: '1.5',
+            stroke: '#009688',
           },
         }}
         bezier
@@ -115,6 +116,33 @@ const styles = StyleSheet.create({
     padding: 10, // 화면 여백 조정
     justifyContent: 'center',
     backgroundColor: '#009B77',
+  },
+  headerBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    height: 50,
+    paddingHorizontal: 10,
+    borderRadius: 8, // 라운드 효과 추가
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    width: '95%', // 카드와 동일한 너비로 설정
+    alignSelf: 'center', // 중앙 정렬
+  },
+  logo: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
+  },
+  headerText: {
+    color: '#009688',
+    fontSize: 22,
+    textAlign: 'center',
+    flex: 1,
+    fontWeight: 'bold', // 볼드체로 변경
   },
   loadingContainer: {
     flex: 1,

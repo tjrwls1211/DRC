@@ -69,49 +69,41 @@ const SuddenBraking = () => {
     <View style={styles.container}>
       <View style={styles.headerBar}>
         <Image source={require("../../../assets/LOGO.png")} style={styles.logo} />
-        <Text style={styles.headerText}>급가속 분석</Text>
+        <Text style={styles.headerText}>급정거 분석</Text>
       </View>
 
       <AnalysisCard num="2" /> 
 
       <LineChart
         data={{
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-          datasets: [
-            {
-              data: [20, 45, 28, 80, 99, 43],
-            },
-          ],
+          labels: chartData.labels,
+          datasets: chartData.datasets,
         }}
         width={chartWidth}
         height={chartHeight}
-        yAxisLabel="$"
-        yAxisSuffix="k"
+        yAxisLabel=""
+        yAxisSuffix="회"
         chartConfig={{
           backgroundColor: '#ffffff',
           backgroundGradientFrom: '#ffffff',
           backgroundGradientTo: '#ffffff',
-          decimalPlaces: 2,
+          decimalPlaces: 1,
           color: (opacity = 1) => `rgba(47, 79, 79, ${opacity})`,
           labelColor: () => `#2F4F4F`,
           style: {
             borderRadius: 16,
           },
           propsForDots: {
-            r: '4', // 점 크기 줄이기
-            strokeWidth: '1.5', // 점 외곽선 크기 줄이기
-            stroke: '#0095A1',
+            r: '4',
+            strokeWidth: '1.5',
+            stroke: '#009688',
           },
         }}
         bezier
         style={{
           marginVertical: 8,
-          // /borderRadius: 16,
+          borderRadius: 16,
           marginHorizontal:7,
-          borderWidth: 1, // 테두리 두께 추가
-          borderColor: '#000000', // 검정색 테두리 추가
-          borderRadius: 16, // 둥근 모서리 추가
-          overflow: 'hidden', // 자식 요소가 테두리를 넘지 않도록 설정
         }}
       />
     </View>
@@ -147,7 +139,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: '#0095A1',
-    fontSize: 18,
+    fontSize: 22,
     textAlign: 'center',
     flex: 1,
     fontWeight: 'bold', // 볼드체로 변경

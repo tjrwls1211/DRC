@@ -73,48 +73,38 @@ const SuddenAcceleration = () => {
       
       <AnalysisCard num="5" />
 
-      <View style={styles.chartContainer}>
-        <LineChart
-          data={{
-            labels: chartData.labels,
-            datasets: chartData.datasets,
-          }}
-          width={chartWidth}
-          height={chartHeight}
-          yAxisLabel=""
-          yAxisSuffix="회"
-          chartConfig={{
-            backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            decimalPlaces: 1,
-            color: (opacity = 1) => `rgba(47, 79, 79, ${opacity})`,
-            labelColor: () => `#2F4F4F`,
-            style: {
-              borderRadius: 16,
-            },
-            propsForDots: {
-              r: '4',
-              strokeWidth: '1.5',
-              stroke: '#009688',
-            },
-          }}
-          bezier
-          style={{
-            marginVertical: 8,
+      <LineChart
+        data={{
+          labels: chartData.labels,
+          datasets: chartData.datasets,
+        }}
+        width={chartWidth}
+        height={chartHeight}
+        yAxisLabel=""
+        yAxisSuffix="회"
+        chartConfig={{
+          backgroundColor: '#ffffff',
+          backgroundGradientFrom: '#ffffff',
+          backgroundGradientTo: '#ffffff',
+          decimalPlaces: 1,
+          color: (opacity = 1) => `rgba(47, 79, 79, ${opacity})`,
+          labelColor: () => `#2F4F4F`,
+          style: {
             borderRadius: 16,
-            // marginHorizontal: 7,
-            elevation: 4, // 안드로이드 그림자 효과
-            shadowColor: "#000", // iOS 그림자 효과
-            shadowOffset: {
-              width: -2,
-              height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.5,
-          }}
-        />
-      </View>
+          },
+          propsForDots: {
+            r: '4',
+            strokeWidth: '1.5',
+            stroke: '#009688',
+          },
+        }}
+        bezier
+        style={{
+          marginVertical: 8,
+          borderRadius: 16,
+          marginHorizontal:7,
+        }}
+      />
     </View>
   );
 };
@@ -124,13 +114,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     justifyContent: 'center',
-    //backgroundColor: '#009688',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#009688',
   },
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#009688',
+    backgroundColor: '#ffffff',
     height: 50,
     paddingHorizontal: 10,
     borderRadius: 8, // 라운드 효과 추가
@@ -148,8 +137,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   headerText: {
-    color: '#ffffff',
-    fontSize: 18,
+    color: '#009688',
+    fontSize: 22,
     textAlign: 'center',
     flex: 1,
     fontWeight: 'bold', // 볼드체로 변경
@@ -164,9 +153,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: '#009688',
     fontSize: 18,
-  },
-  chartContainer: {
-    marginHorizontal: 7, // 카드 UI와 동일한 간격
   },
 });
 
