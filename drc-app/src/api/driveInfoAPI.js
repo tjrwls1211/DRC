@@ -117,7 +117,7 @@ export const getSBrk = async (date) => {
     try {
         console.log("(하루)급정거 조회 함수 들어옴");
         const headers = await getTokenHeader();
-        const response = await apiClient.get("/abnormal/sacl", {
+        const response = await apiClient.get("/abnormal/sbrk", {
             headers,
             params: { date }
         });

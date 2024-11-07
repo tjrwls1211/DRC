@@ -154,10 +154,11 @@ const MypageScreen = () => {
       <TouchableOpacity style={styles.button} onPress={fetchData}>
         <Text style={styles.buttonText}>주행 기록 조회하기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.downloadButton} onPress={{handleDownload}}>
+      <TouchableOpacity style={styles.downloadButton} onPress={handleDownload}>
         <Icon name="download" size={16} color="#009688" />
         <Text style={styles.downloadButtonText}>주행 기록 다운로드</Text>
       </TouchableOpacity>
+
     </View>
   );
 };

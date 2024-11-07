@@ -87,7 +87,7 @@ const SuddenBraking = () => {
           backgroundColor: '#ffffff',
           backgroundGradientFrom: '#ffffff',
           backgroundGradientTo: '#ffffff',
-          decimalPlaces: 1,
+          decimalPlaces: 0,
           color: (opacity = 1) => `rgba(47, 79, 79, ${opacity})`,
           labelColor: () => `#2F4F4F`,
           style: {

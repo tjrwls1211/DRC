@@ -31,6 +31,7 @@ const SamePedal = () => {
         // 날짜 및 분석결과(횟수) 추출, 형식 변경
         const labels = result.map(item => item.date.replace('2024-', '').replace('-', '.'));
         const data = result.map(item => item.bothPedal);
+        // const data = [5, 7, 2, 0, 10, 2]; // # 테스트용
 
         // 배열에 저장
         setChartData({
@@ -87,7 +88,7 @@ const SamePedal = () => {
           backgroundColor: '#ffffff',
           backgroundGradientFrom: '#ffffff',
           backgroundGradientTo: '#ffffff',
-          decimalPlaces: 1,
+          decimalPlaces: 0,
           color: (opacity = 1) => `rgba(47, 79, 79, ${opacity})`,
           labelColor: () => `#2F4F4F`,
           style: {
