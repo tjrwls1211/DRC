@@ -199,7 +199,7 @@ def play_sounds_in_sequence(sounds):
 #전역 변수로 안전 상태 저장
 prev_mqtt_state = None
 
-# 로드셀 데이터와 상태를 업데이트하는 함수    # 급발진 조건을 수정하자 accel_value < 10000 and brake_value > 5000 and speed >= 50 and rpm > 5000:
+# 로드셀 데이터와 상태를 업데이트하는 함수    # 급발진 조건을 수정하자 accel_value < 6000 and brake_value > 2000 and speed >= 50 and rpm > 2000:
 def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds, prev_mqtt_state, last_brake_time, last_both_time, last_speed_time
     mqtt_state = None
