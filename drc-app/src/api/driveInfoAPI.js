@@ -117,7 +117,7 @@ export const getSBrk = async (date) => {
     try {
         console.log("(하루)급정거 조회 함수 들어옴");
         const headers = await getTokenHeader();
-        const response = await apiClient.get(`/abnormal/sbrk`, {
+        const response = await apiClient.get("/abnormal/sacl", {
             headers,
             params: { date }
         });
@@ -144,4 +144,21 @@ export const getSPedal = async (date) => {
         console.error("양발 운전 조회 오류:", error.response?.data || error.message);
         throw error;
     }
+};
+
+// 주행정보 다운로드
+export const downDriveInfo = async (date) => {
+  try {
+    console.log("주행정보 다운로드 API 함수 실행");
+    const headers = await getTokenHeader();
+    const response = await apiClient.get("/driveLog/download", {
+        headers,
+        params: { date }
+    });
+    console.log("주행정보 다운로드 처리 반환값: ", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("주행정보 다운로드 오류: ", error.response?.data || error.message);
+    throw error;
+  }
 };

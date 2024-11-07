@@ -3,8 +3,10 @@ import { View, Text, TouchableOpacity, StyleSheet, Platform, Modal } from 'react
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Ionicons'; 
-import { getSAcl,getSBrk, getSPedal } from '../api/driveInfoAPI';
+import { getSAcl,getSBrk, getSPedal, downDriveInfo } from '../api/driveInfoAPI';
 import { formatDate } from '../utils/formatDate';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 const MypageScreen = () => {
   // 상태: 날짜, DateTimePicker 표시 여부, 유저 정보 (닉네임과 이메일)
@@ -55,6 +57,28 @@ const MypageScreen = () => {
   const openDatePicker = () => {
     setShowPicker(true);
   };
+
+  // CSV 파일 다운로드 기능
+  const handleDownload = async () => {
+    try {
+      const csvData = await downDriveInfo(formatDate(selectedDate)); // 선택한 날짜로 CSV 데이터 가져오기
+
+      // CSV 파일 저장 경로 설정
+      // FileSystem.documentDirectory: Expo 앱의 샌드박스 내에서 파일을 저장할 수 있는 경로
+      const fileUri = FileSystem.documentDirectory + `DriveLog_${formatDate(selectedDate)}.csv`;
+      
+      // 가져온 CSV 데이터를 해당 경로에 저장
+      await FileSystem.writeAsStringAsync(fileUri, csvData, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+
+      // 저장한 CSV 파일 공유 대화상자 열기
+      await Sharing.shareAsync(fileUri);
+    } catch (error) {
+      console.error("파일 다운로드 오류: ", error);
+    }
+  };
+
 
   return (
     <View style={styles.container}>
@@ -130,7 +154,7 @@ const MypageScreen = () => {
       <TouchableOpacity style={styles.button} onPress={fetchData}>
         <Text style={styles.buttonText}>주행 기록 조회하기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.downloadButton}>
+      <TouchableOpacity style={styles.downloadButton} onPress={{handleDownload}}>
         <Icon name="download" size={16} color="#009688" />
         <Text style={styles.downloadButtonText}>주행 기록 다운로드</Text>
       </TouchableOpacity>
