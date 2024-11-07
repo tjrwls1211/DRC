@@ -17,7 +17,7 @@ public class DriveLogReceiveDTO {
 	private int brkPedal;
 	private int speed;
 	private int rpm;
-	private double acceleration;
+	private double speedChange;
 	private LocalDateTime createDate;
 	private String driveState;
 	private String carId;

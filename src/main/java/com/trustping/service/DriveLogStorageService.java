@@ -47,7 +47,7 @@ public class DriveLogStorageService {
 		driveLog.setBrkPedal(driveLogReceiveDTO.getBrkPedal());
 		driveLog.setSpeed(driveLogReceiveDTO.getSpeed());
 		driveLog.setRpm(driveLogReceiveDTO.getRpm());
-		driveLog.setAcceleration(driveLogReceiveDTO.getAcceleration());
+		driveLog.setSpeedChange(driveLogReceiveDTO.getSpeedChange());
 		driveLog.setCreateDate(driveLogReceiveDTO.getCreateDate());
 		driveLog.setDriveState(driveLogReceiveDTO.getDriveState());
 		

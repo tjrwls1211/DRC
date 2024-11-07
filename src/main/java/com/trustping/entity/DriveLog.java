@@ -21,7 +21,7 @@ public class DriveLog {
 	private int brkPedal;
 	private int speed;
 	private int rpm;
-	private double acceleration;
+	private double speedChange;
 	@Column(name = "createDate", columnDefinition = "TIMESTAMP")
 	private LocalDateTime createDate;
 	private String driveState;

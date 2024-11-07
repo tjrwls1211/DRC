@@ -1,7 +1,6 @@
 package com.trustping.service;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,7 +15,6 @@ import com.trustping.DTO.WeeklyBothPedalDTO;
 import com.trustping.DTO.WeeklySAclDTO;
 import com.trustping.DTO.WeeklySBrkDTO;
 import com.trustping.entity.AbnormalData;
-import com.trustping.entity.UserData;
 import com.trustping.repository.AbnormalDataRepository;
 import com.trustping.repository.UserDataRepository;
 import com.trustping.utils.JwtUtil;
