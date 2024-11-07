@@ -35,8 +35,8 @@ public class AbnormalDataController {
 	@GetMapping("/sacl")
 	public ResponseEntity<SAclDTO> getSacl(@RequestHeader("Authorization") String token, @RequestParam("date") LocalDate date) {
 	    String jwtToken = token.substring(7);
-	    String id = jwtUtil.extractUsername(jwtToken);
-	    SAclDTO result = abnormalDataService.getSAclByUserIdAndDate(id, date);
+	    String userId = jwtUtil.extractUsername(jwtToken);
+	    SAclDTO result = abnormalDataService.getSAclByUserIdAndDate(userId, date);
 	    System.out.println(result);
 	    if (result == null) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
@@ -49,8 +49,8 @@ public class AbnormalDataController {
 	@GetMapping("/sbrk")
 	public ResponseEntity<SBrkDTO> getSbrk(@RequestHeader("Authorization") String token, @RequestParam("date") LocalDate date) {
 	    String jwtToken = token.substring(7);
-	    String id = jwtUtil.extractUsername(jwtToken);
-	    SBrkDTO result = abnormalDataService.getSBrkByUserIdAndDate(id, date);
+	    String userId = jwtUtil.extractUsername(jwtToken);
+	    SBrkDTO result = abnormalDataService.getSBrkByUserIdAndDate(userId, date);
 	    if (result == null) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
 	    }
@@ -61,8 +61,8 @@ public class AbnormalDataController {
 	@GetMapping("/bothPedal")
 	public ResponseEntity<BothPedalDTO> getBothPedal(@RequestHeader("Authorization") String token, @RequestParam("date") LocalDate date) {
 	    String jwtToken = token.substring(7);
-	    String id = jwtUtil.extractUsername(jwtToken);
-	    BothPedalDTO result = abnormalDataService.getBothPedalByUserIdAndDate(id, date);
+	    String userId = jwtUtil.extractUsername(jwtToken);
+	    BothPedalDTO result = abnormalDataService.getBothPedalByUserIdAndDate(userId, date);
 	    if (result == null) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
 	    }

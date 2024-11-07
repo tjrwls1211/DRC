@@ -18,6 +18,15 @@ import com.trustping.entity.UserData;
 @Repository
 public interface AbnormalDataRepository extends JpaRepository<AbnormalData, Long> {
 	
+	@Query("SELECT new com.trustping.DTO.SAclDTO(a.sAcl) FROM AbnormalData a WHERE a.userData.userId = :userId AND a.date = :date")
+	Optional<SAclDTO> findSAclByUserData_UserIdAndDate(@Param("userId") String userId, @Param("date") LocalDate date);
+	
+	@Query("SELECT new com.trustping.DTO.SBrkDTO(a.sBrk) FROM AbnormalData a WHERE a.userData.userId = :userId AND a.date = :date")
+	Optional<SBrkDTO> findSBrkByUserData_UserIdAndDate(@Param("userId") String userId, @Param("date") LocalDate date);
+
+	@Query("SELECT new com.trustping.DTO.BothPedalDTO(a.bothPedal) FROM AbnormalData a WHERE a.userData.userId = :userId AND a.date = :date")
+	Optional<BothPedalDTO> findBothPedalByUserData_UserIdAndDate(@Param("userId") String userId, @Param("date") LocalDate date);
+
     Optional<AbnormalData> findByUserData_UserIdAndDate(String userId, LocalDate date);
     
     List<AbnormalData> findByUserData_UserIdAndDateBetween(String userId, LocalDate startDate, LocalDate endDate);

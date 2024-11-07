@@ -123,6 +123,8 @@ public class UserDataServiceImpl implements UserDataService {
 
 		userDataRepository.save(userData);
 		return true; // 회원가입 성공
+		
+		//TODO DriveScore도 같이 생성되도록 수정
 	}
 
 	// 로그인

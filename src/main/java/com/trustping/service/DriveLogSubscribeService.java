@@ -33,7 +33,7 @@ public class DriveLogSubscribeService implements MqttCallback {
     private DriveLogStorageService driveLogStorageService;
     
     @Autowired
-    private DriveScoreService driveScoreService;
+    private DriveScoreEvaluateService driveScoreEvaluateService;
     
     @PostConstruct
     public void subscribeToTopic() {
@@ -98,6 +98,7 @@ public class DriveLogSubscribeService implements MqttCallback {
 		objectMapper.registerModule(new JavaTimeModule());
 		DriveLogReceiveDTO ReceiveDriveLog = objectMapper.readValue(payload, DriveLogReceiveDTO.class);
 		driveLogStorageService.saveData(ReceiveDriveLog);
+		driveScoreEvaluateService.evaluateScore(ReceiveDriveLog);
     }
     
     @Override

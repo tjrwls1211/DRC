@@ -36,38 +36,32 @@ public class AbnormalDataServiceImpl implements AbnormalDataService{
 	
 	// 하루 단위 급가속 조회
 	@Override
-	public SAclDTO getSAclByUserIdAndDate(String id, LocalDate date) {
-	   Optional<AbnormalData> abnormalDataOpt = abnormalDataRepository.findByUserData_UserIdAndDate(id, date);
-	   if (abnormalDataOpt.isPresent()) {
-		   AbnormalData abnormalData = abnormalDataOpt.get();
-		   return new SAclDTO(abnormalData.getSAcl());
-	   } else {
-		   return null;
-	   }
+	public SAclDTO getSAclByUserIdAndDate(String userId, LocalDate date) {
+	    Optional<SAclDTO> result = abnormalDataRepository.findSAclByUserData_UserIdAndDate(userId, date);
+	    if (result.isEmpty()) {
+	        return null;
+	    }
+        return result.get();
 	}
 
 	// 하루 단위 급정거 조회
 	@Override
-	public SBrkDTO getSBrkByUserIdAndDate(String id, LocalDate date) {
-		   Optional<AbnormalData> abnormalDataOpt = abnormalDataRepository.findByUserData_UserIdAndDate(id, date);
-		   if (abnormalDataOpt.isPresent()) {
-			   AbnormalData abnormalData = abnormalDataOpt.get();
-			   return new SBrkDTO(abnormalData.getSBrk());
-		   } else {
-			   return null;
-		   }
-		}
+	public SBrkDTO getSBrkByUserIdAndDate(String userId, LocalDate date) {
+	    Optional<SBrkDTO> result = abnormalDataRepository.findSBrkByUserData_UserIdAndDate(userId, date);
+	    if (result.isEmpty()) {
+	        return null;
+	    }
+        return result.get();
+	}
 	
 	// 하루 단위 양발 운전 조회
 	@Override
-	public BothPedalDTO getBothPedalByUserIdAndDate(String id, LocalDate date) {
-		   Optional<AbnormalData> abnormalDataOpt = abnormalDataRepository.findByUserData_UserIdAndDate(id, date);
-		   if (abnormalDataOpt.isPresent()) {
-			   AbnormalData abnormalData = abnormalDataOpt.get();
-			   return new BothPedalDTO(abnormalData.getBothPedal());
-		   } else {
-			   return null;
-		   }
+	public BothPedalDTO getBothPedalByUserIdAndDate(String userId, LocalDate date) {
+	    Optional<BothPedalDTO> result = abnormalDataRepository.findBothPedalByUserData_UserIdAndDate(userId, date);
+	    if (result.isEmpty()) {
+	        return null;
+	    }
+        return result.get();
 	}
 	
 	// 2주 단위 급가속 조회
@@ -96,7 +90,7 @@ public class AbnormalDataServiceImpl implements AbnormalDataService{
         List<WeeklySBrkDTO> weeklySBrk = weeklyData.stream()
                 .map(sBrkLog -> new WeeklySBrkDTO(
                         sBrkLog.getDate(),
-                        sBrkLog.getSAcl()))
+                        sBrkLog.getSBrk()))
                 .collect(Collectors.toList());
 
         // 변환된 DTO 리스트 반환
@@ -112,7 +106,7 @@ public class AbnormalDataServiceImpl implements AbnormalDataService{
         List<WeeklyBothPedalDTO> weeklyBothPedal = weeklyData.stream()
                 .map(BothPedalLog -> new WeeklyBothPedalDTO(
                         BothPedalLog.getDate(),
-                        BothPedalLog.getSAcl()))
+                        BothPedalLog.getBothPedal()))
                 .collect(Collectors.toList());
 
         // 변환된 DTO 리스트 반환
