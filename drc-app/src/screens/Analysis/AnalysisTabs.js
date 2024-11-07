@@ -15,14 +15,16 @@ export default function AnalysisTabs() {
                 name="급가속 분석"
                 component={SuddenAcceleration}
                 options={{
-                    tabBarIcon: () => <Icon name="forwardburger" size={20} color="#000" />  ,
+                    tabBarIcon: () => <Icon name="forwardburger" size={20} color="#000" />,
+                    headerShown: false,
                 }}
             />
             <Tab.Screen
                 name="급정거 분석"
                 component={SuddenBraking}
                 options={{
-                    tabBarIcon: () => <Icon2 name="warning" size={20} color="#000" /> ,
+                    tabBarIcon: () => <Icon2 name="warning" size={20} color="#000" />,
+                    headerShown: false,
                 }} 
             />
             <Tab.Screen
@@ -30,6 +32,7 @@ export default function AnalysisTabs() {
                 component={SamePedal}
                 options={{
                     tabBarIcon: () => <Icon2 name="footsteps" size={20} color="#000" />,
+                    headerShown: false,
                 }}
             />
         </Tab.Navigator>
