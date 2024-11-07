@@ -204,7 +204,7 @@ def test_rpm_sequence():
     while rpm < 5000:
         rpm += 1000
         print(f"현재 RPM (증가): {rpm}")
-        check_info(accel_value=500, brake_value=10, rpm_value=rpm)  # 가상의 accel_value와 brake_value 설정
+        check_info(accel_value=accel_value, brake_value=brake_value, rpm_value=rpm)  # 가상의 accel_value와 brake_value 설정
         time.sleep(1)  # 1초 대기
 
     # 1000씩 RPM 감소

@@ -226,7 +226,7 @@ def check_info(accel_value, brake_value):
                 last_accel_time = time.time()
 
     # Rapid Acceleration
-    elif accel_value > 1000 and brake_value <= 30:
+    elif accel_value > 1000 and brake_value <= 30:   # accel_value > 1000 and brake_value <= 100 and speed >= 6:
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 1
@@ -299,25 +299,6 @@ def check_info(accel_value, brake_value):
 previous_speed = 0  # 이전 속도 (km/h)
 previous_time = time.time()
 
-""" def calculate_acceleration_kmh2(current_speed):
-    global previous_speed, previous_time
-
-    current_time = time.time()    # 현재 시간 
-    delta_speed = current_speed - previous_speed  # 속도 변화 (km/h)
-    delta_time = current_time - previous_time  # 시간 변화 (초)
-
-    if delta_time > 0:
-        # 가속도 계산 (m/s² -> km/h²로 변환)
-        acceleration = (delta_speed / delta_time) * 12960  # km/h² 단위로 변환
-    else:
-        acceleration = 0  # 시간 간격이 0일 경우 가속도 0
-
-    # 이전 속도와 시간 업데이트
-    previous_speed = current_speed
-    previous_time = current_time
-
-    return acceleration """
-
 # 예시문 
 def calculate_acceleration_kmh2(current_speed):
     global previous_speed, previous_time
@@ -337,6 +318,21 @@ def calculate_acceleration_kmh2(current_speed):
     previous_time = current_time
 
     return acceleration
+
+""" #1초마다 KM/H계산 툴
+def delta_speed(current_speed):
+    global previous_speed, previous_time
+
+    current_time = time.time()
+    kmh = current_speed - previous_speed  # 속도 변화 (km/h)
+    
+    # 이전 속도와 시간 업데이트
+    previous_speed = current_speed
+    previous_time = current_time
+
+    return kmh
+ """
+
 
 # 속도 예시 입력
 current_speeds = [0, 20, 40, 60, 80]  # 속도를 순차적으로 증가시킴 (km/h)
@@ -385,12 +381,15 @@ def run_code():
                 speed_kmh = speed_response.value.to("km/h")
                 data["speed"] = float(speed_kmh)
                 
-                acceleration_kmh2 = calculate_acceleration_kmh2(speed_kmh)
-                data["acceleration"] = acceleration_kmh2
-                
                 text_label.config(text=f"현재 속도: {int(speed_kmh)} km/h") #이거 쓰면 될꺼같네 
+                speed_change = delta_speed(current_speed)
+                data["speedChange"] = speed_change  # 속도 변화 저장
+                
             if rpm_response.value is not None:
-                data["rpm"] = int(rpm_response.value) """
+                data["rpm"] = int(rpm_response.value) 
+                
+                
+                """
 
             
             # 현재 시간 추가
@@ -401,9 +400,9 @@ def run_code():
                 "brkPedal": int(val_brake),
                 "createDate": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                 "driveState": data["driveState"],  # 기존 driveState 유지
-                "speed" : 40, #40 대신에 들어갈 값 : int(speed_response.value)
-                "rpm" : 2000,  #2000 대신에 들어갈 값 : int(rpm_response.value)
-                "acceleration" : 20.0 #가속도 변수 f{acceleration:.1f}
+                "speed" : 40, #40 대신에 들어갈 값 : data["speed"]
+                "rpm" : 2000,  #2000 대신에 들어갈 값 : data["rpm"]
+                "acceleration" : 20.0 #speedChange data["kmh"]
             })             
             print(data)
             #레이블 업데이트 (정수 형식)
