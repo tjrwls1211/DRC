@@ -17,14 +17,14 @@ import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
 import com.trustping.DTO.MfaResponseDTO;
-import com.trustping.DTO.UpdateNicknameDTO;
-import com.trustping.DTO.UpdateResponseDTO;
 import com.trustping.DTO.MyDataResponseDTO;
 import com.trustping.DTO.OtpResponseDTO;
 import com.trustping.DTO.PasswordDTO;
 import com.trustping.DTO.ResponseDTO;
-import com.trustping.DTO.SAclDTO;
 import com.trustping.DTO.SignUpRequestDTO;
+import com.trustping.DTO.UpdateNicknameDTO;
+import com.trustping.DTO.UpdateResponseDTO;
+import com.trustping.entity.DriveScore;
 import com.trustping.entity.UserData;
 import com.trustping.repository.UserDataRepository;
 import com.trustping.utils.JwtUtil;
@@ -37,6 +37,9 @@ public class UserDataServiceImpl implements UserDataService {
 
 	@Autowired
 	private UserDataRepository userDataRepository;
+	
+	@Autowired
+	private DriveScoreService driveScoreService;
 
 	@Autowired
 	private JwtUtil jwtUtil;
@@ -122,9 +125,8 @@ public class UserDataServiceImpl implements UserDataService {
 				"ROLE_USER");
 
 		userDataRepository.save(userData);
+		driveScoreService.registerDriveScore(userData);
 		return true; // 회원가입 성공
-		
-		//TODO DriveScore도 같이 생성되도록 수정
 	}
 
 	// 로그인

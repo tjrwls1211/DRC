@@ -9,5 +9,8 @@ import com.trustping.entity.UserData;
 
 
 public interface DriveScoreRepository extends JpaRepository<DriveScore, Long> {
+	
 	Optional<DriveScore> findByUserData(UserData userData);
+	
+	Optional<DriveScore> findByUserData_UserId(String userId);
 }

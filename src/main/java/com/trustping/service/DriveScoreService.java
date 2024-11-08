@@ -1,5 +1,11 @@
 package com.trustping.service;
 
-public class DriveScoreService {
+import com.trustping.DTO.DriveScoreDTO;
+import com.trustping.entity.UserData;
 
+public interface DriveScoreService{
+	
+	public void registerDriveScore(UserData userData);
+	
+	public DriveScoreDTO getDriveScoreByUserId(String id);
 }
