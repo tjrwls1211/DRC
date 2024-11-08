@@ -140,11 +140,6 @@ def update_display_state(accel_value, brake_value, state):
     else:
         if brake_label.cget("image") != str(brake_img_normal):
             brake_label.config(image=brake_img_normal)
-    
-
-    #레이블 업데이트 (정수 형식)
-    #text_label.config(text=f"현재 : {random_speed}")
-    #나중에 obd스피드 입력넣을때 accel_value대신에 speed_response.value 로 교체
 
 #급발진 음성
 rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1.wav")
@@ -199,7 +194,7 @@ def play_sounds_in_sequence(sounds):
 #전역 변수로 안전 상태 저장
 prev_mqtt_state = None
 
-# 로드셀 데이터와 상태를 업데이트하는 함수    # 급발진 조건을 수정하자 accel_value < 6000 and brake_value > 2000 and speed >= 50 and rpm > 2000:
+# 로드셀 데이터와 상태를 업데이트하는 함수    # 급발진 조건을 수정하자 accel_value < 2000 and brake_value > 3000 and speed >= 40 and rpm > 2000:
 def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds, prev_mqtt_state, last_brake_time, last_both_time, last_speed_time
     mqtt_state = None
@@ -226,7 +221,7 @@ def check_info(accel_value, brake_value):
                 last_accel_time = time.time()
 
     # Rapid Acceleration
-    elif accel_value > 1000 and brake_value <= 30:   # accel_value > 1000 and brake_value <= 100 and speed >= 6:
+    elif accel_value > 1000 and brake_value <= 30:   # accel_value > 1000 and brake_value <= 100 and speed >= 6 and speed     and rpm :
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 1
@@ -235,7 +230,7 @@ def check_info(accel_value, brake_value):
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_speed_time
-            if elapsed_time >= 4 and not is_playing_sounds:
+            if elapsed_time >= 3 and not is_playing_sounds:
                 stop_sounds = True
                 time.sleep(0.2)
                 sounds = [accelaccel_sound]
@@ -253,7 +248,7 @@ def check_info(accel_value, brake_value):
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_brake_time
-            if elapsed_time >= 4 and not is_playing_sounds:
+            if elapsed_time >= 3 and not is_playing_sounds:
                 stop_sounds = True
                 time.sleep(0.2)
                 sounds = [brakebrake_sound]
@@ -271,7 +266,7 @@ def check_info(accel_value, brake_value):
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_both_time
-            if elapsed_time >= 4 and not is_playing_sounds:
+            if elapsed_time >= 3 and not is_playing_sounds:
                 stop_sounds = True
                 time.sleep(0.2)
                 sounds = [bothdrive_sound]
@@ -344,7 +339,8 @@ for speed in current_speeds:
     data["acceleration"] = acceleration
     #print(f"속도: {speed} km/h, 가속도: {acceleration:.2f} km/h²")
 
-
+""" def speed_image(): """
+    
 
 
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
@@ -411,7 +407,7 @@ def run_code():
             client.publish('pedal', json.dumps(data), 0, retain=False)
             check_info(val_accelerator, val_brake)
 
-            time.sleep(1)
+            time.sleep(0.8)
 
         except Exception as error:
             print(error)
