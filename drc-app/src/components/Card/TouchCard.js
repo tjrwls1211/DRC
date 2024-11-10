@@ -1,20 +1,35 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, Image } from 'react-native';
 import BaseCard from './BaseCard';
+import { useTheme } from '../Mode/ThemeContext'; // 다크 모드 Context import
 
 // Card 컴포넌트 정의
 const Card = ({ analysis_item, analysis_count, iconSource, onPress }) => {
+    const { isDarkMode } = useTheme(); // 다크 모드 상태 가져오기
+
     return (
         <TouchableOpacity onPress={onPress}>
-            <BaseCard style={styles.baseCard}> 
+            <BaseCard style={[styles.baseCard, { backgroundColor: isDarkMode ? '#444444' : '#fff' }]}> 
                 <View style={styles.container}>
-                    <View style={styles.iconContainer}>
+                    <View style={[
+                        styles.iconContainer, 
+                        { 
+                            borderColor: isDarkMode ? '#009688' : 'rgba(0, 150, 136, 1)', 
+                            backgroundColor: isDarkMode ? '#d3d3d3' : '#fff' // 다크 모드일 때 배경색 하얀색
+                        }
+                    ]}>
                         <Image source={iconSource} style={styles.icon} />
                     </View>
-                    <Text style={styles.analysis_item}>{analysis_item}</Text>
+                    <Text style={[styles.analysis_item, { color: isDarkMode ? '#ffffff' : '#000' }]}>
+                        {analysis_item}
+                    </Text>
                     <View style={styles.countContainer}>
-                        <Text style={styles.analysis_count}>{analysis_count}</Text>
-                        <Text style={styles.arrow}>{'>'}</Text>
+                        <Text style={[styles.analysis_count, { color: isDarkMode ? '#ffffff' : '#000' }]}>
+                            {analysis_count}
+                        </Text>
+                        <Text style={[styles.arrow, { color: isDarkMode ? '#ffffff' : '#000' }]}>
+                            {'>'}
+                        </Text>
                     </View>
                 </View>
             </BaseCard>
@@ -24,7 +39,6 @@ const Card = ({ analysis_item, analysis_count, iconSource, onPress }) => {
 
 const styles = StyleSheet.create({
     baseCard: {
-        backgroundColor: '#fff', // 카드 배경색을 회색으로 설정
         borderRadius: 13, // 모서리 둥글게
         padding: 10, // 내부 여백
         elevation: 2, // 그림자 효과 (안드로이드)
@@ -38,18 +52,15 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    iconContainer: { //아이콘 배경 원
+    iconContainer: { // 아이콘 배경 원
         width: 50,
         height: 50,
         borderRadius: 30,
-        backgroundColor: '#fff',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: -4,
         marginLeft: 0,
-        borderWidth:2,
-        borderColor: 'rgba(0, 150, 136, 1)'
-        
+        borderWidth: 2,
     },
     icon: {
         width: 32,
@@ -57,7 +68,7 @@ const styles = StyleSheet.create({
     },
     analysis_item: {
         fontSize: 18,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     countContainer: {
         flexDirection: 'row',

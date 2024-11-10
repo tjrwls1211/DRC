@@ -4,6 +4,7 @@ import { fetchData } from '../components/ChatBot/ApiService';
 import { extractDateAndKeyword } from '../components/ChatBot/extractHelpers';
 import { chatbotResponses } from '../components/ChatBot/chatbotResponses';
 import axios from 'axios';
+import { useTheme } from '../components/Mode/ThemeContext';
 
 
 const ChatbotScreen = ({ navigation }) => {
@@ -12,7 +13,7 @@ const ChatbotScreen = ({ navigation }) => {
     const [showQueryButtons, setShowQueryButtons] = useState(false);
     const [showBackOnly, setShowBackOnly] = useState(false);
     const [activeButton, setActiveButton] = useState(null);
-
+    const { isDarkMode } = useTheme();
 
   
     // GPT API 호출 함수
@@ -199,7 +200,7 @@ if (inputDate > currentDate) {
     
     return (
       <KeyboardAvoidingView
-          style={styles.container}
+          style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#ffffff' }]} // 배경색 설정
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
       >
@@ -208,11 +209,11 @@ if (inputDate > currentDate) {
                   <View key={index} style={[styles.messageContainer, message.isBot ? styles.botMessage : styles.userMessage]}>
                       {message.isBot && (
                           <View style={styles.botMessageContainer}>
-                              <View style={styles.iconContainer}>
-                                  <Image source={require('../../assets/iconizer-free-icon-chatbot-5292342-_1_.png')} style={styles.icon} />
-                              </View>
+                              <View style={[styles.iconContainer, { backgroundColor: isDarkMode ? '#121212' : '#fff' }]}>
+    <Image source={require('../../assets/iconizer-free-icon-chatbot-5292342-_1_.png')} style={styles.icon} />
+</View>
                               <View style={styles.messageContentContainer}>
-                                  <Text style={styles.messageText}>
+                                  <Text style={[styles.messageText, { color: isDarkMode ? '#121212' : '#000000' }]}>
                                       {message.text || ''} {/* 빈 문자열 처리 */}
                                   </Text>
                               </View>
@@ -246,45 +247,53 @@ if (inputDate > currentDate) {
                   </View>
               ) : (
                 <View style={styles.buttonsContainer}>
-    <View style={styles.row}>
-        {/* 급발진 버튼 */}
-        <TouchableOpacity style={styles.largeButton} onPress={() => handleButtonPress("급발진")}>
-            <Text style={styles.buttonText}>급발진</Text>
-        </TouchableOpacity>
-        
-        {/* 앱 도움말 버튼 */}
-        <TouchableOpacity style={styles.largeButton} onPress={() => handleButtonPress("앱 도움말")}>
-            <Text style={styles.buttonText}>앱 도움말</Text>
-        </TouchableOpacity>
-        
-        {/* 고객지원 버튼 */}
-        <TouchableOpacity style={styles.largeButton} onPress={() => handleButtonPress("고객지원")}>
-            <Text style={styles.buttonText}>고객지원</Text>
-        </TouchableOpacity>
-    </View>
-</View>
-
-            
-
+                  <View style={styles.row}>
+                      {/* 급발진 버튼 */}
+                      <TouchableOpacity style={styles.largeButton} onPress={() => handleButtonPress("급발진")}>
+                          <Text style={styles.buttonText}>급발진</Text>
+                      </TouchableOpacity>
+                      
+                      {/* 앱 도움말 버튼 */}
+                      <TouchableOpacity style={styles.largeButton} onPress={() => handleButtonPress("앱 도움말")}>
+                          <Text style={styles.buttonText}>앱 도움말</Text>
+                      </TouchableOpacity>
+                      
+                      {/* 고객지원 버튼 */}
+                      <TouchableOpacity style={styles.largeButton} onPress={() => handleButtonPress("고객지원")}>
+                          <Text style={styles.buttonText}>고객지원</Text>
+                      </TouchableOpacity>
+                  </View>
+                </View>
               )}
           </ScrollView>
   
-          <View style={styles.inputContainer}>
-    <TextInput
-        style={styles.input}
-        placeholder="메시지를 입력하세요..."
-        value={inputText}
-        onChangeText={setInputText}
-        onSubmitEditing={handleSend}
-        returnKeyType="send"
-    />
-    <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+          <View style={[styles.inputContainer, { backgroundColor: isDarkMode ? '#1e1e1e' : '#fff' }]}>
+          <TextInput
+    style={[
+        styles.input, 
+        { 
+            borderColor: isDarkMode ? '#ccc' : '#ccc', 
+            color: isDarkMode ? '#ffffff' : '#000000' // 텍스트 색상 설정
+        }
+    ]}
+    placeholder="메시지를 입력하세요..."
+    placeholderTextColor={isDarkMode ? '#b0b0b0' : '#999'} // 플레이스홀더 색상 조정
+    value={inputText}
+    onChangeText={setInputText}
+    onSubmitEditing={handleSend}
+    returnKeyType="send"
+/>
+
+    <TouchableOpacity 
+        style={[styles.sendButton, { backgroundColor: isDarkMode ? '#1e1e1e' : '#fff' }]} // 배경색 설정
+        onPress={handleSend}
+    >
         <Image source={require('../../assets/sending-icon.png')} style={styles.sendIcon} />
     </TouchableOpacity>
 </View>
+
       </KeyboardAvoidingView>
-  );
-  
+    );
 };
 
 const styles = StyleSheet.create({
