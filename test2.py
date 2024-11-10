@@ -16,7 +16,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
-
+import os
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
 
@@ -90,11 +90,13 @@ root.configure(bg="black")
 
 # 폰트 설정
 font_large = ("Arial", 40, "bold")
-import os
+
 
 # 현재 파일의 디렉토리 경로를 가져옴
 base_dir = os.path.dirname(__file__)
 
+
+global accel_img_normal, accel_img_dark, brake_img_normal, brake_img_dark
 # 절대 경로를 사용하여 이미지 로드
 accel_img_normal = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "accel_normal.png")).resize((365, 500)))
 accel_img_dark = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "accel_dark.png")).resize((365, 500)))
