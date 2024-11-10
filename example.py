@@ -22,7 +22,7 @@ data = {
     "aclPedal": 0,
     "brkPedal": 0,
     "createDate": 0,
-    "driveState": "",
+    "driveState": "normalDriving",
     "speed" : 50,
     "rpm" : 2000,
     "acceleration" : 0
@@ -82,6 +82,7 @@ brake_label.place(relx=-0.04, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
 text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
 text_label.place(relx=0.45, rely=0.05, anchor='center')
+# 초기값 
 
 
 # pygame 초기화
