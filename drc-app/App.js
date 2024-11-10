@@ -59,6 +59,7 @@ const MainNavigator = () => {
         <Stack.Screen
           name="LoginScreen"
           component={LoginScreen} // 로그인 화면 추가
+          options={{ headerShown: false}}
         />
         <Stack.Screen
           name="DrivingScoreEvaluator"

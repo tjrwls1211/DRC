@@ -138,6 +138,7 @@ const MypageScreen = () => {
       <Icon name="download" size={16} color={isDarkMode ? '#009688' : '#009688'} />
         <Text style={[styles.downloadButtonText, { color: isDarkMode ? '#009688' : '#009688' }]}>주행 기록 다운로드</Text>
       </TouchableOpacity>
+
     </View>
   );
 };
@@ -152,7 +153,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginTop: 15,
+    marginTop: 15,
     marginBottom: 5,
+    color: '#2F4F4F',
   },
   email: {
     fontSize: 16,
@@ -202,6 +205,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+  closeButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
   recordContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -217,21 +224,32 @@ const styles = StyleSheet.create({
     height: 125,
     borderRadius: 5,
     justifyContent: 'center',
+    backgroundColor: '#d5e3e2',
+    width: 105,
+    height: 125,
+    borderRadius: 5,
+    justifyContent: 'center',
   },
   recordTitle: {
     fontSize: 16,
     color: '#2F4F4F',
     marginBottom: 13,
+    color: '#2F4F4F',
+    marginBottom: 13,
   },
   recordValue: {
     fontSize: 27,
+    fontSize: 27,
     fontWeight: 'bold',
+    color: '#2F4F4F',
     color: '#2F4F4F',
   },
   button: {
     backgroundColor: '#009688',
+    backgroundColor: '#009688',
     paddingVertical: 10,
     borderRadius: 5,
+    marginBottom: 15,
     marginBottom: 15,
   },
   buttonText: {
@@ -244,15 +262,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#009688',
+    borderColor: '#009688',
     borderWidth: 1,
     paddingVertical: 10,
     borderRadius: 5,
   },
   downloadButtonText: {
     color: '#009688',
+    color: '#009688',
     fontSize: 16,
     marginLeft: 5,
   },
 });
+
 
 export default MypageScreen;

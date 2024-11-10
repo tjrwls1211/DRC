@@ -5,19 +5,9 @@ import { useTheme } from "../Mode/ThemeContext"; // 다크 모드 Context import
 
 const AnalysisCard = ({ num, circleBackgroundColor, borderColor }) => {
     const { isDarkMode } = useTheme(); // 다크 모드 상태 가져오기
-
     return (
         <View style={[styles.customCard, { backgroundColor: isDarkMode ? '#333333' : '#ffffff' }]}>
             <View style={[styles.innerCard, { borderColor: borderColor || '#009688' }]}>
-                {/* 상단에 카드에 걸쳐진 사진이 들어간 원 */}
-                {/* 
-                <View style={[styles.circle, { backgroundColor: circleBackgroundColor || (isDarkMode ? '#444444' : '#ffffff') }]}>
-                    <Image 
-                        source={require('../../../assets/LOGO.png')} 
-                        style={styles.logo} 
-                    />
-                </View>
-                */}
                 <Text style={[styles.subText, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}> 저번주 대비</Text>
                 <View style={styles.row}>
                     <Text style={[styles.num, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{num}회</Text>
@@ -70,7 +60,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5, // 그림자 투명도
         shadowRadius: 4, // 그림자 흐림 효과
         elevation: 5, // 안드로이드에서 그림자 효과
-        marginTop: 20,
     },
     logo: {
         width: 40,
@@ -95,5 +84,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 });
+
 
 export default AnalysisCard;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Alert, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { loginUser, checkTokenValidity, checkOTP } from '../api/authAPI'; // api.js에서 loginUser 함수 가져오기
 import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차 인증 필요 상태 Context import
@@ -138,8 +138,9 @@ const handleOTPFocus = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.LogoText}>DRC</Text>
-
+      <View style={styles.logoView}>
+        <Image source={require('../../assets/drcsplash.png')} style={styles.logo} />
+      </View>
       <View style={styles.LoginView}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -147,7 +148,7 @@ const handleOTPFocus = () => {
           keyboardVerticalOffset={100}
         >
           <ScrollView contentContainerStyle={styles.scrollContent}>
-            <Text>ID (Email)</Text>
+            <Text style={styles.text}>ID (Email)</Text>
             <TextInput
               style={styles.TextInput}
               onChangeText={setEmail}
@@ -158,7 +159,7 @@ const handleOTPFocus = () => {
               autoCapitalize="none"
             />
 
-            <Text>Password</Text>
+            <Text style={styles.text}>Password</Text>
             <TextInput
               style={styles.TextInput}
               onChangeText={setPassword}
@@ -222,14 +223,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  logoView:{
+    justifyContent: 'center',  // 세로 중앙 정렬
+    alignItems: 'center',      // 가로 중앙 정렬
+    opacity: 0.8,
+  },
+  logo: {
+    width: 130,                 // 로고 너비
+    height: 130,                // 로고 높이
+    marginTop: "25%",           // 수직 위치 조정
+    resizeMode: 'contain',      // 로고 크기를 너비와 높이에 맞게 조정
+  },
+  text:{
+    color: '#2F4F4F'
+  },
   LoginView: {
     flex: 1,
     padding: 20,
     margin: 35,
-    marginBottom: "50%",
+    marginBottom: "35%",
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#D9D9D9',
+    borderColor: '#009688',
     borderRadius: 6,
   },
   scrollContent: {
@@ -270,7 +285,7 @@ const styles = StyleSheet.create({
   SignUpText: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#cccccc',
+    color: '#009688',
   },
   ErrorMessage: {
     color: 'red', 
@@ -334,3 +349,4 @@ const styles = StyleSheet.create({
     color: '#000', // 닫기 버튼 텍스트 색상
   },
 });
+

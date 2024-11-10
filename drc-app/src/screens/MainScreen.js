@@ -1,4 +1,4 @@
-import React, { useState } from "react"; 
+import React, { useState, useEffect } from "react"; 
 import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'; 
 import ViewCard from "../components/Card/ViewCard"; 
 import DrivingScoreEvaluator from "../components/Score/DrivingScoreEvaluator"; 
@@ -6,14 +6,44 @@ import TouchCard from "../components/Card/TouchCard";
 import DRCLogoText from "../../assets/DRCLogo-text.png";
 import { useNavigation } from '@react-navigation/native'; 
 import Icon3 from 'react-native-vector-icons/Ionicons'; 
-import Icon4 from 'react-native-vector-icons/FontAwesome5'; 
+import Icon4 from 'react-native-vector-icons/FontAwesome5';
+import { getSAcl, getSBrk, getSPedal } from "../api/driveInfoAPI";
+ 
 import { useTheme } from "../components/Mode/ThemeContext";
 import { PanGestureHandler } from 'react-native-gesture-handler';
 
 const MainScreen = () => { 
     const [score, setScore] = useState(100); 
+    const [analysisCount, setAnalysisCount] = useState({
+        suddenAcceleration: 0,
+        suddenBraking: 0,
+        bothPedal: 0,
+    });
     const navigation = useNavigation(); 
     const { isDarkMode } = useTheme();
+
+    useEffect(() => {
+        const fetchAnalysisData = async () => {
+            const today = new Date().toISOString().split('T')[0]; // 오늘 날짜 가져오기 (YYYY-MM-DD 형식)
+            console.log("(메인화면)오늘 날짜: ", today);
+            try {
+                const [accel, brake, pedal] = await Promise.all([
+                    getSAcl(today),
+                    getSBrk(today),
+                    getSPedal(today),
+                ]);
+                setAnalysisCount({
+                    suddenAcceleration: accel.sacl,
+                    suddenBraking: brake.sbrk,
+                    bothPedal: pedal.bothPedal,
+                });
+            } catch (error) {
+                console.error("분석 데이터 조회 오류:", error);
+            }
+        };
+
+        fetchAnalysisData();
+    }, []);
 
     const goToSuddenAcceleration = () => { 
         navigation.navigate('AnalysisTabs', { screen: '급가속 분석' }); 
@@ -29,7 +59,7 @@ const MainScreen = () => {
     
 
     return( 
-        <View style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#ffffff' }]}> 
+        <View style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#009688' }]}> 
             {/* 헤더 부분 */} 
             <View style={[styles.headerContainer, { backgroundColor: isDarkMode ? '#009688' : '#009688' }]}> 
                 <View style={styles.header}> 
@@ -48,9 +78,25 @@ const MainScreen = () => {
                     color: isDarkMode ? '#ffffff' : '#000' // 다크 모드일 때 글자색을 하얀색으로 설정
                 }}>운전 습관</Text>
                 <View style={styles.cardContainer}> 
-                    <TouchCard iconSource={require('../../assets/acceleration-icon.png')} analysis_item="급가속 분석 결과" analysis_count="5회" onPress={goToSuddenAcceleration} /> 
-                    <TouchCard iconSource={require('../../assets/brake-icon.png')} analysis_item="급정거 분석 결과" analysis_count="7회" onPress={goToSuddenBraking} /> 
-                    <TouchCard iconSource={require('../../assets/pedal-icon.png')} analysis_item="페달동시사용 분석 결과" analysis_count="2회" onPress={goToSamePedal} /> 
+                    {/* analysis_count= 변수설정하기 */} 
+                    <TouchCard 
+                        iconSource={require('../../assets/acceleration-icon.png')} 
+                        analysis_item="급가속 분석 결과" 
+                        analysis_count={`${analysisCount.suddenAcceleration}회`} 
+                        onPress={goToSuddenAcceleration} 
+                    /> 
+                    <TouchCard 
+                        iconSource={require('../../assets/brake-icon.png')} 
+                        analysis_item="급정거 분석 결과" 
+                        analysis_count={`${analysisCount.suddenBraking}회`} 
+                        onPress={goToSuddenBraking} 
+                    /> 
+                    <TouchCard 
+                        iconSource={require('../../assets/pedal-icon.png')} 
+                        analysis_item="페달동시사용 분석 결과" 
+                        analysis_count={`${analysisCount.bothPedal}회`} 
+                        onPress={goToSamePedal} 
+                    /> 
                 </View> 
 
                 {/* Acceleration Monitor Component */} 
@@ -76,8 +122,7 @@ const styles = StyleSheet.create({
     headerContainer: { 
         padding: 20, 
         marginTop: 25, 
-        height: "35%", 
-        opacity: 0.9
+        height: "35%"
     }, 
     header: { 
         flexDirection: 'row', 
@@ -111,5 +156,4 @@ const styles = StyleSheet.create({
         opacity: 0.8,
     },
 }); 
-
 export default MainScreen; 
