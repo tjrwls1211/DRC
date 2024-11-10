@@ -15,6 +15,7 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
@@ -65,6 +66,26 @@ root.configure(bg="black")
 
 # 폰트 설정
 font_large = ("Arial", 40, "bold")
+
+# 속도 구간 설정
+num_bins = 10
+bin_width = 20
+max_speed = 200
+
+# 속도 구간에 따른 색상 및 상태 레이블 정의
+colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
+labels = ['안전', '안전', '안전', '주의', '주의', '주의', '위험', '위험', '고위험', '고위험']
+
+# 그래프 초기 설정
+fig, ax = plt.subplots(figsize=(2, 6))
+ax.set_ylim(0, num_bins)
+ax.axis('off')
+
+# 초기 막대 생성
+bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(10)]
+combined_label_text = ax.text(1, 10.5, '', ha='center', color='blue', fontweight='bold')
+
+
 
 # 이미지 로드
 accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((365, 500)))
@@ -122,6 +143,27 @@ def generate_random_speed(min_speed=0, max_speed=200):
     """
     return random.randint(min_speed, max_speed)
 
+# 애니메이션 업데이트 함수
+def update(frame):
+    random_speed = random.randint(0, 200)  # 예시: 0~200 사이의 랜덤 속도
+    current_level = int(random_speed // 20)
+
+    # 막대 색상 업데이트
+    colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
+    for i, bar in enumerate(bars):
+        bar[0].set_color(colors[i] if i <= current_level else "lightgray")
+
+    # 통합 레이블 업데이트
+    combined_label_text.set_text(f'Speed: {random_speed} | Status: {"Status Text"}')
+
+# 애니메이션 실행
+ani = FuncAnimation(fig, update, interval=500)  # 500ms마다 업데이트
+
+# Tkinter 창에 그래프 추가
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)  # 오른쪽에 그래프 배치
+canvas.draw()
+
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
     global data # driveState를 초기화하려면 필요한 코드
@@ -147,6 +189,7 @@ def update_display_state(accel_value, brake_value, state):
 rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1.wav")
 rapidspeed_2_sound = pygame.mixer.Sound("rapidspeed_2.wav")
 rapidspeed_3_sound = pygame.mixer.Sound("rapidspeed_3.wav")
+rapidspeed_4_sound = pygame.mixer.Sound("rapidspeed_4.wav")
 nobrake_1_sound = pygame.mixer.Sound("nobrake_1.wav")
 nobrake_2_sound = pygame.mixer.Sound("nobrake_2.wav")
 nobrake_3_sound = pygame.mixer.Sound("nobrake_3.wav")
@@ -200,7 +243,8 @@ prev_mqtt_state = None
 def check_info(accel_value, brake_value, rpm_value):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds, prev_mqtt_state
     global last_brake_time, last_both_time, last_speed_time, rpm_reached_5000, prev_rpm
-
+    state = "Normal Driving"
+    
     # Unintended Acceleration
     if 200 < accel_value < 1000 and brake_value <= 30:    
         state = "Unintended Acceleration"
@@ -224,7 +268,7 @@ def check_info(accel_value, brake_value, rpm_value):
                 # RPM이 5000에 도달한 후 천 단위로 감소할 때 각 음성 출력
                 elif rpm_reached_5000:
                     if rpm_value == 4000 and prev_rpm > rpm_value:
-                        sounds = [rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound]
+                        sounds = [rapidspeed_2_sound, rapidspeed_3_sound, rapidspeed_4_sound]
                         threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                     elif rpm_value == 3000 and prev_rpm > rpm_value:
                         sounds = [nobrake_1_sound, nobrake_2_sound, nobrake_3_sound]
@@ -235,7 +279,7 @@ def check_info(accel_value, brake_value, rpm_value):
                     elif rpm_value == 1000 and prev_rpm > rpm_value:
                         sounds = [carstop_1_sound, carstop_2_sound]
                         threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-
+                        rpm_reached_5000 = False
                 # 이전 RPM 업데이트
                 prev_rpm = rpm_value
 
