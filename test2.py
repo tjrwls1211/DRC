@@ -12,17 +12,9 @@ import pygame
 from server import ip, port
 import obd
 import random
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
-import os
-
-
-# 코드 실행 전에 GPIO 핀 초기화
-GPIO.setwarnings(False)
-GPIO.cleanup()  # 모든 GPIO 핀 해제
-GPIO.setmode(GPIO.BCM)
 
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
@@ -33,41 +25,17 @@ data = {
     "aclPedal": 0,
     "brkPedal": 0,
     "createDate": 0,
-    "driveState": "",
-    "speed" : 0,
-    "rpm" : 0,
+    "driveState": " ",
+    "speed" : 50,
+    "rpm" : 2000,
     "acceleration" : 0
 }
-# 속도 구간 설정
-num_bins = 10
-bin_width = 20
-max_speed = 200
 
 def cleanAndExit():
     print("Cleaning...")
     GPIO.cleanup()  # GPIO 핀 해제
     print("Bye!")
     sys.exit()
-
-
-# 속도 구간에 따른 색상 및 상태 레이블 정의
-colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
-labels = ['안전', '안전', '안전', '주의', '주의', '주의', '위험', '위험', '고위험', '고위험']
-
-# 그래프 초기 설정
-fig, ax = plt.subplots(figsize=(2, 6))
-ax.set_ylim(0, num_bins)
-ax.axis('off')
-ax.set_title("Cylinder Representation of Speed")
-
-# 초기 막대 생성
-bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)]
-combined_label_text = ax.text(1, num_bins + 0.5, '', ha='center', color='blue', fontweight='bold')
-
-
-
-
-
 
 # 첫 번째 HX711 - 엑셀(Accelerator)
 hx1 = HX711(20, 16)
@@ -89,38 +57,29 @@ hx2.reset()
 hx1.tare()
 hx2.tare()
 
-# 폰트 설정
-font_large = ("Arial", 40, "bold")
-
-# 현재 파일의 디렉토리 경로를 가져옴
-base_dir = os.path.dirname(__file__)
-
-# 이미지 객체를 전역 변수로 설정
-global accel_img_normal, accel_img_dark, brake_img_normal, brake_img_dark
-
-# 절대 경로를 사용하여 이미지 로드
-accel_img_normal = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "accel_normal.png")).resize((365, 500)))
-accel_img_dark = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "accel_dark.png")).resize((365, 500)))
-brake_img_normal = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "brake_normal.png")).resize((365, 500)))
-brake_img_dark = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "brake_dark.png")).resize((365, 500)))
-
 # Tkinter 창생성
 root = tk.Tk()
 root.title("Car Driving Display")
 root.geometry("1000x600")
 root.configure(bg="black")
 
+# 폰트 설정
+font_large = ("Arial", 40, "bold")
+
+# 이미지 로드
+accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((365, 500)))
+accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((365, 500)))
+brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((365, 500)))
+brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((365, 500)))
+
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
-accel_label.image = accel_img_dark  # 이미지 객체에 대한 참조를 유지
 accel_label.config(width=accel_img_normal.width(), height=accel_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
 accel_label.place(relx=0.42, rely=0.5, anchor="center")  # 윈도우 중앙에 배치
 
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
-brake_label.image = brake_img_dark  # 이미지 객체에 대한 참조를 유지
 brake_label.config(width=brake_img_normal.width(), height=brake_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
 brake_label.place(relx=-0.04, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
-
 
 
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
@@ -163,42 +122,27 @@ def generate_random_speed(min_speed=0, max_speed=200):
     """
     return random.randint(min_speed, max_speed)
 
+# RPM 증가 및 감소 테스트 함수
+def test_rpm_sequence():
+    while True:  # 무한 루프
+        rpm = 0  # 초기 RPM 설정
 
-# 애니메이션 업데이트 함수
-def update(frame):
-    # 랜덤 속도 생성
-    random_speed = generate_random_speed(0, max_speed)
-    current_level = int(random_speed // bin_width)
+        # 5000까지 RPM 증가
+        while rpm < 5000:
+            rpm += 1000
+            print(f"현재 RPM (증가): {rpm}")
+            check_info(accel_value=500, brake_value=10, rpm_value=rpm)  # 가상의 accel_value와 brake_value 설정
+            time.sleep(1)  # 1초 대기
 
-    # 막대 색상 업데이트
-    for i, bar in enumerate(bars):
-        bar[0].set_color(colors[i] if i <= current_level else "lightgray")
+        # 1000씩 RPM 감소
+        while rpm > 0:
+            rpm -= 1000
+            print(f"현재 RPM (감소): {rpm}")
+            check_info(accel_value=500, brake_value=10, rpm_value=rpm)  # 가상의 accel_value와 brake_value 설정
+            time.sleep(1)  # 1초 대기
 
-    # 통합 레이블 업데이트
-    combined_label_text.set_text(f'Speed: {int(random_speed)} | Status: {labels[current_level]}')
-
-# 애니메이션 실행
-ani = FuncAnimation(fig, update, interval=500)  # 500ms마다 업데이트
-
-# matplotlib 그래프를 tkinter에 삽입
-canvas = FigureCanvasTkAgg(fig, master=root)
-graph_label = canvas.get_tk_widget()
-graph_label.place(relx=0.6, rely=0.05, anchor='center')  # text_label 오른쪽에 배치
-canvas.draw()
-
-prev_mqtt_state = None
-prev_rpm = 0
-
-
-
-
-
-
-
-
-
-
-
+# 테스트 실행
+test_rpm_sequence()
 
 
 # 상태 업데이트 및 이미지 전환 함수
@@ -221,11 +165,6 @@ def update_display_state(accel_value, brake_value, state):
     else:
         if brake_label.cget("image") != str(brake_img_normal):
             brake_label.config(image=brake_img_normal)
-    
-
-    #레이블 업데이트 (정수 형식)
-    #text_label.config(text=f"현재 : {random_speed}")
-    #나중에 obd스피드 입력넣을때 accel_value대신에 speed_response.value 로 교체
 
 #급발진 음성
 rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1.wav")
@@ -275,29 +214,10 @@ def play_sounds_in_sequence(sounds):
             time.sleep(0.1)  # 비차단 대기
         time.sleep(3)  # 음성 간 3초 간격
 
-    is_playing_sounds = False  # 모든 음성 재생 완료 후 플래그 해제 
+    is_playing_sounds = False  # 모든 음성 재생 완료 후 플래그 해제
 
-# RPM 증가 및 감소 테스트 함수
-def test_rpm_sequence():
-    while True:  # 무한 루프
-        rpm = 0  # 초기 RPM 설정
-
-        # 5000까지 RPM 증가
-        while rpm < 5000:
-            rpm += 1000
-            print(f"현재 RPM (증가): {rpm}")
-            check_info(accel_value=500, brake_value=10, rpm_value=rpm)  # 가상의 accel_value와 brake_value 설정
-            time.sleep(1)  # 1초 대기
-
-        # 1000씩 RPM 감소
-        while rpm > 0:
-            rpm -= 1000
-            print(f"현재 RPM (감소): {rpm}")
-            check_info(accel_value=500, brake_value=10, rpm_value=rpm)  # 가상의 accel_value와 brake_value 설정
-            time.sleep(1)  # 1초 대기
-
-# 테스트 실행
-test_rpm_sequence()
+#전역 변수로 안전 상태 저장
+prev_mqtt_state = None
 
 # RPM 조건에 따라 음성을 재생하는 함수# 테스트용 이여서 한번 해보면될듯
 def check_info(accel_value, brake_value, rpm_value):
@@ -343,7 +263,7 @@ def check_info(accel_value, brake_value, rpm_value):
                 prev_rpm = rpm_value
 
     # Rapid Acceleration
-    elif accel_value > 1000 and brake_value <= 30:
+    elif accel_value > 1000 and brake_value <= 30:   # accel_value > 1000 and brake_value <= 100 and speed >= 6 and speed     and rpm :
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 1
@@ -352,7 +272,7 @@ def check_info(accel_value, brake_value, rpm_value):
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_speed_time
-            if elapsed_time >= 4 and not is_playing_sounds:
+            if elapsed_time >= 3 and not is_playing_sounds:
                 stop_sounds = True
                 time.sleep(0.2)
                 sounds = [accelaccel_sound]
@@ -370,7 +290,7 @@ def check_info(accel_value, brake_value, rpm_value):
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_brake_time
-            if elapsed_time >= 4 and not is_playing_sounds:
+            if elapsed_time >= 3 and not is_playing_sounds:
                 stop_sounds = True
                 time.sleep(0.2)
                 sounds = [brakebrake_sound]
@@ -388,7 +308,7 @@ def check_info(accel_value, brake_value, rpm_value):
             is_accelerating = True
         else:
             elapsed_time = time.time() - last_both_time
-            if elapsed_time >= 4 and not is_playing_sounds:
+            if elapsed_time >= 3 and not is_playing_sounds:
                 stop_sounds = True
                 time.sleep(0.2)
                 sounds = [bothdrive_sound]
@@ -400,6 +320,8 @@ def check_info(accel_value, brake_value, rpm_value):
         update_display_state(accel_value, brake_value, state)
         is_accelerating = False
         stop_sounds = True  # 일반 주행일 때 음성 중단
+        
+    data["driveState"] = state
         
     # 상태가 변경되고 mqtt_state가 None이 아    닐 때만 MQTT 전송    
     if mqtt_state is not None and mqtt_state != prev_mqtt_state:
@@ -415,25 +337,6 @@ def check_info(accel_value, brake_value, rpm_value):
 # 초기 값 설정
 previous_speed = 0  # 이전 속도 (km/h)
 previous_time = time.time()
-
-""" def calculate_acceleration_kmh2(current_speed):
-    global previous_speed, previous_time
-
-    current_time = time.time()    # 현재 시간 
-    delta_speed = current_speed - previous_speed  # 속도 변화 (km/h)
-    delta_time = current_time - previous_time  # 시간 변화 (초)
-
-    if delta_time > 0:
-        # 가속도 계산 (m/s² -> km/h²로 변환)
-        acceleration = (delta_speed / delta_time) * 12960  # km/h² 단위로 변환
-    else:
-        acceleration = 0  # 시간 간격이 0일 경우 가속도 0
-
-    # 이전 속도와 시간 업데이트
-    previous_speed = current_speed
-    previous_time = current_time
-
-    return acceleration """
 
 # 예시문 
 def calculate_acceleration_kmh2(current_speed):
@@ -455,6 +358,21 @@ def calculate_acceleration_kmh2(current_speed):
 
     return acceleration
 
+""" #1초마다 KM/H계산 툴
+def delta_speed(current_speed):
+    global previous_speed, previous_time
+
+    current_time = time.time()
+    kmh = current_speed - previous_speed  # 속도 변화 (km/h)
+    
+    # 이전 속도와 시간 업데이트
+    previous_speed = current_speed
+    previous_time = current_time
+
+    return kmh
+ """
+
+
 # 속도 예시 입력
 current_speeds = [0, 20, 40, 60, 80]  # 속도를 순차적으로 증가시킴 (km/h)
 
@@ -465,7 +383,8 @@ for speed in current_speeds:
     data["acceleration"] = acceleration
     #print(f"속도: {speed} km/h, 가속도: {acceleration:.2f} km/h²")
 
-
+""" def speed_image(): """
+    
 
 
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
@@ -502,12 +421,15 @@ def run_code():
                 speed_kmh = speed_response.value.to("km/h")
                 data["speed"] = float(speed_kmh)
                 
-                acceleration_kmh2 = calculate_acceleration_kmh2(speed_kmh)
-                data["acceleration"] = acceleration_kmh2
-                
                 text_label.config(text=f"현재 속도: {int(speed_kmh)} km/h") #이거 쓰면 될꺼같네 
+                speed_change = delta_speed(current_speed)
+                data["speedChange"] = speed_change  # 속도 변화 저장
+                
             if rpm_response.value is not None:
-                data["rpm"] = int(rpm_response.value) """
+                data["rpm"] = int(rpm_response.value) 
+                
+                
+                """
 
             
             # 현재 시간 추가
@@ -518,9 +440,9 @@ def run_code():
                 "brkPedal": int(val_brake),
                 "createDate": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                 "driveState": data["driveState"],  # 기존 driveState 유지
-                "speed" : 40, #40 대신에 들어갈 값 : int(speed_response.value)
-                "rpm" : 2000,  #2000 대신에 들어갈 값 : int(rpm_response.value)
-                "acceleration" : 20.0 #가속도 변수 f{acceleration:.1f}
+                "speed" : 40, #40 대신에 들어갈 값 : data["speed"]
+                "rpm" : 2000,  #2000 대신에 들어갈 값 : data["rpm"]
+                "acceleration" : 20.0 #speedChange data["kmh"]
             })             
             print(data)
             #레이블 업데이트 (정수 형식)
@@ -529,7 +451,7 @@ def run_code():
             client.publish('pedal', json.dumps(data), 0, retain=False)
             check_info(val_accelerator, val_brake)
 
-            time.sleep(1)
+            time.sleep(0.8)
 
         except Exception as error:
             print(error)
