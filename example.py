@@ -106,7 +106,7 @@ client = mqtt.Client()
 client.connect(ip(), 1222, 60)
 
 # 테스트 예시 
-def generate_random_speed(min_speed=0, max_speed=120):
+def generate_random_speed(min_speed=0, max_speed=200):
     """
     랜덤 속도를 생성하는 함수
     

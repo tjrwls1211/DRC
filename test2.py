@@ -12,6 +12,10 @@ import pygame
 from server import ip, port
 import obd
 import random
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.animation import FuncAnimation
 
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
@@ -27,12 +31,37 @@ data = {
     "rpm" : 2000,
     "acceleration" : 0
 }
+# 속도 구간 설정
+num_bins = 10
+bin_width = 20
+max_speed = 200
 
 def cleanAndExit():
     print("Cleaning...")
     GPIO.cleanup()  # GPIO 핀 해제
     print("Bye!")
     sys.exit()
+
+
+# 속도 구간에 따른 색상 및 상태 레이블 정의
+colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
+labels = ['안전', '안전', '안전', '주의', '주의', '주의', '위험', '위험', '고위험', '고위험']
+
+# 그래프 초기 설정
+fig, ax = plt.subplots(figsize=(2, 6))
+ax.set_ylim(0, num_bins)
+ax.axis('off')
+ax.set_title("Cylinder Representation of Speed")
+
+# 초기 막대 생성
+bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)]
+combined_label_text = ax.text(1, num_bins + 0.5, '', ha='center', color='blue', fontweight='bold')
+
+
+
+
+
+
 
 # 첫 번째 HX711 - 엑셀(Accelerator)
 hx1 = HX711(20, 16)
@@ -106,7 +135,7 @@ client = mqtt.Client()
 client.connect(ip(), 1222, 60)
 
 # 테스트 예시 
-def generate_random_speed(min_speed=0, max_speed=120):
+def generate_random_speed(min_speed=0, max_speed=200):
     """
     랜덤 속도를 생성하는 함수
     
@@ -118,6 +147,42 @@ def generate_random_speed(min_speed=0, max_speed=120):
     int: 랜덤하게 생성된 속도 (km/h)
     """
     return random.randint(min_speed, max_speed)
+
+
+# 애니메이션 업데이트 함수
+def update(frame):
+    # 랜덤 속도 생성
+    random_speed = generate_random_speed(0, max_speed)
+    current_level = int(random_speed // bin_width)
+
+    # 막대 색상 업데이트
+    for i, bar in enumerate(bars):
+        bar[0].set_color(colors[i] if i <= current_level else "lightgray")
+
+    # 통합 레이블 업데이트
+    combined_label_text.set_text(f'Speed: {int(random_speed)} | Status: {labels[current_level]}')
+
+# 애니메이션 실행
+ani = FuncAnimation(fig, update, interval=500)  # 500ms마다 업데이트
+
+# matplotlib 그래프를 tkinter에 삽입
+canvas = FigureCanvasTkAgg(fig, master=root)
+graph_label = canvas.get_tk_widget()
+graph_label.place(relx=0.6, rely=0.05, anchor='center')  # text_label 오른쪽에 배치
+canvas.draw()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # 상태 업데이트 및 이미지 전환 함수
