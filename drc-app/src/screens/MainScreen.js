@@ -1,4 +1,4 @@
-import React, { useState } from "react"; 
+import React, { useState, useEffect } from "react"; 
 import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'; 
 import ViewCard from "../components/Card/ViewCard"; 
 import DrivingScoreEvaluator from "../components/Score/DrivingScoreEvaluator"; 
@@ -7,10 +7,39 @@ import DRCLogoText from "../../assets/DRCLogo-text.png";
 import { useNavigation } from '@react-navigation/native'; 
 import Icon3 from 'react-native-vector-icons/Ionicons'; 
 import Icon4 from 'react-native-vector-icons/FontAwesome5'; 
+import { getSAcl, getSBrk, getSPedal } from "../api/driveInfoAPI";
 
 const MainScreen = () => { 
-    const [score, setScore] = useState(100); 
-    const navigation = useNavigation(); 
+    const [score, setScore] = useState(100);
+    const [analysisCount, setAnalysisCount] = useState({
+        suddenAcceleration: 0,
+        suddenBraking: 0,
+        bothPedal: 0,
+    });
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        const fetchAnalysisData = async () => {
+            const today = new Date().toISOString().split('T')[0]; // 오늘 날짜 가져오기 (YYYY-MM-DD 형식)
+            console.log("(메인화면)오늘 날짜: ", today);
+            try {
+                const [accel, brake, pedal] = await Promise.all([
+                    getSAcl(today),
+                    getSBrk(today),
+                    getSPedal(today),
+                ]);
+                setAnalysisCount({
+                    suddenAcceleration: accel.sacl,
+                    suddenBraking: brake.sbrk,
+                    bothPedal: pedal.bothPedal,
+                });
+            } catch (error) {
+                console.error("분석 데이터 조회 오류:", error);
+            }
+        };
+
+        fetchAnalysisData();
+    }, []);
 
     const goToSuddenAcceleration = () => { 
         navigation.navigate('AnalysisTabs', { screen: '급가속 분석' }); 
@@ -40,11 +69,25 @@ const MainScreen = () => {
                 <ViewCard name="OOO" score={score} /> 
                 <Text style={{ marginTop: -110, fontWeight: 'bold', fontSize: 15 }}>운전 습관</Text>
                 <View style={styles.cardContainer}> 
-                    {/* analysis_count= 변수설정하기 */} 
-                    <TouchCard iconSource={require('../../assets/acceleration-icon.png')} analysis_item="급가속 분석 결과" analysis_count="5회" onPress={goToSuddenAcceleration} /> 
-                    <TouchCard iconSource={require('../../assets/brake-icon.png')} analysis_item="급정거 분석 결과" analysis_count="7회" onPress={goToSuddenBraking} /> 
-                    <TouchCard iconSource={require('../../assets/pedal-icon.png')} analysis_item="페달동시사용 분석 결과" analysis_count="2회" onPress={goToSamePedal} /> 
-                </View> 
+                    <TouchCard 
+                        iconSource={require('../../assets/acceleration-icon.png')} 
+                        analysis_item="급가속 분석 결과" 
+                        analysis_count={`${analysisCount.suddenAcceleration}회`} 
+                        onPress={goToSuddenAcceleration} 
+                    /> 
+                    <TouchCard 
+                        iconSource={require('../../assets/brake-icon.png')} 
+                        analysis_item="급정거 분석 결과" 
+                        analysis_count={`${analysisCount.suddenBraking}회`} 
+                        onPress={goToSuddenBraking} 
+                    /> 
+                    <TouchCard 
+                        iconSource={require('../../assets/pedal-icon.png')} 
+                        analysis_item="페달동시사용 분석 결과" 
+                        analysis_count={`${analysisCount.bothPedal}회`} 
+                        onPress={goToSamePedal} 
+                    /> 
+                </View>  
 
                 {/* Acceleration Monitor Component */} 
                 <DrivingScoreEvaluator score={score} setScore={setScore} /> 
