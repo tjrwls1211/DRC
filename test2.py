@@ -171,7 +171,8 @@ graph_label = canvas.get_tk_widget()
 graph_label.place(relx=0.6, rely=0.05, anchor='center')  # text_label 오른쪽에 배치
 canvas.draw()
 
-
+prev_mqtt_state = None
+prev_rpm = 0
 
 
 
