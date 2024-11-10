@@ -105,7 +105,7 @@ brake_label.place(relx=-0.04, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
 
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
 text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
-text_label.place(relx=0.45, rely=0.05, anchor='center')
+text_label.place(relx=0.84, rely=0.05, anchor='ne')
 
 
 # pygame 초기화
@@ -161,7 +161,7 @@ ani = FuncAnimation(fig, update, interval=500)  # 500ms마다 업데이트
 
 # Tkinter 창에 그래프 추가
 canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().place(relx=0.80, rely=0.1, anchor="n", width=200, height=400)  # 오른쪽 상단에 고정된 크기로 배치
+canvas.get_tk_widget().place(relx=0.84, rely=0.15, anchor="n", width=300, height=400)  # 오른쪽 상단에 고정된 크기로 배치
 canvas.draw()
 
 # 상태 업데이트 및 이미지 전환 함수
