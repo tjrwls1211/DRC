@@ -161,7 +161,7 @@ ani = FuncAnimation(fig, update, interval=500)  # 500ms마다 업데이트
 
 # Tkinter 창에 그래프 추가
 canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().place(relx=0.75, rely=0.1, anchor="n", width=200, height=400)  # 오른쪽 상단에 고정된 크기로 배치
+canvas.get_tk_widget().place(relx=0.80, rely=0.1, anchor="n", width=200, height=400)  # 오른쪽 상단에 고정된 크기로 배치
 canvas.draw()
 
 # 상태 업데이트 및 이미지 전환 함수
@@ -243,6 +243,7 @@ prev_mqtt_state = None
 def check_info(accel_value, brake_value, rpm_value):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds, prev_mqtt_state
     global last_brake_time, last_both_time, last_speed_time, rpm_reached_5000, prev_rpm
+    mqtt_state = None
     state = "Normal Driving"
     
     # Unintended Acceleration
