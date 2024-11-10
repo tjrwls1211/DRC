@@ -25,7 +25,7 @@ data = {
     "driveState": " ",
     "speed" : 50,
     "rpm" : 2000,
-    "acceleration" : 0
+    "speedChange" : 0
 }
 
 def cleanAndExit():
@@ -338,9 +338,8 @@ current_speeds = [0, 20, 40, 60, 80]  # 속도를 순차적으로 증가시킴 (
 for speed in current_speeds:
     time.sleep(1)  # 1초 간격으로 속도 변경
     acceleration = calculate_acceleration_kmh2(speed)
-    data["acceleration"] = acceleration
+    data["speedChange"] = acceleration
     #print(f"속도: {speed} km/h, 가속도: {acceleration:.2f} km/h²")
-
 """ def speed_image(): """
     
 
@@ -400,7 +399,7 @@ def run_code():
                 "driveState": data["driveState"],  # 기존 driveState 유지
                 "speed" : 40, #40 대신에 들어갈 값 : data["speed"]
                 "rpm" : 2000,  #2000 대신에 들어갈 값 : data["rpm"]
-                "acceleration" : 20.0 #speedChange data["kmh"]
+                "speedChange" : 20.0 #speedChange data["kmh"]
             })             
             print(data)
             #레이블 업데이트 (정수 형식)
