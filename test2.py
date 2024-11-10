@@ -17,6 +17,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 import os
+
+
+# 코드 실행 전에 GPIO 핀 초기화
+GPIO.setwarnings(False)
+GPIO.cleanup()  # 모든 GPIO 핀 해제
+GPIO.setmode(GPIO.BCM)
+
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
 
