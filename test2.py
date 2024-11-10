@@ -123,26 +123,38 @@ def generate_random_speed(min_speed=0, max_speed=200):
     return random.randint(min_speed, max_speed)
 
 # RPM 증가 및 감소 테스트 함수
-def test_rpm_sequence(accel_value, brake_value):
+def test_rpm_sequence(hx1, hx2):
     while True:  # 무한 루프
         rpm = 0  # 초기 RPM 설정
 
         # 5000까지 RPM 증가
         while rpm < 5000:
             rpm += 1000
-            print(f"현재 RPM (증가): {rpm}")
+
+            # 센서로부터 값을 읽어옴
+            accel_value = hx1.get_weight(5)  # 첫 번째 센서에서 accel 값을 가져옴
+            brake_value = hx2.get_weight(5)  # 두 번째 센서에서 brake 값을 가져옴
+
+            print(f"현재 RPM (증가): {rpm}, Accelerator: {accel_value}, Brake: {brake_value}")
             check_info(accel_value=accel_value, brake_value=brake_value, rpm_value=rpm)
+            
             time.sleep(1)  # 1초 대기
 
         # 1000씩 RPM 감소
         while rpm > 0:
             rpm -= 1000
-            print(f"현재 RPM (감소): {rpm}")
+
+            # 센서로부터 값을 읽어옴
+            accel_value = hx1.get_weight(5)
+            brake_value = hx2.get_weight(5)
+
+            print(f"현재 RPM (감소): {rpm}, Accelerator: {accel_value}, Brake: {brake_value}")
             check_info(accel_value=accel_value, brake_value=brake_value, rpm_value=rpm)
+            
             time.sleep(1)  # 1초 대기
 
-# 테스트 실행
-test_rpm_sequence()
+# hx1과 hx2는 HX711 센서 인스턴스
+test_rpm_sequence(hx1, hx2)
 
 
 # 상태 업데이트 및 이미지 전환 함수
