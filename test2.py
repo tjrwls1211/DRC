@@ -34,8 +34,8 @@ data = {
     "brkPedal": 0,
     "createDate": 0,
     "driveState": "",
-    "speed" : 50,
-    "rpm" : 2000,
+    "speed" : 0,
+    "rpm" : 0,
     "acceleration" : 0
 }
 # 속도 구간 설정
@@ -89,36 +89,38 @@ hx2.reset()
 hx1.tare()
 hx2.tare()
 
-# Tkinter 창생성
-root = tk.Tk()
-root.title("Car Driving Display")
-root.geometry("1000x600")
-root.configure(bg="black")
-
 # 폰트 설정
 font_large = ("Arial", 40, "bold")
-
 
 # 현재 파일의 디렉토리 경로를 가져옴
 base_dir = os.path.dirname(__file__)
 
-
+# 이미지 객체를 전역 변수로 설정
 global accel_img_normal, accel_img_dark, brake_img_normal, brake_img_dark
+
 # 절대 경로를 사용하여 이미지 로드
 accel_img_normal = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "accel_normal.png")).resize((365, 500)))
 accel_img_dark = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "accel_dark.png")).resize((365, 500)))
 brake_img_normal = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "brake_normal.png")).resize((365, 500)))
 brake_img_dark = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "brake_dark.png")).resize((365, 500)))
 
+# Tkinter 창생성
+root = tk.Tk()
+root.title("Car Driving Display")
+root.geometry("1000x600")
+root.configure(bg="black")
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
+accel_label.image = accel_img_dark  # 이미지 객체에 대한 참조를 유지
 accel_label.config(width=accel_img_normal.width(), height=accel_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
 accel_label.place(relx=0.42, rely=0.5, anchor="center")  # 윈도우 중앙에 배치
 
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
+brake_label.image = brake_img_dark  # 이미지 객체에 대한 참조를 유지
 brake_label.config(width=brake_img_normal.width(), height=brake_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
 brake_label.place(relx=-0.04, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
+
 
 
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
