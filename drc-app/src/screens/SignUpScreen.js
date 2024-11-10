@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useState }  from 'react';
 import { SignUpUser, checkID } from "../api/authAPI";
@@ -153,8 +153,10 @@ const SignUpScreen = () => {
   }
   
   return (
-      <View style={Styles.container}>      
-        <Text style={Styles.LogoText}>DRC</Text>
+      <View style={Styles.container}>     
+        <View style={Styles.logoView}>
+          <Image source={require('../../assets/drcsplash.png')} style={Styles.logo} />
+        </View> 
 
         {/* ScrollView 안에 KeyboardAvoidingView 사용 */}
         {/* 필드들이 RegisterView 밖으로 벗어나지 않도록 하고, 벗어날 경우 스크롤 */}
@@ -167,7 +169,7 @@ const SignUpScreen = () => {
           
           <ScrollView contentContainerStyle={Styles.scrollContent}>
             <View style={Styles.formContainer}>
-              <Text>ID (Email)</Text>
+              <Text style={Styles.text}>ID (Email)</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                 <TextInput 
                   style={[Styles.TextInput, {flex: 1}]} 
@@ -187,7 +189,7 @@ const SignUpScreen = () => {
               {emailError ? <Text style={Styles.error}>{emailError}</Text> : null}
               
 
-              <Text>Password</Text>
+              <Text style={Styles.text}>Password</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TextInput 
                   style={[Styles.TextInput, {flex: 1}]} 
@@ -207,7 +209,7 @@ const SignUpScreen = () => {
               {passwordError ? <Text style={Styles.error}>{passwordError}</Text> : null}
             
               {/* 비밀번호 확인 입력칸 */}
-              <Text>Confirm Password</Text>
+              <Text style={Styles.text}>Confirm Password</Text>
               <TextInput 
                 style={Styles.TextInput} 
                 onChangeText={handleConfirmPassword}
@@ -220,7 +222,7 @@ const SignUpScreen = () => {
               {/* 비밀번호 일치 여부 에러 메시지 */}
               {confirmPasswordError ? <Text style={Styles.error}>{confirmPasswordError}</Text> : null}
 
-              <Text>Vehicle Number</Text>
+              <Text style={Styles.text}>Vehicle Number</Text>
               <TextInput
                 style={Styles.TextInput}
                 onChangeText={setCarNumber}
@@ -229,7 +231,7 @@ const SignUpScreen = () => {
                 value={carNumber}
               />
 
-              <Text>Nickname</Text>
+              <Text style={Styles.text}>Nickname</Text>
               <TextInput 
                 style={Styles.TextInput} 
                 onChangeText={setNickname}
@@ -238,7 +240,7 @@ const SignUpScreen = () => {
                 value={nickname}
               />
 
-              <Text>Birth Date</Text>
+              <Text style={Styles.text}>Birth Date</Text>
               <DateTimePicker
                 value={birthDate}
                 mode="date"
@@ -277,14 +279,28 @@ const Styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  logoView:{
+    justifyContent: 'center',  // 세로 중앙 정렬
+    alignItems: 'center',      // 가로 중앙 정렬
+    opacity: 0.8,
+  },
+  logo: {
+    width: 130,                 // 로고 너비
+    height: 130,                // 로고 높이
+    marginTop: "17%",           // 수직 위치 조정
+    resizeMode: 'contain',      // 로고 크기를 너비와 높이에 맞게 조정
+  },
+  text:{
+    color: '#2F4F4F'
+  },
   RegisterView:{
-    flex: 1,
+    height: "63%",
     padding:20,
     margin: 35,
     marginTop:20,
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#D9D9D9',
+    borderColor: '#009688',
     borderRadius: 6,
   },
   scrollContent: {
@@ -306,12 +322,12 @@ const Styles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 35,
     borderRadius: 6,
-    borderColor: '#D9D9D9',
+    borderColor: '#009688',
     borderWidth: 1
   },
   SignUpBtn: {
     margin: 10,
-    backgroundColor: "black",
+    backgroundColor: "#009688",
     padding: 10,
     width: "100%",
     alignSelf: "center",
@@ -325,12 +341,13 @@ const Styles = StyleSheet.create({
   LoginText: {
     fontSize: 14,
     textAlign: 'center',
-    color:'#cccccc',
+    color:'#009688',
+    marginBottom: 15
   },
   CheckDuplicateBtn: {
     marginLeft: 10,
     padding: 8,
-    backgroundColor: '#007BFF',
+    backgroundColor: '#009688',
     borderRadius: 5,
   },
   error: {
