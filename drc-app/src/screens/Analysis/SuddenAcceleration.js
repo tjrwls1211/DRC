@@ -26,24 +26,24 @@ const SuddenAcceleration = () => {
 
       try {
         //const result = await getWeeklySAcl(twoWeeksAgo, currentDate);
-        // 테스트 용 -----
+        // 테스트 데이터 ↓ -----
         const result = [
-          {"date": "2024-10-21", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-10-22", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-10-23", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-10-24", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-10-25", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-10-26", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-10-27", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-10-28", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-10-29", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-10-30", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-10-31", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-11-01", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-11-02", "sacl": Math.floor(Math.random() * 5)},
-          {"date": "2024-11-03", "sacl": Math.floor(Math.random() * 5)},
+          {"date": "2024-10-21", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-22", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-23", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-24", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-25", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-26", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-27", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-28", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-29", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-30", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-31", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-11-01", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-11-02", "sacl": Math.floor(Math.random() * 21)},
+          {"date": "2024-11-03", "sacl": Math.floor(Math.random() * 21)},
         ];
-        // 테스트 중 -----
+        // 테스트 데이터 ↑ -----
         clearTimeout(timeoutId); // 응답이 오면 타이머 종료
         console.log("급가속 데이터 요청 결과", result);
         
@@ -61,11 +61,10 @@ const SuddenAcceleration = () => {
         console.log("Labels:", labels);
         console.log("Data:", data);
 
-        // 데이터 분석
+        // 전주 대비 분석
         const change = weeklyDiff(data);
         console.log("변화량:", change.change);
-        // AnalysisCard에 변화량 전달
-        setWeeklyChange(change.change); // 상태 관리 추가
+        setWeeklyChange(change.change);
       } catch (error) {
         console.error("데이터 가져오기 오류: ", error);
       } 

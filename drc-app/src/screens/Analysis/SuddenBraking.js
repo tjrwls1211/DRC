@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, ActivityIndicator, Image } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ActivityIndicator, Image, ScrollView } from 'react-native';
 import AnalysisCard from '../../components/Card/AnalysisCard';
 import { LineChart } from 'react-native-chart-kit';
 import { getDate } from '../../utils/getDate';
 import { getWeeklySBrk } from '../../api/driveInfoAPI';
+import { weeklyDiff } from '../../utils/weeklyDiff';
 
 const SuddenBraking = () => {
+  const [weeklyChange, setWeeklyChange] = useState(0);
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [{ data: [] }], // 초기 데이터 빈 배열로
@@ -24,7 +26,25 @@ const SuddenBraking = () => {
 
       try {
         console.log("급정거 --------------");
-        const result = await getWeeklySBrk(twoWeeksAgo, currentDate);
+        // const result = await getWeeklySBrk(twoWeeksAgo, currentDate);
+        // 테스트 데이터 ↓ -----
+        const result = [
+          {"date": "2024-10-21", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-22", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-23", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-24", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-25", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-26", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-27", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-28", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-29", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-30", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-10-31", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-11-01", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-11-02", "sbrk": Math.floor(Math.random() * 21)},
+          {"date": "2024-11-03", "sbrk": Math.floor(Math.random() * 21)},
+        ];
+        // 테스트 데이터 ↑ -----
         clearTimeout(timeoutId); // 응답이 오면 타이머 종료
         console.log("급정거 데이터 요청 결과", result);
         
@@ -41,6 +61,11 @@ const SuddenBraking = () => {
         // 콘솔에 결과 출력
         console.log("Labels:", labels);
         console.log("Data:", data);
+
+        // 전주 대비 분석
+        const change = weeklyDiff(data);
+        console.log("변화량:", change.change);
+        setWeeklyChange(change.change);
       } catch (error) {
         console.error("데이터 가져오기 오류: ", error);
       } 
@@ -58,12 +83,12 @@ const SuddenBraking = () => {
         <ActivityIndicator size="large" color="#009688" />
         <Text style={styles.loadingText}>급정거 분석 중...</Text>
       </View>
-    );  // 로딩 표시 컴포넌트
+    );
   }
 
   // LineChart 크기 설정
-  const chartWidth = Dimensions.get('window').width - 32; // 화면 너비보다 32 픽셀 줄임
-  const chartHeight = 300; // 기존 높이보다 낮게 조정
+  const chartWidth = chartData.labels.length * 60; // 데이터 수에 따라 그래프 내부 너비 설정
+  const chartHeight = 300;
 
   return (
     <View style={styles.container}>
@@ -72,40 +97,42 @@ const SuddenBraking = () => {
         <Text style={styles.headerText}>급정거 분석</Text>
       </View>
 
-      <AnalysisCard num="2" /> 
+      <AnalysisCard num={weeklyChange.toString()} /> 
 
-      <LineChart
-        data={{
-          labels: chartData.labels,
-          datasets: chartData.datasets,
-        }}
-        width={chartWidth}
-        height={chartHeight}
-        yAxisLabel=""
-        yAxisSuffix="회"
-        chartConfig={{
-          backgroundColor: '#ffffff',
-          backgroundGradientFrom: '#ffffff',
-          backgroundGradientTo: '#ffffff',
-          decimalPlaces: 0,
-          color: (opacity = 1) => `rgba(47, 79, 79, ${opacity})`,
-          labelColor: () => `#2F4F4F`,
-          style: {
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <LineChart
+          data={{
+            labels: chartData.labels,
+            datasets: chartData.datasets,
+          }}
+          width={chartWidth}
+          height={chartHeight}
+          yAxisLabel=""
+          yAxisSuffix="회"
+          chartConfig={{
+            backgroundColor: '#ffffff',
+            backgroundGradientFrom: '#ffffff',
+            backgroundGradientTo: '#ffffff',
+            decimalPlaces: 0,
+            color: (opacity = 1) => `rgba(47, 79, 79, ${opacity})`,
+            labelColor: () => `#2F4F4F`,
+            style: {
+              borderRadius: 16,
+            },
+            propsForDots: {
+              r: '4',
+              strokeWidth: '1.5',
+              stroke: '#009688',
+            },
+          }}
+          bezier
+          style={{
+            marginVertical: 8,
             borderRadius: 16,
-          },
-          propsForDots: {
-            r: '4',
-            strokeWidth: '1.5',
-            stroke: '#009688',
-          },
-        }}
-        bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
-          marginHorizontal:7,
-        }}
-      />
+            marginHorizontal: 7,
+          }}
+        />
+      </ScrollView>
     </View>
   );
 };
@@ -124,7 +151,8 @@ const styles = StyleSheet.create({
     height: 50,
     paddingHorizontal: 10,
     borderRadius: 8, // 라운드 효과 추가
-    marginBottom: 10,
+    marginBottom: 15,
+    marginTop:25,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
