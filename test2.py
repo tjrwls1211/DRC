@@ -90,12 +90,17 @@ root.configure(bg="black")
 
 # 폰트 설정
 font_large = ("Arial", 40, "bold")
+import os
 
-# 이미지 로드
-accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((365, 500)))
-accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((365, 500)))
-brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((365, 500)))
-brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((365, 500)))
+# 현재 파일의 디렉토리 경로를 가져옴
+base_dir = os.path.dirname(__file__)
+
+# 절대 경로를 사용하여 이미지 로드
+accel_img_normal = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "accel_normal.png")).resize((365, 500)))
+accel_img_dark = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "accel_dark.png")).resize((365, 500)))
+brake_img_normal = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "brake_normal.png")).resize((365, 500)))
+brake_img_dark = ImageTk.PhotoImage(Image.open(os.path.join(base_dir, "brake_dark.png")).resize((365, 500)))
+
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
