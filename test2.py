@@ -161,7 +161,7 @@ ani = FuncAnimation(fig, update, interval=500)  # 500ms마다 업데이트
 
 # Tkinter 창에 그래프 추가
 canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)  # 오른쪽에 그래프 배치
+canvas.get_tk_widget().place(relx=0.75, rely=0.1, anchor="n", width=200, height=400)  # 오른쪽 상단에 고정된 크기로 배치
 canvas.draw()
 
 # 상태 업데이트 및 이미지 전환 함수
