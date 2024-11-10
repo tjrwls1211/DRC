@@ -1,23 +1,33 @@
 import React from 'react'; 
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const AnalysisCard = ({ num }) => {
+    let iconName;
+    let displayNum = num;
+
+    if (num > 0) {
+        iconName = "arrow-up-bold";
+    } else if (num < 0) {
+        iconName = "arrow-down-bold";
+        displayNum = Math.abs(num); // 음수 절댓값으로 변환
+    } else {
+        iconName = "approximately-equal"; // 0일 경우 아이콘
+    }
+
     return (
         <View style={styles.customCard}>
             <View style={styles.innerCard}>
-                {/* 상단에 카드에 걸쳐진 사진이 들어간 원
-                <View style={styles.circle}>
-                    <Image 
-                        source={require('../../../assets/LOGO.png')} 
-                        style={styles.logo} 
-                    />
-                </View> */}
-                <Text style={styles.subText}>🚗 저번주 대비</Text>
+            <Text style={styles.subText}>
+    <Icon name="car-arrow-left" size={30} color="#2F4F4F" /> 저번주 대비
+</Text>
                 <View style={styles.row}>
-                    <Text style={styles.num}>{num}회</Text>
-                    <Icon name="arrow-up-bold" size={40} color="#009688" />
-                    <Icon name="arrow-down-bold" size={40} color="#2F4F4F" />
+                    <Text style={styles.num}>{displayNum}회</Text>
+                    <Icon 
+                        name={iconName} 
+                        size={40} 
+                        color={num > 0 ? "red" : num < 0 ? "lightgreen" : "#2F4F4F"}
+                    />
                 </View>
             </View>
         </View>
@@ -50,22 +60,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: 30, // 상단 여백을 주어 원이 걸치도록 함
-    },
-    circle: {
-        position: 'absolute',
-        top: -70, // 카드 상단에 걸쳐 위치
-        width: 100,
-        height: 100,
-        borderRadius: 70, // 원 모양
-        backgroundColor: 'white', // 검정색 원
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000', // 그림자 색상
-        shadowOffset: { width: 0, height: 2 }, // 그림자 위치
-        shadowOpacity: 0.5, // 그림자 투명도
-        shadowRadius: 4, // 그림자 흐림 효과
-        elevation: 5, // 안드로이드에서 그림자 효과
-        marginTop: 20,
     },
     logo: {
         width: 40,
