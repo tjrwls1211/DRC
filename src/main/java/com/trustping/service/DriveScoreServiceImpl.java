@@ -3,12 +3,14 @@ package com.trustping.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.trustping.DTO.DriveScoreDTO;
 import com.trustping.entity.DriveScore;
 import com.trustping.entity.UserData;
 import com.trustping.repository.DriveScoreRepository;
 
+@Service
 public class DriveScoreServiceImpl implements DriveScoreService {
 	
 	@Autowired

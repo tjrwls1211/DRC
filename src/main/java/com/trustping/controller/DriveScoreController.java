@@ -12,7 +12,7 @@ import com.trustping.DTO.DriveScoreDTO;
 import com.trustping.service.DriveScoreService;
 
 @RestController
-@RequestMapping("/score")
+@RequestMapping("/api/score")
 public class DriveScoreController {
 	
 	@Autowired

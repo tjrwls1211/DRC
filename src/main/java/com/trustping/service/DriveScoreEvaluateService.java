@@ -52,13 +52,15 @@ public class DriveScoreEvaluateService {
 		} else {
 			count = checkSuddenDeceleration(carId, count, speed, speedChange);
 		}
+
+		abnormalDriveCount.put(carId, count);
 		
 		if (count==3) {
             abnormalDriveCount.put(carId, 0);
+            System.out.println("카운트 초기화 "+carId);
             deductScore(userData);
 		}
 		
-		abnormalDriveCount.put(carId, count);
 	}
 
 	private int checkSuddenAcceleration(String carId, int count, int speed, double speedChange) {
