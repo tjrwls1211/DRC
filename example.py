@@ -83,8 +83,6 @@ brake_label.place(relx=-0.04, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
 text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
 text_label.place(relx=0.45, rely=0.05, anchor='center')
 
-# 초기값 
-data = {"state": "Drive Ready"}
 
 # pygame 초기화
 pygame.mixer.init()
@@ -200,7 +198,7 @@ prev_mqtt_state = None
 def check_info(accel_value, brake_value):
     global last_accel_time, is_accelerating, stop_sounds, is_playing_sounds, prev_mqtt_state, last_brake_time, last_both_time, last_speed_time
     mqtt_state = None
-
+    state = "Normal Driving"
     # Unintended Acceleration
     if 200 < accel_value < 1000 and brake_value <= 30:    
         state = "Unintended Acceleration"
@@ -280,6 +278,8 @@ def check_info(accel_value, brake_value):
         update_display_state(accel_value, brake_value, state)
         is_accelerating = False
         stop_sounds = True  # 일반 주행일 때 음성 중단
+        
+    data["driveState"] = state
         
     # 상태가 변경되고 mqtt_state가 None이 아    닐 때만 MQTT 전송    
     if mqtt_state is not None and mqtt_state != prev_mqtt_state:
@@ -397,7 +397,7 @@ def run_code():
                 "aclPedal": int(val_accelerator),
                 "brkPedal": int(val_brake),
                 "createDate": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-                "driveState": data["state"],  # 기존 driveState 유지
+                "driveState": data["driveState"],  # 기존 driveState 유지
                 "speed" : 40, #40 대신에 들어갈 값 : data["speed"]
                 "rpm" : 2000,  #2000 대신에 들어갈 값 : data["rpm"]
                 "acceleration" : 20.0 #speedChange data["kmh"]
