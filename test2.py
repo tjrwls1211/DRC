@@ -263,21 +263,22 @@ def play_sounds_in_sequence(sounds):
 
 # RPM 증가 및 감소 테스트 함수
 def test_rpm_sequence():
-    rpm = 0  # 초기 RPM 설정
+    while True:  # 무한 루프
+        rpm = 0  # 초기 RPM 설정
 
-    # 5000까지 RPM 증가
-    while rpm < 5000:
-        rpm += 1000
-        print(f"현재 RPM (증가): {rpm}")
-        check_info(accel_value=accel_value, brake_value=brake_value, rpm_value=rpm)  # 가상의 accel_value와 brake_value 설정
-        time.sleep(1)  # 1초 대기
+        # 5000까지 RPM 증가
+        while rpm < 5000:
+            rpm += 1000
+            print(f"현재 RPM (증가): {rpm}")
+            check_info(accel_value=500, brake_value=10, rpm_value=rpm)  # 가상의 accel_value와 brake_value 설정
+            time.sleep(1)  # 1초 대기
 
-    # 1000씩 RPM 감소
-    while rpm > 0:
-        rpm -= 1000
-        print(f"현재 RPM (감소): {rpm}")
-        check_info(accel_value=500, brake_value=10, rpm_value=rpm)  # 가상의 accel_value와 brake_value 설정
-        time.sleep(1)  # 1초 대기
+        # 1000씩 RPM 감소
+        while rpm > 0:
+            rpm -= 1000
+            print(f"현재 RPM (감소): {rpm}")
+            check_info(accel_value=500, brake_value=10, rpm_value=rpm)  # 가상의 accel_value와 brake_value 설정
+            time.sleep(1)  # 1초 대기
 
 # 테스트 실행
 test_rpm_sequence()
