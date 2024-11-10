@@ -84,7 +84,7 @@ text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="wh
 text_label.place(relx=0.45, rely=0.05, anchor='center')
 
 # 초기값 
-data = {"driveState": "Drive Ready"}
+data = {"state": "Drive Ready"}
 
 # pygame 초기화
 pygame.mixer.init()
@@ -397,7 +397,7 @@ def run_code():
                 "aclPedal": int(val_accelerator),
                 "brkPedal": int(val_brake),
                 "createDate": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-                "driveState": data["driveState"],  # 기존 driveState 유지
+                "driveState": data["state"],  # 기존 driveState 유지
                 "speed" : 40, #40 대신에 들어갈 값 : data["speed"]
                 "rpm" : 2000,  #2000 대신에 들어갈 값 : data["rpm"]
                 "acceleration" : 20.0 #speedChange data["kmh"]
