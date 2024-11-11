@@ -118,15 +118,26 @@ const SettingsScreen = () => {
         <Text style={[styles.label, styles.labelSpacing, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>계정</Text> 
       </View>
   
-      <TouchableOpacity style={[styles.button, { marginTop: 5, backgroundColor: isDarkMode ? '#1f1f1f' : '#009688' }]}>
-        <Text style={styles.buttonText}>개인정보</Text>
+      <TouchableOpacity 
+        style={[styles.button, { marginTop: 5, backgroundColor: isDarkMode ? '#1f1f1f' : '#009688' }]} 
+        onPress={() => navigation.navigate('PersonalInfoScreen')} 
+      >
+      <Text style={styles.buttonText}>개인정보</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { marginTop: 5, backgroundColor: isDarkMode ? '#1f1f1f' : '#009688' }]}>
-        <Text style={styles.buttonText}>닉네임 수정</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { marginTop: 5, backgroundColor: isDarkMode ? '#1f1f1f' : '#009688' }]}>
-        <Text style={styles.buttonText}>비밀번호 수정</Text>
-      </TouchableOpacity>
+
+      <TouchableOpacity 
+  style={[styles.button, { marginTop: 5, backgroundColor: isDarkMode ? '#1f1f1f' : '#009688' }]} 
+  onPress={() => setNicknameModalVisible(true)} // 모달을 열도록 수정
+>
+  <Text style={styles.buttonText}>닉네임 수정</Text>
+</TouchableOpacity>
+
+<TouchableOpacity 
+  style={[styles.button, { marginTop: 5, backgroundColor: isDarkMode ? '#1f1f1f' : '#009688' }]} 
+  onPress={() => setPasswordModalVisible(true)} // 모달을 열도록 수정
+>
+  <Text style={styles.buttonText}>비밀번호 수정</Text>
+</TouchableOpacity>
   
       <View style={[styles.section, { marginTop: 35 }]}>
         <MaterialIcons name="lock" size={24} color={isDarkMode ? '#ffffff' : '#009688'} /> 
