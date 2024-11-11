@@ -5,14 +5,32 @@ import { useTheme } from "../Mode/ThemeContext"; // 다크 모드 Context import
 
 const AnalysisCard = ({ num, circleBackgroundColor, borderColor }) => {
     const { isDarkMode } = useTheme(); // 다크 모드 상태 가져오기
+
+    let iconName;
+    let displayNum = num;
+
+    if (num > 0) {
+        iconName = "arrow-up-bold";
+    } else if (num < 0) {
+        iconName = "arrow-down-bold";
+        displayNum = Math.abs(num); // 음수 절댓값으로 변환
+    } else {
+        iconName = "approximately-equal"; // 0일 경우 아이콘
+    }
+
     return (
         <View style={[styles.customCard, { backgroundColor: isDarkMode ? '#333333' : '#ffffff' }]}>
             <View style={[styles.innerCard, { borderColor: borderColor || '#009688' }]}>
-                <Text style={[styles.subText, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}> 저번주 대비</Text>
+                <Text style={[styles.subText, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>
+                    <Icon name="car-arrow-left" size={30} color={isDarkMode ? '#ffffff' : '#2F4F4F'} /> 저번주 대비
+                </Text>
                 <View style={styles.row}>
-                    <Text style={[styles.num, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{num}회</Text>
-                    <Icon name="arrow-up-bold" size={40} color={isDarkMode ? '#4CAF50' : '#009688'} /> 
-                    <Icon name="arrow-down-bold" size={40} color={isDarkMode ? '#FF5252' : '#2F4F4F'} /> 
+                    <Text style={[styles.num, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{displayNum}회</Text>
+                    <Icon 
+                        name={iconName} 
+                        size={40} 
+                        color={num > 0 ? (isDarkMode ? '#4CAF50' : 'red') : num < 0 ? (isDarkMode ? '#FF5252' : 'lightgreen') : (isDarkMode ? '#ffffff' : '#2F4F4F')}
+                    />
                 </View>
             </View>
         </View>
