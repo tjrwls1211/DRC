@@ -417,6 +417,8 @@ for speed in current_speeds:
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
 def run_code():
     rpm = 0
+    rpm_up =True
+    rpm_down = False
     while True:
         try:
             # 첫 번째 로드셀 (엑셀)
@@ -437,18 +439,24 @@ def run_code():
             
             # RPM 증가 및 감소 테스트
             # 5000까지 RPM 증가
-            while rpm < 5000:
-                rpm += 1000
-                print(f"현재 RPM (증가): {rpm}")
-                check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
-                time.sleep(3)  # 1초 대기
+            if rpm_up==True:
+                
+                while rpm < 5000:
+                    rpm += 1000
+                    print(f"현재 RPM (증가): {rpm}")
+                    check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
+                    if rpm == 5000:
+                        rpm_down=True
+                        rpm_up ==False
+                    time.sleep(3)  # 1초 대기
 
             # 1000씩 RPM 감소
-            while rpm > 0:
-                rpm -= 1000
-                print(f"현재 RPM (감소): {rpm}")
-                check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
-                time.sleep(3)  # 1초 대기
+            if rpm_down == True:
+                while rpm > 0:
+                    rpm -= 1000
+                    print(f"현재 RPM (감소): {rpm}")
+                    check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
+                    time.sleep(3)  # 1초 대기
             
             """ speed_cmd = obd.commands.speed
             rpm_cmd = obd.commands.RPM
@@ -493,7 +501,7 @@ def run_code():
             client.publish('pedal', json.dumps(data), 0, retain=False)
             check_info(val_accelerator, val_brake)
 
-            time.sleep(0.8)
+            time.sleep(10)
 
         except Exception as error:
             print(error)
