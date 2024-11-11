@@ -412,11 +412,11 @@ for speed in current_speeds:
     #print(f"속도: {speed} km/h, 가속도: {acceleration:.2f} km/h²")
 
 """ def speed_image(): """
-    
 
 
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
 def run_code():
+    rpm = 0
     while True:
         try:
             # 첫 번째 로드셀 (엑셀)
@@ -436,7 +436,6 @@ def run_code():
             print(f"랜덤 속도: {random_speed} km/h")            
             
             # RPM 증가 및 감소 테스트
-            rpm = 0  # 초기 RPM 설정
             # 5000까지 RPM 증가
             while rpm < 5000:
                 rpm += 1000
