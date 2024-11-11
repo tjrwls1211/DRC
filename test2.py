@@ -446,14 +446,18 @@ def run_code():
                     if rpm == 5000:
                         rpm_down=True
                         rpm_up ==False
+                        print("이제 다운 시작 실행됨")
+                        continue
             # 1000씩 RPM 감소
             elif rpm_down == True:
                     rpm -= 1000
                     print(f"현재 RPM (감소): {rpm}")
                     check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
                     if rpm == 0:
+                        print("이제 상승 시작")
                         rpm_up=True
                         rpm_down=False
+                        continue
             """ speed_cmd = obd.commands.speed
             rpm_cmd = obd.commands.RPM
 
