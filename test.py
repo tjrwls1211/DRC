@@ -19,7 +19,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
 
 
-df = pd.read_csv("C:\Users\KIm\Desktop\rasberry\DRC\audi_s1.csv", encoding='utf-8-sig', sep=',')
+df = pd.read_csv("C:/Users/KIm/Desktop/rasberry/DRC/audi_s1.csv", encoding='utf-8-sig', sep=',')
 
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
