@@ -254,8 +254,11 @@ prev_mqtt_state = None
 last_played_state = None  # 전역 변수로 설정
 
 def check_info(accel_value, brake_value, rpm_value):
+    print("acl : ", accel_value, "brk : ", brake_value, "rpm : ", rpm_value)
     global stop_sounds, is_playing_sounds, prev_mqtt_state, rpm_reached_5000, prev_rpm, last_played_state
     mqtt_state = None
+    
+    print("rpm_reached : ", rpm_reached_5000)
     state = "Normal Driving"
 
     current_time = time.time()  # 현재 시간 기록
@@ -292,7 +295,7 @@ def check_info(accel_value, brake_value, rpm_value):
                     sounds = [speedless_1_sound, speedless_2_sound]
                     threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 elif rpm_value < 2000 and rpm_value >= 1000 and prev_rpm > rpm_value:
-                    print("4번케이스", rpm_value, prev_rpm)
+                    print("번케이스", rpm_value, prev_rpm)
                     sounds = [carstop_1_sound, carstop_2_sound]
                     threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                     rpm_reached_5000 = False
