@@ -379,7 +379,7 @@ def run_code():
             
             rpm_value = df.iloc[i]['Engine RPM']  # Engine RPM 칼럼 값
             speed_value = df.iloc[i]['Ground Speed']  # Ground Speed 칼럼 값
-        
+            print("rpm : ", rpm_value, "speed : ", speed_value)
             
             # 현재 시간 추가
             now = datetime.now()
