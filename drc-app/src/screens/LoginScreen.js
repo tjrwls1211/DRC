@@ -136,18 +136,16 @@ const handleOTPFocus = () => {
 };
 
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.logoView}>
-        <Image source={require('../../assets/drcsplash.png')} style={styles.logo} />
-      </View>
-      <View style={styles.LoginView}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1 }}
-          keyboardVerticalOffset={100}
-        >
-          <ScrollView contentContainerStyle={styles.scrollContent}>
+return (
+  <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.logoView}>
+          <Image source={require('../../assets/drcsplash.png')} style={styles.logo} />
+        </View>
+        <View style={styles.LoginView}>
             <Text style={styles.text}>ID (Email)</Text>
             <TextInput
               style={styles.TextInput}
@@ -183,9 +181,9 @@ const handleOTPFocus = () => {
             >
               <Text style={styles.SignUpText}>회원가입하러가기</Text>
             </TouchableOpacity>
+            </View>
           </ScrollView>
-        </KeyboardAvoidingView>
-      </View>
+          
 
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
@@ -212,7 +210,7 @@ const handleOTPFocus = () => {
           </TouchableOpacity>
         </View>
       </Modal>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -241,7 +239,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     margin: 35,
-    marginBottom: "35%",
+    marginBottom: "40%",
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#009688',
