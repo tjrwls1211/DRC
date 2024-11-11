@@ -277,16 +277,12 @@ def check_info(accel_value, brake_value, rpm_value):
         if rpm_value >= 5000:
                 rpm_reached_5000 = True
                 print("rpm 도착값", rpm_reached_5000)
-                sounds = [rapidspeed_1_sound]
+                sounds = [rapidspeed_1_sound,rapidspeed_2_sound, rapidspeed_3_sound, rapidspeed_4_sound]
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
 
             # 이후 RPM 감소 구간에 따른 음성 출력
         if rpm_reached_5000:
-                if rpm_value < 5000 and rpm_value >= 4000:
-                    print("1번케이스", rpm_value, prev_rpm)
-                    sounds = [rapidspeed_2_sound, rapidspeed_3_sound, rapidspeed_4_sound]
-                    threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-                elif rpm_value < 4000 and rpm_value >= 3000:
+                if rpm_value < 4000 and rpm_value >= 3000:
                     print("2번케이스", rpm_value, prev_rpm)
                     sounds = [nobrake_1_sound, nobrake_2_sound, nobrake_3_sound]
                     threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
