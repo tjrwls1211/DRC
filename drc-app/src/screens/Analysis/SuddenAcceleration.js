@@ -1,12 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions, Text, ActivityIndicator, Image, ScrollView } from 'react-native';
-import AnalysisCard from '../../components/Card/AnalysisCard';
-import { LineChart } from 'react-native-chart-kit';
+import React from 'react';
 import { getWeeklySAcl } from '../../api/driveInfoAPI';
-import { getDate } from '../../utils/getDate';
-import { weeklyDiff } from '../../utils/weekliyDiff';
-import { useTheme } from "../../components/Mode/ThemeContext"; // 다크 모드 Context import
+import AnalysisScreen from './AnalysisScreen';
 
+const SuddenAcceleration = () => {
+  const fetchData = async (twoWeeksAgo, currentDate) => {
+    // 급가속 데이터 가져오기
+    return await getWeeklySAcl(twoWeeksAgo, currentDate);
+  };
+
+  return (
+    <AnalysisScreen 
+      fetchData={fetchData}
+      title="급가속 분석"
+      chartDataKey="sacl"
+      loadingText="급가속 분석 중..."
+
+      themeColor="#009688" // 테마색
+    />
+  );
+};
+
+export default SuddenAcceleration;
+
+/*
 const SuddenAcceleration = () => {
   const [weeklyChange, setWeeklyChange] = useState(0); // 전주 대비 변환량 저장
   const [chartData, setChartData] = useState({
@@ -93,7 +109,7 @@ const SuddenAcceleration = () => {
   const chartHeight = 300;
 
   return (
-    <View style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#0095A1' }]}>
+    <View style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#009688' }]}>
       <View style={[styles.headerBar, { backgroundColor: isDarkMode ? '#333333' : '#ffffff' }]}>
         <Image 
           source={
@@ -112,6 +128,7 @@ const SuddenAcceleration = () => {
         borderColor={isDarkMode ? '#009688' : '#009688'}
         style={styles.analysisCard} // 스타일 추가
       />
+
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <LineChart
           data={{
@@ -150,6 +167,16 @@ const SuddenAcceleration = () => {
           }}
         />
       </ScrollView>
+
+      <Text style={{
+            color: isDarkMode ? '#b0b0b0' : '#2F4F4F',
+            textAlign: 'right',
+            marginRight: 10,
+            fontSize: 12, // 작은 텍스트 크기
+            marginBottom: 15,
+        }}>
+            * 그래프를 옆으로 스크롤하여 정보를 확인하세요
+        </Text>
     </View>
   );
 };
@@ -159,7 +186,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10, // 화면 여백 조정
     justifyContent: 'center',
-    backgroundColor: '#0095A1',
+    backgroundColor: '#009688',
   },
   headerBar: {
     flexDirection: 'row',
@@ -169,7 +196,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 8, // 라운드 효과 추가
     marginBottom: 15,
-    marginTop:25,
+    marginTop:15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -183,8 +210,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   headerText: {
-    color: '#0095A1',
-    fontSize: 18,
+    color: '#2F4F4F',
+    fontSize: 22,
     textAlign: 'center',
     flex: 1,
     fontWeight: 'bold', // 볼드체로 변경
@@ -202,6 +229,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
-
-
-export default SuddenAcceleration;
+*/

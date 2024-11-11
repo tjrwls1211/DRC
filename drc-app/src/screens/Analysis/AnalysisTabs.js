@@ -18,7 +18,7 @@ export default function AnalysisTabs() {
                 tabBarStyle: {
                     backgroundColor: isDarkMode ? '#121212' : '#ffffff', // 탭 바 배경색
                 },
-                tabBarActiveTintColor: isDarkMode ? '#ffffff' : '#000000', // 활성화된 아이콘 색상
+                tabBarActiveTintColor: '#009688', // 활성화된 아이콘 및 텍스트 색상
                 tabBarInactiveTintColor: isDarkMode ? '#b0b0b0' : '#000000', // 비활성화된 아이콘 색상
             }}
         >
