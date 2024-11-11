@@ -446,9 +446,8 @@ def run_code():
                     if rpm == 5000:
                         rpm_down=True
                         rpm_up ==False
-
             # 1000씩 RPM 감소
-            if rpm_down == True:
+            elif rpm_down == True:
                     rpm -= 1000
                     print(f"현재 RPM (감소): {rpm}")
                     check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
