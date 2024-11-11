@@ -420,14 +420,14 @@ def run_code():
                 rpm += 1000
                 print(f"현재 RPM (증가): {rpm}")
                 check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
-                time.sleep(1)  # 1초 대기
+                time.sleep(3)  # 1초 대기
 
             # 1000씩 RPM 감소
             while rpm > 0:
                 rpm -= 1000
                 print(f"현재 RPM (감소): {rpm}")
                 check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
-                time.sleep(1)  # 1초 대기
+                time.sleep(3)  # 1초 대기
             
             """ speed_cmd = obd.commands.speed
             rpm_cmd = obd.commands.RPM
