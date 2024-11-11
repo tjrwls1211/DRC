@@ -376,7 +376,10 @@ def run_code():
             hx2.power_down()
             hx1.power_up()
             hx2.power_up()
-                
+            
+            rpm_value = df.iloc[i]['Engine RPM']  # Engine RPM 칼럼 값
+            speed_value = df.iloc[i]['Ground Speed']  # Ground Speed 칼럼 값
+        
             
             # 현재 시간 추가
             now = datetime.now()
@@ -395,7 +398,7 @@ def run_code():
             text_label.config(text=f"현재 : {speed_value}")    
             
             client.publish('pedal', json.dumps(data), 0, retain=False)
-            i++
+            i += 1
             time.sleep(1)
 
         except Exception as error:
