@@ -253,12 +253,12 @@ prev_mqtt_state = None
 # 마지막으로 재생된 상태를 저장하는 변수
 last_played_state = None  # 전역 변수로 설정
 
+rpm_reached_5000 = False
+
 def check_info(accel_value, brake_value, rpm_value):
     print("acl : ", accel_value, "brk : ", brake_value, "rpm : ", rpm_value)
     global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state
     mqtt_state = None
-    rpm_reached_5000 = False
-    print("rpm_reached : ", rpm_reached_5000)
     state = "Normal Driving"
 
     current_time = time.time()  # 현재 시간 기록
@@ -502,7 +502,7 @@ def run_code():
             
             client.publish('pedal', json.dumps(data), 0, retain=False)
 
-            time.sleep(10)
+            time.sleep(1)
 
         except Exception as error:
             print(error)
