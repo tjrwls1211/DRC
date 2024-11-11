@@ -447,7 +447,6 @@ def run_code():
                         rpm_down=True
                         rpm_up =False
                         print("이제 다운 시작 실행됨")
-                        continue
             # 1000씩 RPM 감소
             elif rpm_down == True:
                     rpm -= 1000
@@ -457,7 +456,6 @@ def run_code():
                         print("이제 상승 시작")
                         rpm_up=True
                         rpm_down=False
-                        continue
             """ speed_cmd = obd.commands.speed
             rpm_cmd = obd.commands.RPM
 
