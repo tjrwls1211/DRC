@@ -5,7 +5,7 @@ import { LineChart } from 'react-native-chart-kit';
 import { useTheme } from "../../components/Mode/ThemeContext"; // 다크 모드 Context import
 import { getWeeklySPedal } from '../../api/driveInfoAPI';
 import { getDate } from '../../utils/getDate';
-import { weeklyDiff } from '../../utils/weeklyDiff';
+import { weeklyDiff } from '../../utils/weekliyDiff';
 
 const SamePedal = () => {
   const [weeklyChange, setWeeklyChange] = useState(0);
@@ -168,8 +168,8 @@ const styles = StyleSheet.create({
     height: 50,
     paddingHorizontal: 10,
     borderRadius: 8, // 라운드 효과 추가
-    marginBottom: 10,
-    marginTop:10,
+    marginBottom: 15,
+    marginTop:25,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
