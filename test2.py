@@ -409,9 +409,11 @@ for speed in current_speeds:
 
 """ def speed_image(): """
 
-rpm = 0
+""" rpm = 0
 rpm_up =True
 rpm_down = False
+val_accelerator = hx1.get_weight(5)
+val_brake = hx2.get_weight(5)
 
 for _ in range(100):
     # 5000까지 RPM 증가
@@ -432,12 +434,16 @@ for _ in range(100):
             print("이제 상승 시작")
             rpm_up = True
             rpm_down = False
+        
+        time.sleep(15) """
 
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
 def run_code():
-    #rpm = 0
-    #rpm_up =True
-    #rpm_down = False
+    rpm = 0
+    rpm_up = True
+    rpm_down = False
+    last_rpm_update_time = time.time()  # RPM 마지막 업데이트 시간
+    rpm_update_interval = 15  # RPM 업데이트 간격 (초)
     while True:
         try:
             # 첫 번째 로드셀 (엑셀)
@@ -499,7 +505,30 @@ def run_code():
                 
                 
                 """
+            # 현재 시간 확인
+            current_time = time.time()
 
+            # RPM 조정 로직 (15초마다)
+            if current_time - last_rpm_update_time >= rpm_update_interval:
+                if rpm_up:
+                    rpm += 1000
+                    print(f"현재 RPM (증가): {rpm}")
+                    check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
+                    if rpm >= 5000:
+                        rpm_down = True
+                        rpm_up = False
+                        print("이제 다운 시작 실행됨")
+                elif rpm_down:
+                    rpm -= 1000
+                    print(f"현재 RPM (감소): {rpm}")
+                    check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
+                    if rpm <= 0:
+                        rpm_up = True
+                        rpm_down = False
+                        print("이제 상승 시작")
+
+                # RPM 업데이트 시간 기록
+                last_rpm_update_time = current_time
             
             # 현재 시간 추가
             now = datetime.now()
