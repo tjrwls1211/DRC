@@ -1,9 +1,10 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Image } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useState }  from 'react';
-import { SignUpUser, checkID } from "../api/authAPI";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Platform, Image } from "react-native"; 
+import { useNavigation } from "@react-navigation/native"; 
+import { useState } from 'react'; 
+import { SignUpUser, checkID } from "../api/authAPI"; 
+import DateTimePicker from '@react-native-community/datetimepicker'; 
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -16,32 +17,30 @@ const SignUpScreen = () => {
   const [isDuplicateID, setIsDuplicateID] = useState(false); // ID 중복 여부
   const [isPasswordVisible, setIsPasswordVisible] = useState(false); // 비밀번호 보이기 상태
   const [isIDChecked, setIsIDChecked] = useState(false); // ID 중복 확인 버튼 클릭 여부
-  
-  // 각각 필드에 대한 에러 메시지 상태 관리
+  const [showPicker, setShowPicker] = useState(false); // 날짜 선택기 표시 여부
+
+  // 에러 메시지 상태 관리
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
-  const [formError, setFormError] = useState(''); // 전체 폼 오류 메시지 (필수 항목 누락 등)
-  
+  const [formError, setFormError] = useState('');// 전체 폼 오류 메시지 (필수 항목 누락 등)
+
   // ID 유효성 검사 정규식
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   // 비밀번호 유효성 검사 정규식 (최소 8자, 하나 이상의 숫자, 대소문자 및 특수 문자 포함)
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-  // ID 중복 확인 버튼 핸들러
   const handleCheckDuplicate = async () => {
     try {
       const isDuplicate = await checkID(email);
       setIsIDChecked(true); // 중복 확인 버튼이 클릭되었음을 표시
       setIsDuplicateID(isDuplicate); // 중복 여부 상태 업데이트
       setEmailError(isDuplicateID);
-      
+
       if (isDuplicate) {
         setEmailError("중복된 ID입니다.");
-      } else if(!isDuplicate){
+      } else {
         setEmailError("중복되지 않은 ID입니다."); // (수정) 나중에 초록색으로 출력
-      }else {
-        setEmailError('');
       }
     } catch (error) {
       setEmailError('ID 중복 확인 오류');
@@ -59,7 +58,6 @@ const SignUpScreen = () => {
     }
   };
 
-  
   // 회원가입 버튼 핸들러
   const handleSignUp = async () => {
     console.log("차량번호", carNumber);
@@ -74,10 +72,10 @@ const SignUpScreen = () => {
     if (!emailRegex.test(email)) {
       setEmailError("유효한 이메일 주소를 입력하세요.");
       hasError = true; // 에러 발생
-    } else { 
+    } else {
       setEmailError('');
     }
-    if(!passwordRegex.test(password)) {
+    if (!passwordRegex.test(password)) {
       setPasswordError("비밀번호는 8자 이상, 하나 이상의 숫자, 대소문자, 특수 문자를 포함해야 합니다.");
       hasError = true;
     } else {
@@ -87,19 +85,20 @@ const SignUpScreen = () => {
     // 비밀번호 재확인
     if (password !== confirmPassword) {
       setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
-      hasError = true; // 에러 발생
+      hasError = true;
     } else {
       setConfirmPasswordError('');
     }
 
     // ID 중복 확인 여부 체크
     if (!isIDChecked) {
-      setEmailError("ID 중복 확인을 해주세요."); // 중복 확인을 클릭하지 않은 경우 메시지 표시
+      setEmailError("ID 중복 확인을 해주세요.");  // 중복 확인을 클릭하지 않은 경우 메시지 표시
       return;
     }
+
     // ID 중복된 경우 회원가입 불가
     if (isDuplicateID) {
-      setEmailError("중복된 ID입니다. 다른 ID를 입력하세요."); // 중복된 ID일 경우 메시지 표시
+      setEmailError("중복된 ID입니다. 다른 ID를 입력하세요.");  // 중복된 ID일 경우 메시지 표시
       return;
     }
 
@@ -108,7 +107,7 @@ const SignUpScreen = () => {
       return;
     }
     console.log(email);
-
+    
     // birthDate를 YYYY-MM-DD 형식으로 변환
     const formattedBirthDate = birthDate.toISOString().split('T')[0];
     console.log(formattedBirthDate);
@@ -125,7 +124,7 @@ const SignUpScreen = () => {
         setFormError('');
         setConfirmPasswordError('');
         // 로그인 화면 이동
-        navigation.navigate("LoginScreen", {screen: 'LoginScreen'});
+        navigation.navigate("LoginScreen", { screen: 'LoginScreen' });
       } else {
         console.log(response.message);
         if(response.success === false) {
@@ -142,31 +141,41 @@ const SignUpScreen = () => {
 
   // 날짜 선택기 핸들러
   const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || birthDate; // 선택된 날짜 또는 기존 날짜
-    setBirthDate(currentDate); // 생년월일 정보 업데이트
+    const birthDate = selectedDate || birthDate;  // 선택된 날짜 또는 기존 날짜
+    setShowPicker(false);
+    setBirthDate(birthDate);  // 생년월일 정보 업데이트
+  };
 
-    // 선택된 날짜를 YYYY-MM-DD 형식으로 출력
-    const formattedDate = currentDate.toISOString().split('T')[0];
+  // 선택된 날짜를 YYYY-MM-DD 형식으로 출력
+  const formattedDate = birthDate.toISOString().split('T')[0];
     console.log(formattedDate);
     // setBirthDate(formattedDate);
     // console.log(birthDate);
-  }
-  
-  return (
-      <View style={Styles.container}>     
-        <View style={Styles.logoView}>
-          <Image source={require('../../assets/drcsplash.png')} style={Styles.logo} />
-        </View> 
 
-        {/* ScrollView 안에 KeyboardAvoidingView 사용 */}
-        {/* 필드들이 RegisterView 밖으로 벗어나지 않도록 하고, 벗어날 경우 스크롤 */}
-        <View style = {Styles.RegisterView}>
-          <KeyboardAvoidingView 
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={{ flex: 1, justifyContent: 'center' }}
-            keyboardVerticalOffset={100}
-          >
-          
+  const openDatePicker = () => {
+    setShowPicker(true);
+  };
+
+  const formattedBirthDate = birthDate.toISOString().split('T')[0]; // 날짜를 YYYY-MM-DD 형식으로 변환
+  
+
+  return (
+    <View style={Styles.container}>     
+      <View style={Styles.logoView}>
+        <Image source={require('../../assets/drcsplash.png')} style={Styles.logo} />
+      </View> 
+      
+      <View style = {Styles.RegisterView}>
+        <KeyboardAwareScrollView 
+          extraHeight={300} // 키보드가 올라올 때 추가로 화면을 위로 밀어주는 높이
+          enableOnAndroid={true}  // 안드로이드에서 키보드가 올라올 때 화면이 자동으로 스크롤
+          enableAutomaticScroll={Platform.OS === 'ios'} // iOS에서는 자동으로 스크롤이 활성화
+          contentContainerStyle={{ height: -30 }}  // ScrollView 내의 콘텐츠 높이를 -30으로 설정하여 약간의 여백을 주는 효과
+          resetScrollToCoords={{ x: 0, y: 0 }}  // 키보드가 닫힐 때 스크롤 위치를 (0, 0)으로 초기화
+          scrollEnabled={true}  // 스크롤을 활성화
+        >
+
+          {/* 필드들이 RegisterView 밖으로 벗어나지 않도록 하고, 벗어날 경우 스크롤 */}
           <ScrollView contentContainerStyle={Styles.scrollContent}>
             <View style={Styles.formContainer}>
               <Text style={Styles.text}>ID (Email)</Text>
@@ -241,13 +250,32 @@ const SignUpScreen = () => {
               />
 
               <Text style={Styles.text}>Birth Date</Text>
-              <DateTimePicker
-                value={birthDate}
-                mode="date"
-                display="default"
-                onChange={onChange}
-                style={{ width: '100%', alignItems: 'flex-start' }}
-              />
+              {Platform.OS === 'android' && (
+                <TouchableOpacity onPress={openDatePicker}>
+                  <View style={Styles.birthDateContainer}>
+                    <Text style={Styles.dateText}>{formattedBirthDate}</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+              {Platform.OS === 'ios' ? (
+                <View style={Styles.iosBirthDateContainer}>
+                  <DateTimePicker
+                    value={birthDate}
+                    mode="date"
+                    display="default"
+                    onChange={onChange}
+                  />
+                </View>
+              ):(
+                showPicker && (
+                  <DateTimePicker
+                      value={birthDate}
+                      mode="date"
+                      display="default"
+                      onChange={onChange}
+                    />
+                  )
+              )}
 
               {/* 폼 오류 메시지(필수 항목 누락 등) */}
               {formError ? <Text style={Styles.error}>{formError}</Text> : null}
@@ -266,11 +294,12 @@ const SignUpScreen = () => {
               </TouchableOpacity>
               </View>
             </ScrollView>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
       </View>
     </View>
   );
 }
+
 
 export default SignUpScreen;
 
@@ -354,6 +383,25 @@ const Styles = StyleSheet.create({
     color: 'red',
     marginTop: -5,
     marginBottom: 10,
+  },
+  birthDateContainer: {
+    padding: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 7,
+    backgroundColor: '#d5e3e2',
+    marginRight: '55%'
+  },
+  dateText: {
+    fontSize: 16,
+    color: '#2F4F4F',
+  },
+  iosBirthDateContainer: {
+    flexDirection: 'row', 
+    alignItems: 'center',   
+    marginBottom: 10,       
+    marginTop: 10,
+    marginLeft: -10
   },
 })
 

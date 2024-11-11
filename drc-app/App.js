@@ -111,7 +111,10 @@ const MainNavigator = () => {
           component={ChatbotScreen} 
           options={{ headerTitle: '', headerTitleAlign: 'center' }}
         />
-        <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+        <Stack.Screen 
+          name="SignUpScreen" component={SignUpScreen} 
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
