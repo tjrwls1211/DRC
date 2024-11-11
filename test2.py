@@ -16,6 +16,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import pandas as pd
+
+
+df = pd.read_csv('test2_trail_lap_second_all.csv')
+
 
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
@@ -272,7 +277,7 @@ def check_info(accel_value, brake_value, rpm_value):
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
 
             # 이후 RPM 감소 구간에 따른 음성 출력
-            elif rpm_reached_5000:
+            if rpm_reached_5000:
                 if rpm_value < 5000 and rpm_value >= 4000 and prev_rpm > rpm_value:
                     sounds = [rapidspeed_2_sound, rapidspeed_3_sound, rapidspeed_4_sound]
                     threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
