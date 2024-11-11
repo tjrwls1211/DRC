@@ -255,9 +255,9 @@ last_played_state = None  # 전역 변수로 설정
 
 def check_info(accel_value, brake_value, rpm_value):
     print("acl : ", accel_value, "brk : ", brake_value, "rpm : ", rpm_value)
-    global stop_sounds, is_playing_sounds, prev_mqtt_state, rpm_reached_5000, prev_rpm, last_played_state
+    global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state
     mqtt_state = None
-    
+    rpm_reached_5000 = False
     print("rpm_reached : ", rpm_reached_5000)
     state = "Normal Driving"
 
@@ -447,7 +447,7 @@ def run_code():
                     if rpm == 5000:
                         rpm_down=True
                         rpm_up ==False
-                    time.sleep(3)  # 1초 대기
+                    time.sleep(1)  # 1초 대기
 
             # 1000씩 RPM 감소
             if rpm_down == True:
@@ -458,7 +458,7 @@ def run_code():
                     if rpm == 0:
                         rpm_up=True
                         rpm_down=False
-                    time.sleep(3)  # 1초 대기
+                    time.sleep(1)  # 1초 대기
             
             """ speed_cmd = obd.commands.speed
             rpm_cmd = obd.commands.RPM
