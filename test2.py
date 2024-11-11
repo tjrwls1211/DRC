@@ -291,7 +291,7 @@ def check_info(accel_value, brake_value, rpm_value):
                     sounds = [speedless_1_sound, speedless_2_sound]
                     threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 elif rpm_value < 2000 and rpm_value >= 1000:
-                    print("번케이스", rpm_value, prev_rpm)
+                    print("4번케이스", rpm_value, prev_rpm)
                     sounds = [carstop_1_sound, carstop_2_sound]
                     threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                     rpm_reached_5000 = False
