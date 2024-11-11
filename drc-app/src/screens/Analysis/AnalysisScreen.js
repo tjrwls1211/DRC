@@ -21,40 +21,32 @@ const AnalysisScreen = ({ fetchData, title, chartDataKey, loadingText, themeColo
 
   // 데이터 fetching 및 그래프 렌더링
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDataAndUpdate = async () => {
       // 로딩: 3초 후 종료
       const timeoutId = setTimeout(() => {
         setLoading(false);
       }, 3000);
 
       try {
-        console.log(title, "---------");
+        console.log("---------", title, "---------");
         // 데이터 fetching
-        // const result = await getWeeklySBrk(twoWeeksAgo, currentDate);
+        //const result = await fetchData(twoWeeksAgo, currentDate); // fetchData는 prop으로 전달된 (각 분석 항목 데이터 조회)함수
         // 테스트 데이터 ↓ -----
-        const result = [
-          {"date": "2024-10-21", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-10-22", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-10-23", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-10-24", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-10-25", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-10-26", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-10-27", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-10-28", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-10-29", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-10-30", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-10-31", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-11-01", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-11-02", "sbrk": Math.floor(Math.random() * 21)},
-          {"date": "2024-11-03", "sbrk": Math.floor(Math.random() * 21)},
-        ];
+        const result = Array.from({ length: 14 }, (_, index) => {
+          const date = new Date();
+          date.setDate(date.getDate() - (14 - index)); // 오늘 날짜로부터 14일 전부터 오늘까지의 날짜 생성
+          return {
+            date: date.toISOString().split('T')[0], // ISO 포맷으로 날짜 생성 (YYYY-MM-DD)
+            [chartDataKey]: Math.floor(Math.random() * 21) // chartDataKey를 키로 사용
+          };
+        });
         // 테스트 데이터 ↑ -----
         clearTimeout(timeoutId); // 응답 오면 타이머 종료
         console.log(title, "데이터 요청 결과: ", result);
         
         // 반환결과에서 날짜 및 분석결과(횟수) 추출, 형식 변경
         const labels = result.map(item => item.date.replace('2024-', '').replace('-', '.'));
-        const data = result.map(item => item.sbrk);
+        const data = result.map(item => item[chartDataKey]);
 
         // 반환 데이터 그래프 배열에 저장
         setChartData({
@@ -76,7 +68,7 @@ const AnalysisScreen = ({ fetchData, title, chartDataKey, loadingText, themeColo
       }
     };
 
-    fetchData();
+    fetchDataAndUpdate(); // 데이터 fetching 호출
   }, [currentDate, twoWeeksAgo]);
 
   // 로딩 UI
