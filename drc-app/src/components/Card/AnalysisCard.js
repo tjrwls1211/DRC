@@ -1,10 +1,51 @@
-import React from 'react'; 
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { useEffect, useState } from 'react'; 
+import { View, Text, StyleSheet, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from "../Mode/ThemeContext"; // 다크 모드 Context import
 
-const AnalysisCard = ({ num, circleBackgroundColor, borderColor }) => {
+const AnalysisCard = ({ num, borderColor, title, todayData }) => {
     const { isDarkMode } = useTheme(); // 다크 모드 상태 가져오기
+    const [count, setCount] = useState(0);
+    const [fadeAnim] = useState(new Animated.Value(1)); // 애니메이션 값 초기화
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await todayData(); // 오늘 날짜로 데이터 조회
+                setCount(data.sacl || 0); // 데이터 설정 (sacl 값 사용)
+            } catch (error) {
+                console.error("데이터 조회 오류:", error);
+                setCount(0); // 오류 발생 시 0으로 설정
+            }
+        };
+
+        fetchData();
+    }, [todayData]);
+
+    // 오늘 주행 분석 결과 애니메이션
+    useEffect(() => {
+        const fadeIn = () => {
+            Animated.sequence([
+                Animated.timing(fadeAnim, {
+                    toValue: 0,
+                    duration: 1000, // 애니메이션 지속 시간: 500ms
+                    useNativeDriver: true, 
+                }),
+                // 두 번째 애니메이션: opacity를 1로 변경 (다시 보임)
+                Animated.timing(fadeAnim, {
+                    toValue: 1,
+                    duration: 1300,
+                    useNativeDriver: true,
+                }),
+            ]).start(() => {
+                // 애니메이션 끝난 후 500ms 지연 -> fadeIn 함수 재 실행
+                setTimeout(fadeIn, 500);
+            });
+        };
+    
+        fadeIn();
+    }, [fadeAnim]);
+    
 
     let iconName;
     let displayNum = num;
@@ -24,6 +65,19 @@ const AnalysisCard = ({ num, circleBackgroundColor, borderColor }) => {
                 <Text style={[styles.subText, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>
                     <Icon name="car-arrow-left" size={30} color={isDarkMode ? '#ffffff' : '#2F4F4F'} /> 저번주 대비
                 </Text>
+
+                {/* 상단 우측 텍스트 추가 */}
+                <Animated.View style={{ opacity: fadeAnim, position: 'absolute', top: 10, right: 10 }}>
+                    <Text style={[styles.countText, { 
+                        color: isDarkMode ? '#2F4F4F' : '#2F4F4F', // 형광 초록색
+                        fontWeight: 'bold', // 볼드체 설정
+                        fontSize: 15, // 텍스트 사이즈 18
+                    }]}>
+                        오늘 {title.replace(" 분석", "")} 횟수: {count}회
+                    </Text>
+                </Animated.View>
+
+                
                 <View style={styles.row}>
                     <Text style={[styles.num, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{displayNum}회</Text>
                     <Icon 

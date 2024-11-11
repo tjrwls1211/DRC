@@ -1,5 +1,5 @@
 import React from 'react';
-import { getWeeklySAcl } from '../../api/driveInfoAPI';
+import { getWeeklySAcl, getSAcl } from '../../api/driveInfoAPI';
 import AnalysisScreen from './AnalysisScreen';
 
 const SuddenAcceleration = () => {
@@ -8,8 +8,14 @@ const SuddenAcceleration = () => {
     return await getWeeklySAcl(twoWeeksAgo, currentDate);
   };
 
+  const todayDate = async () => {
+    const today = new Date().toISOString().slice(0, 10); // 오늘 날짜
+    return await getSAcl(today); // 오늘 날짜로 급가속 데이터 조회
+  };
+
   return (
     <AnalysisScreen 
+      todayDate={todayDate}
       fetchData={fetchData}
       title="급가속 분석"
       chartDataKey="sacl"

@@ -8,8 +8,8 @@ import { useTheme } from "../../components/Mode/ThemeContext"; // 다크 모드 
 import { getDate } from '../../utils/getDate';
 import { weeklyDiff } from '../../utils/weekliyDiff';
 
-// ☆ 파라미터 { 주행데이터, 화면 표시 제목, 서버 반환객체에서 값 추출용 key명(ex-sbrk), 로딩 표시 텍스트}
-const AnalysisScreen = ({ fetchData, title, chartDataKey, loadingText, themeColor }) => {
+// ☆ 파라미터 { 하루주행데이터, 주행데이터, 화면 표시 제목, 서버 반환객체에서 값 추출용 key명(ex-sbrk), 로딩 표시 텍스트, 테마색}
+const AnalysisScreen = ({ todayDate, fetchData, title, chartDataKey, loadingText, themeColor }) => {
   const [weeklyChange, setWeeklyChange] = useState(0); // 주간 변화량
   const [chartData, setChartData] = useState({ // 그래프 데이터
     labels: [],
@@ -60,6 +60,11 @@ const AnalysisScreen = ({ fetchData, title, chartDataKey, loadingText, themeColo
         const change = weeklyDiff(data);
         console.log("변화량:", change.change);
         setWeeklyChange(change.change);
+
+        // 오늘 날짜로 todayDate 호출
+        // const dailyData = await todayDate();
+        const dailyData = 4; // 테스트
+        setWeeklyChange(dailyData.sacl || 0); // 오늘 데이터 설정
       } catch (error) {
         console.error("데이터 가져오기 오류: ", error);
       } 
@@ -92,7 +97,13 @@ const AnalysisScreen = ({ fetchData, title, chartDataKey, loadingText, themeColo
         <Text style={[styles.headerText, { color: isDarkMode ? '#ffffff' : themeColor }]}>{title}</Text>
       </View>
 
-      <AnalysisCard num={weeklyChange.toString()} circleBackgroundColor={isDarkMode ? themeColor : '#FFFFFF'} borderColor={isDarkMode ? themeColor : themeColor} />
+      <AnalysisCard 
+        num={weeklyChange.toString()}
+        circleBackgroundColor={isDarkMode ? themeColor : '#FFFFFF'}
+        borderColor={isDarkMode ? themeColor : themeColor}
+        title={title} // 화면 제목 전달
+        todayDate={todayDate} // fetchCount 전달
+      />
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <LineChart
