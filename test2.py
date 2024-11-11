@@ -440,26 +440,21 @@ def run_code():
             # RPM 증가 및 감소 테스트
             # 5000까지 RPM 증가
             if rpm_up==True:
-                while rpm < 5000:
                     rpm += 1000
                     print(f"현재 RPM (증가): {rpm}")
                     check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
                     if rpm == 5000:
                         rpm_down=True
                         rpm_up ==False
-                    time.sleep(1)  # 1초 대기
 
             # 1000씩 RPM 감소
             if rpm_down == True:
-                while rpm > 0:
                     rpm -= 1000
                     print(f"현재 RPM (감소): {rpm}")
                     check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
                     if rpm == 0:
                         rpm_up=True
                         rpm_down=False
-                    time.sleep(1)  # 1초 대기
-            
             """ speed_cmd = obd.commands.speed
             rpm_cmd = obd.commands.RPM
 
