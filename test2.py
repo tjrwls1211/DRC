@@ -409,12 +409,35 @@ for speed in current_speeds:
 
 """ def speed_image(): """
 
+rpm = 0
+rpm_up =True
+rpm_down = False
+
+for _ in range(100):
+    # 5000까지 RPM 증가
+    if rpm_up == True:
+        rpm += 1000
+        print(f"현재 RPM (증가): {rpm}")
+        check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
+        if rpm == 5000:
+            rpm_down = True
+            rpm_up = False
+            print("이제 다운 시작 실행됨")
+    # 1000씩 RPM 감소
+    elif rpm_down == True:
+        rpm -= 1000
+        print(f"현재 RPM (감소): {rpm}")
+        check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
+        if rpm == 0:
+            print("이제 상승 시작")
+            rpm_up = True
+            rpm_down = False
 
 # 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
 def run_code():
-    rpm = 0
-    rpm_up =True
-    rpm_down = False
+    #rpm = 0
+    #rpm_up =True
+    #rpm_down = False
     while True:
         try:
             # 첫 번째 로드셀 (엑셀)
@@ -435,7 +458,8 @@ def run_code():
             
             # RPM 증가 및 감소 테스트
             # 5000까지 RPM 증가
-            if rpm_up==True:
+            
+            """ if rpm_up==True:
                     rpm += 1000
                     print(f"현재 RPM (증가): {rpm}")
                     check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
@@ -452,6 +476,7 @@ def run_code():
                         print("이제 상승 시작")
                         rpm_up=True
                         rpm_down=False
+                         """
             """ speed_cmd = obd.commands.speed
             rpm_cmd = obd.commands.RPM
 
