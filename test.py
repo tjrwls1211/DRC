@@ -20,6 +20,7 @@ import pandas as pd
 
 
 df = pd.read_csv("/home/drc/DRC/DRC/audi_s1.csv", sep=',')
+i = 155
 rpm_value = df.iloc[i]['Engine RPM']  # Engine RPM 칼럼 값
 speed_value = df.iloc[i]['Ground Speed']  # Ground Speed 칼럼 값
 print("rpm : ", rpm_value, "speed : ", speed_value)
