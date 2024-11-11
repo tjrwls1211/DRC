@@ -19,7 +19,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
 
 
-df = pd.read_csv('test2_trail_lap_second_all.csv')
+#df = pd.read_csv('test2_trail_lap_second_all.csv')
 
 
 # 서버 URL 설정
