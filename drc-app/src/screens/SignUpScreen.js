@@ -1,9 +1,10 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Image } from "react-native"; 
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Platform, Image } from "react-native"; 
 import { useNavigation } from "@react-navigation/native"; 
 import { useState } from 'react'; 
 import { SignUpUser, checkID } from "../api/authAPI"; 
 import DateTimePicker from '@react-native-community/datetimepicker'; 
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -163,88 +164,90 @@ const SignUpScreen = () => {
       <View style={Styles.logoView}>
         <Image source={require('../../assets/drcsplash.png')} style={Styles.logo} />
       </View> 
-
-      {/* ScrollView 안에 KeyboardAvoidingView 사용 */}
-      {/* 필드들이 RegisterView 밖으로 벗어나지 않도록 하고, 벗어날 경우 스크롤 */}
+      
       <View style = {Styles.RegisterView}>
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1, justifyContent: 'center' }}
-          keyboardVerticalOffset={100}
+        <KeyboardAwareScrollView 
+          extraHeight={300} // 키보드가 올라올 때 추가로 화면을 위로 밀어주는 높이
+          enableOnAndroid={true}  // 안드로이드에서 키보드가 올라올 때 화면이 자동으로 스크롤
+          enableAutomaticScroll={Platform.OS === 'ios'} // iOS에서는 자동으로 스크롤이 활성화
+          contentContainerStyle={{ height: -30 }}  // ScrollView 내의 콘텐츠 높이를 -30으로 설정하여 약간의 여백을 주는 효과
+          resetScrollToCoords={{ x: 0, y: 0 }}  // 키보드가 닫힐 때 스크롤 위치를 (0, 0)으로 초기화
+          scrollEnabled={true}  // 스크롤을 활성화
         >
-        
-        <ScrollView contentContainerStyle={Styles.scrollContent}>
-          <View style={Styles.formContainer}>
-            <Text style={Styles.text}>ID (Email)</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center'}}>
-              <TextInput 
-                style={[Styles.TextInput, {flex: 1}]} 
-                onChangeText={setEmail}
-                placeholder="ID (Email)"
-                placeholderTextColor="#D9D9D9"
-                value={email}
-              />
-              <TouchableOpacity
-                style={Styles.CheckDuplicateBtn}
-                onPress={handleCheckDuplicate}>
-                <Text style={Styles.BtnText}>중복 확인</Text>
-              </TouchableOpacity>
-            </View>
 
-            {/* ID 중복 에러 메시지 */}
-            {emailError ? <Text style={Styles.error}>{emailError}</Text> : null}
+          {/* 필드들이 RegisterView 밖으로 벗어나지 않도록 하고, 벗어날 경우 스크롤 */}
+          <ScrollView contentContainerStyle={Styles.scrollContent}>
+            <View style={Styles.formContainer}>
+              <Text style={Styles.text}>ID (Email)</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                <TextInput 
+                  style={[Styles.TextInput, {flex: 1}]} 
+                  onChangeText={setEmail}
+                  placeholder="ID (Email)"
+                  placeholderTextColor="#D9D9D9"
+                  value={email}
+                />
+                <TouchableOpacity
+                  style={Styles.CheckDuplicateBtn}
+                  onPress={handleCheckDuplicate}>
+                  <Text style={Styles.BtnText}>중복 확인</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* ID 중복 에러 메시지 */}
+              {emailError ? <Text style={Styles.error}>{emailError}</Text> : null}
+              
+
+              <Text style={Styles.text}>Password</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TextInput 
+                  style={[Styles.TextInput, {flex: 1}]} 
+                  onChangeText={setPassword}
+                  placeholder="password"
+                  placeholderTextColor="#D9D9D9"
+                  secureTextEntry={!isPasswordVisible}
+                  value={password}
+                />
+                <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={{ marginLeft: 10 }}>
+                  <Icon name={isPasswordVisible ? "eye" : "eye-slash"} size={20} color="#000" />
+                </TouchableOpacity>
+              </View>
+              
+
+              {/* 비밀번호 오류 메시지 */}
+              {passwordError ? <Text style={Styles.error}>{passwordError}</Text> : null}
             
-
-            <Text style={Styles.text}>Password</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {/* 비밀번호 확인 입력칸 */}
+              <Text style={Styles.text}>Confirm Password</Text>
               <TextInput 
-                style={[Styles.TextInput, {flex: 1}]} 
-                onChangeText={setPassword}
-                placeholder="password"
+                style={Styles.TextInput} 
+                onChangeText={handleConfirmPassword}
+                placeholder="Confirm Password"
                 placeholderTextColor="#D9D9D9"
-                secureTextEntry={!isPasswordVisible}
-                value={password}
+                secureTextEntry={true}
+                value={confirmPassword}
               />
-              <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={{ marginLeft: 10 }}>
-                <Icon name={isPasswordVisible ? "eye" : "eye-slash"} size={20} color="#000" />
-              </TouchableOpacity>
-            </View>
-            
 
-            {/* 비밀번호 오류 메시지 */}
-            {passwordError ? <Text style={Styles.error}>{passwordError}</Text> : null}
-          
-            {/* 비밀번호 확인 입력칸 */}
-            <Text style={Styles.text}>Confirm Password</Text>
-            <TextInput 
-              style={Styles.TextInput} 
-              onChangeText={handleConfirmPassword}
-              placeholder="Confirm Password"
-              placeholderTextColor="#D9D9D9"
-              secureTextEntry={true}
-              value={confirmPassword}
-            />
+              {/* 비밀번호 일치 여부 에러 메시지 */}
+              {confirmPasswordError ? <Text style={Styles.error}>{confirmPasswordError}</Text> : null}
 
-            {/* 비밀번호 일치 여부 에러 메시지 */}
-            {confirmPasswordError ? <Text style={Styles.error}>{confirmPasswordError}</Text> : null}
+              <Text style={Styles.text}>Vehicle Number</Text>
+              <TextInput
+                style={Styles.TextInput}
+                onChangeText={setCarNumber}
+                placeholder="차량번호"
+                placeholderTextColor="#D9D9D9"
+                value={carNumber}
+              />
 
-            <Text style={Styles.text}>Vehicle Number</Text>
-            <TextInput
-              style={Styles.TextInput}
-              onChangeText={setCarNumber}
-              placeholder="차량번호"
-              placeholderTextColor="#D9D9D9"
-              value={carNumber}
-            />
-
-            <Text style={Styles.text}>Nickname</Text>
-            <TextInput 
-              style={Styles.TextInput} 
-              onChangeText={setNickname}
-              placeholder="Nickname"
-              placeholderTextColor="#D9D9D9"
-              value={nickname}
-            />
+              <Text style={Styles.text}>Nickname</Text>
+              <TextInput 
+                style={Styles.TextInput} 
+                onChangeText={setNickname}
+                placeholder="Nickname"
+                placeholderTextColor="#D9D9D9"
+                value={nickname}
+              />
 
               <Text style={Styles.text}>Birth Date</Text>
               {Platform.OS === 'android' && (
@@ -291,7 +294,7 @@ const SignUpScreen = () => {
               </TouchableOpacity>
               </View>
             </ScrollView>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
       </View>
     </View>
   );
