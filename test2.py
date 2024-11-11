@@ -445,7 +445,7 @@ def run_code():
                     check_info(accel_value=val_accelerator, brake_value=val_brake, rpm_value=rpm)
                     if rpm == 5000:
                         rpm_down=True
-                        rpm_up ==False
+                        rpm_up =False
                         print("이제 다운 시작 실행됨")
                         continue
             # 1000씩 RPM 감소
