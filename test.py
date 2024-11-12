@@ -386,6 +386,7 @@ def run_code():
             print("rpm : ", rpm_value, "speed : ", speed_value)
             # 속도 변화 계산
             speed_change = delta_speed(speed_value)  # 속도 변화(kmh) 계산
+            speed_change = round(speed_change, 1)
             
             # check_info 호출하여 음성 상태 평가 및 재생
             check_info(val_accelerator, val_brake, rpm_value)
