@@ -356,6 +356,10 @@ def delta_speed(current_speed):
 def run_code():
     i = 0
     state = "Normal Driving"
+    global previous_speed, previous_time  # 전역 변수로 초기화 필요
+    previous_speed = 0  # 이전 속도 초기값 설정
+    previous_time = time.time()  # 이전 시간 초기값 설정
+    
     while i < len(df):  # 데이터프레임의 길이에 따라 반복
         try:
             # 첫 번째 로드셀 (엑셀)
@@ -380,6 +384,11 @@ def run_code():
                 speed_value = 0  # 기본값 설정
 
             print("rpm : ", rpm_value, "speed : ", speed_value)
+            # 속도 변화 계산
+            speed_change = delta_speed(speed_value)  # 속도 변화(kmh) 계산
+            
+            # check_info 호출하여 음성 상태 평가 및 재생
+            check_info(val_accelerator, val_brake, rpm_value)
             
             # 현재 시간 추가
             now = datetime.now()
@@ -388,10 +397,10 @@ def run_code():
                 "aclPedal": int(val_accelerator),
                 "brkPedal": int(val_brake),
                 "createDate": now.strftime('%Y-%m-%dT%H:%M:%S'),
-                "driveState": data.get("driveState", ""),  # 기존 driveState 유지
+                "driveState": data["driveState"],  # 기존 driveState 유지
                 "speed": int(speed_value),
                 "rpm": int(rpm_value),
-                "speedChange": 20.0  # speedChange data["kmh"]
+                "speedChange":speed_change  # speedChange data["kmh"]
             })             
             print(data)
             # 레이블 업데이트 (정수 형식)
