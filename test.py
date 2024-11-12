@@ -20,10 +20,7 @@ import pandas as pd
 
 
 df = pd.read_csv("/home/drc/DRC/DRC/audi_s1.csv", sep=',')
-i = 155
-rpm_value = df.iloc[i]['Engine RPM']  # Engine RPM 칼럼 값
-speed_value = df.iloc[i]['Ground Speed']  # Ground Speed 칼럼 값
-print("rpm : ", rpm_value, "speed : ", speed_value)
+
 
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
@@ -80,21 +77,15 @@ num_bins = 10
 bin_width = 20
 max_speed = 200
 
-# 속도 구간에 따른 색상 및 상태 레이블 정의
-colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
-labels = ['안전', '안전', '안전', '주의', '주의', '주의', '위험', '위험', '고위험', '고위험']
-
 # 그래프 초기 설정
 fig, ax = plt.subplots(figsize=(2, 6))
 ax.set_ylim(0, num_bins)
 ax.axis('off')
-
 ax.set_facecolor("black")
 
 # 초기 막대 생성
-bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(10)]
-#combined_label_text = ax.text(1, num_bins + 0.5, '', ha='center', color='blue', fontweight='bold')
-# 그래프안에 글씨 제거 
+bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)]
+
 
 
 # 이미지 로드
@@ -138,9 +129,11 @@ client = mqtt.Client()
 client.connect(ip(), 1222, 60)
 
 # 애니메이션 업데이트 함수
-def update(frame, index):
+def update(frame):
     # CSV에서 speed_value 가져오기
-    speed_value = df.iloc[index]['Ground Speed']
+    speed_value = df.iloc[frame]['Ground Speed']
+    if pd.isna(speed_value):
+        speed_value = 0  # 기본값 설정
     
     # 현재 레벨 계산 (0~9 범위)
     current_level = min(int(speed_value // 20), 9)  # 0~9로 제한
@@ -148,19 +141,16 @@ def update(frame, index):
     # 막대 색상 업데이트
     colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
     for i, bar in enumerate(bars):
-        # 현재 레벨 이하의 막대는 색상을 지정하고, 초과하는 막대는 회색으로 설정
         bar[0].set_color(colors[i] if i <= current_level else "lightgray")
 
-    # 통합 레이블 업데이트
-    #combined_label_text.set_text(f'Speed: {random_speed} | Status: {"Status Text"}')
+    canvas.draw()  # 그래프 업데이트
 
 # 애니메이션 실행
-ani = FuncAnimation(fig, update, interval=1000)  # 500ms마다 업데이트
+ani = FuncAnimation(fig, update, interval=1000)  # 1000ms마다 업데이트
 
 # Tkinter 창에 그래프 추가
 canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().place(relx=0.84, rely=0.2, anchor="n", width=300, height=400)  # 오른쪽 상단에 고정된 크기로 배치
-canvas.draw()
+canvas.get_tk_widget().place(relx=0.84, rely=0.2, anchor="n", width=300, height=400)
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
@@ -362,10 +352,10 @@ def delta_speed(current_speed):
     return kmh
 
 
-# 로드셀에서 데이터를 읽고 주행 상태를 확인하는 함수
+# 데이터 수집 및 업데이트 함수
 def run_code():
     i = 0
-    while (i<644):
+    while i < len(df):  # 데이터프레임의 길이에 따라 반복
         try:
             # 첫 번째 로드셀 (엑셀)
             val_accelerator = hx1.get_weight(5)
@@ -383,6 +373,9 @@ def run_code():
             
             rpm_value = df.iloc[i]['Engine RPM']  # Engine RPM 칼럼 값
             speed_value = df.iloc[i]['Ground Speed']  # Ground Speed 칼럼 값
+            if pd.isna(speed_value):
+                speed_value = 0  # 기본값 설정
+
             print("rpm : ", rpm_value, "speed : ", speed_value)
             
             # 현재 시간 추가
@@ -391,15 +384,15 @@ def run_code():
                 "carId": "01가1234",  # 차량 ID 유지
                 "aclPedal": int(val_accelerator),
                 "brkPedal": int(val_brake),
-                "createDate": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-                "driveState": data["driveState"],  # 기존 driveState 유지
-                "speed" : int(speed_value),
-                "rpm" : int(rpm_value),
-                "speedChange" : 20.0 #speedChange data["kmh"]
+                "createDate": now.strftime('%Y-%m-%dT%H:%M:%S'),
+                "driveState": data.get("driveState", ""),  # 기존 driveState 유지
+                "speed": int(speed_value),
+                "rpm": int(rpm_value),
+                "speedChange": 20.0  # speedChange data["kmh"]
             })             
             print(data)
-            #레이블 업데이트 (정수 형식)
-            text_label.config(text=f"현재 : {speed_value}")    
+            # 레이블 업데이트 (정수 형식)
+            text_label.config(text=f"현재 : {int(speed_value)}")    
             
             client.publish('pedal', json.dumps(data), 0, retain=False)
             i += 1
@@ -412,5 +405,5 @@ def run_code():
 # 쓰레드로 run_code 실행
 threading.Thread(target=run_code, daemon=True).start()
 
-# Tkinter 창 실행
+# Tkinter 메인 루프 시작
 root.mainloop()
