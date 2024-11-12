@@ -365,7 +365,6 @@ def run_code():
             val_brake = hx2.get_weight(5)
             print(f"현재상태 : 브레이크(Brake) 무게: {val_brake} g")
             
-            update_display_state(val_accelerator, val_brake)
             hx1.power_down()
             hx2.power_down()
             hx1.power_up()
