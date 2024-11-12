@@ -235,7 +235,7 @@ def check_info(accel_value, brake_value, rpm_value):
     print("acl : ", accel_value, "brk : ", brake_value, "rpm : ", rpm_value)
     global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000
     mqtt_state = None
-    state = "Normal Driving"
+    
 
     current_time = time.time()  # 현재 시간 기록
 
@@ -355,6 +355,7 @@ def delta_speed(current_speed):
 # 데이터 수집 및 업데이트 함수
 def run_code():
     i = 0
+    state = "Normal Driving"
     while i < len(df):  # 데이터프레임의 길이에 따라 반복
         try:
             # 첫 번째 로드셀 (엑셀)
@@ -369,6 +370,9 @@ def run_code():
             hx2.power_down()
             hx1.power_up()
             hx2.power_up()
+            
+            # 상태 업데이트 및 UI 갱신
+            update_display_state(val_accelerator, val_brake, state)
             
             rpm_value = df.iloc[i]['Engine RPM']  # Engine RPM 칼럼 값
             speed_value = df.iloc[i]['Ground Speed']  # Ground Speed 칼럼 값
