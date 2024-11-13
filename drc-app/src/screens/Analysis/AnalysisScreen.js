@@ -11,6 +11,7 @@ import { weeklyDiff } from '../../utils/weekliyDiff';
 // ☆ 파라미터 { 하루주행데이터, 주행데이터, 화면 표시 제목, 서버 반환객체에서 값 추출용 key명(ex-sbrk), 로딩 표시 텍스트, 테마색}
 const AnalysisScreen = ({ todayDate, fetchData, title, chartDataKey, loadingText, themeColor }) => {
   const [weeklyChange, setWeeklyChange] = useState(0); // 주간 변화량
+  const [todayChange, setTodayChange] = useState(0); // 오늘 주행 분석 저장용
   const [chartData, setChartData] = useState({ // 그래프 데이터
     labels: [],
     datasets: [{ data: [] }], // 초기 데이터 빈 배열 설정
@@ -61,10 +62,11 @@ const AnalysisScreen = ({ todayDate, fetchData, title, chartDataKey, loadingText
         console.log("변화량:", change.change);
         setWeeklyChange(change.change);
 
-        // 오늘 날짜로 todayDate 호출
+        // 오늘 주행 분석 결과 서버에서 가져오기
         // const dailyData = await todayDate();
-        const dailyData = 4; // 테스트
-        setWeeklyChange(dailyData.sacl || 0); // 오늘 데이터 설정
+        // setTodayChange(dailyData.sacl || 0);
+        // console.log("오늘 주행 분석 결과: ", todayChange);
+        setTodayChange(4); // 테스트용
       } catch (error) {
         console.error("데이터 가져오기 오류: ", error);
       } 
@@ -102,7 +104,7 @@ const AnalysisScreen = ({ todayDate, fetchData, title, chartDataKey, loadingText
         circleBackgroundColor={isDarkMode ? themeColor : '#FFFFFF'}
         borderColor={isDarkMode ? themeColor : themeColor}
         title={title} // 화면 제목 전달
-        todayDate={todayDate} // fetchCount 전달
+        todayDate={todayChange} // fetchCount 전달
       />
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
