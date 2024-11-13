@@ -4,10 +4,11 @@ import ViewCard from "../components/Card/ViewCard";
 import DrivingScoreEvaluator from "../components/Score/DrivingScoreEvaluator"; 
 import TouchCard from "../components/Card/TouchCard"; 
 import DRCLogoText from "../../assets/DRCLogo-text.png";
-import { useNavigation } from '@react-navigation/native'; 
+import { useNavigation, useFocusEffect } from '@react-navigation/native'; 
 import Icon3 from 'react-native-vector-icons/Ionicons'; 
 import Icon4 from 'react-native-vector-icons/FontAwesome5';
 import { getSAcl, getSBrk, getSPedal } from "../api/driveInfoAPI";
+import { fetchUserInfo } from "../api/userInfoAPI";
  
 import { useTheme } from "../components/Mode/ThemeContext";
 import { PanGestureHandler } from 'react-native-gesture-handler';
@@ -19,31 +20,43 @@ const MainScreen = () => {
         suddenBraking: 0,
         bothPedal: 0,
     });
+    const [nickname, setNickname] = useState("홍길동");
     const navigation = useNavigation(); 
     const { isDarkMode } = useTheme();
 
-    useEffect(() => {
-        const fetchAnalysisData = async () => {
-            const today = new Date().toISOString().split('T')[0]; // 오늘 날짜 가져오기 (YYYY-MM-DD 형식)
-            console.log("(메인화면)오늘 날짜: ", today);
-            try {
-                const [accel, brake, pedal] = await Promise.all([
-                    getSAcl(today),
-                    getSBrk(today),
-                    getSPedal(today),
-                ]);
-                setAnalysisCount({
-                    suddenAcceleration: accel.sacl,
-                    suddenBraking: brake.sbrk,
-                    bothPedal: pedal.bothPedal,
-                });
-            } catch (error) {
-                console.error("분석 데이터 조회 오류:", error);
-            }
-        };
+    // useFocuseEffect를 사용하여 화면 포커스 받을 때마다 정보 가져오기
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchData = async () => {
+                const today = '2024-11-06'; // 테스트
+                console.log("(메인화면)오늘 날짜: ", today);
+                try {
+                    const [accel, brake, pedal] = await Promise.all([
+                        getSAcl(today),
+                        getSBrk(today),
+                        getSPedal(today),
+                    ]);
+                    setAnalysisCount({
+                        suddenAcceleration: accel.sacl || 0,
+                        suddenBraking: brake.sbrk || 0,
+                        bothPedal: pedal.bothPedal || 0,
+                    });
+                } catch (error) {
+                    console.error("분석 데이터 조회 오류:", error);
+                }
+                
+                try {
+                    const userInfo = await fetchUserInfo();
+                    setNickname(userInfo.nickname);
+                    console.log("메인 화면 닉네임", userInfo.nickname);
+                } catch (error) {
+                    console.error("사용자 정보 가져오기 오류:", error);
+                }
+            };
 
-        fetchAnalysisData();
-    }, []);
+            fetchData();
+        }, [])
+    );
 
     const goToSuddenAcceleration = () => { 
         navigation.navigate('AnalysisTabs', { screen: '급가속 분석' }); 
@@ -70,7 +83,7 @@ const MainScreen = () => {
             </View> 
 
             <View style={{ flex: 1, backgroundColor: isDarkMode ? '#121212' : '#ffffff', padding: 20 }}> 
-                <ViewCard name="OOO" score={score} /> 
+                <ViewCard name={nickname} score={score} /> 
                 <Text style={{ 
                     marginTop: -110, 
                     fontWeight: 'bold', 
