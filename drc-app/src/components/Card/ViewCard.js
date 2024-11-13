@@ -23,8 +23,8 @@ const ViewCard = ({ name, score }) => {
 
     return (
         <BaseCard style={[styles.customCard, { backgroundColor: isDarkMode ? '#444444' : '#ffffff' }]}>
-            <Text style={[styles.name, { color: isDarkMode ? '#ffffff' : '#333' }]}>
-                {name}님의 이번주 주행 점수는
+             <Text style={[styles.name, { color: isDarkMode ? '#ffffff' : '#333' }]}>
+                <Text style={styles.boldName}>{name}</Text> 님의 이번주 주행 점수는
             </Text>
             <Text style={[styles.score, { color: getScoreColor(score) }]}>
                 {score}점
@@ -52,6 +52,10 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 20,
         textAlign: 'center',
+    },
+    boldName: {
+        fontSize: 24,
+        fontWeight: 'bold',
     },
     score: {
         fontSize: 40,
