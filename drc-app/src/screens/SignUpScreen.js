@@ -146,12 +146,6 @@ const SignUpScreen = () => {
     setBirthDate(birthDate);  // 생년월일 정보 업데이트
   };
 
-  // 선택된 날짜를 YYYY-MM-DD 형식으로 출력
-  const formattedDate = birthDate.toISOString().split('T')[0];
-    console.log(formattedDate);
-    // setBirthDate(formattedDate);
-    // console.log(birthDate);
-
   const openDatePicker = () => {
     setShowPicker(true);
   };
