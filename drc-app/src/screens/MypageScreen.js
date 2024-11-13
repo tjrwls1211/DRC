@@ -8,6 +8,7 @@ import { formatDate } from '../utils/formatDate';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { useTheme } from '../components/Mode/ThemeContext'; // 다크 모드 Context import
+import { fetchUserInfo } from '../api/userInfoAPI';
 
 const MypageScreen = () => {
   const { isDarkMode } = useTheme(); // 다크 모드 상태 가져오기
@@ -18,6 +19,20 @@ const MypageScreen = () => {
   const [sacl, setSacl] = useState(0);
   const [sbrk, setSbrk] = useState(0);
   const [bothPedal, setBothPedal] = useState(0);
+
+  const fetchUserData = async () => {
+    try {
+      const userInfo = await fetchUserInfo(); // 사용자 정보 API 호출
+      setNickname(userInfo.nickname); // 닉네임 상태 업데이트
+      setEmail(userInfo.email); // 이메일 상태 업데이트
+    } catch (error) {
+      console.error('사용자 정보 가져오기 실패:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   const fetchData = async () => {
     try {
