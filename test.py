@@ -223,6 +223,11 @@ def play_sounds_in_sequence(sounds):
 
     is_playing_sounds = False  # 모든 음성 재생 완료 후 플래그 해제
 
+# 특정시간이 지나면 다시 초기화하는 로직
+def reset_playing_state():
+    global is_playing_sounds
+    is_playing_sounds = False
+    
 #전역 변수로 안전 상태 저장
 prev_mqtt_state = None
 
@@ -236,14 +241,15 @@ def check_info(accel_value, brake_value, rpm_value):
     global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating, last_accel_time, last_sound_time
     mqtt_state = None
     
-    state = "Normal Driving"
+     # 기본 state 설정을 제외하고 RPM 감소 구간에서는 상태 변경 안 함
+    state = "Normal Driving" if not rpm_reached_5000 else "Unintended Acceleration"
     current_time = time.time()  # 현재 시간 기록
 
     # Unintended Acceleration + 5000 RPM 조건 결합
     if 200 < accel_value < 1000 and brake_value <= 30 and rpm_value >= 5000:
-        state = "Unintended Acceleration + High RPM"
+        state = "Unintended Acceleration"
         update_display_state(accel_value, brake_value, state)
-
+    
         # 가속 상태 체크 및 경과 시간 측정
         if not is_accelerating:
             last_accel_time = current_time
@@ -261,6 +267,7 @@ def check_info(accel_value, brake_value, rpm_value):
             sounds = [rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound, rapidspeed_4_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
 
+            threading.Timer(3, reset_playing_state).start()
     # 이후 RPM 감소 구간에 따른 음성 출력
     if rpm_reached_5000:
         if rpm_value < 5000 and rpm_value >= 4000 and not is_playing_sounds:
