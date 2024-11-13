@@ -20,7 +20,7 @@ public class DriveScore {
     @Min(0)
     @Max(100)
     private int score;
-    @OneToOne 
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id", referencedColumnName = "userId") // UserData의 id를 참조
     private UserData userData; // UserData 엔티티 참조
 }

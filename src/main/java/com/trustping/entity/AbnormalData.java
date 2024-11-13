@@ -2,6 +2,7 @@ package com.trustping.entity;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,7 +29,7 @@ public class AbnormalData {
 	private int sAcl;
 	private int sBrk;
 	private int bothPedal;
-    @ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id", referencedColumnName = "userId") // UserData의 id를 참조
     private UserData userData; // UserData 엔티티 참조
 }

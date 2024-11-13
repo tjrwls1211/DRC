@@ -16,6 +16,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.trustping.DTO.DriveLogReceiveDTO;
 import com.trustping.config.EnvConfig;
 import com.trustping.entity.DriveLog;
+import com.trustping.repository.SegmentRepository;
 
 import jakarta.annotation.PostConstruct;
 
@@ -34,6 +35,10 @@ public class DriveLogSubscribeService implements MqttCallback {
     
     @Autowired
     private DriveScoreEvaluateService driveScoreEvaluateService;
+    
+    @Autowired
+	private SegmentService segmentService;
+	
     
     @PostConstruct
     public void subscribeToTopic() {
@@ -99,6 +104,10 @@ public class DriveLogSubscribeService implements MqttCallback {
 		DriveLogReceiveDTO ReceiveDriveLog = objectMapper.readValue(payload, DriveLogReceiveDTO.class);
 		driveLogStorageService.saveData(ReceiveDriveLog);
 		driveScoreEvaluateService.evaluateScore(ReceiveDriveLog);
+
+        // Segment 업데이트
+        segmentService.updateOrCreateSegment(ReceiveDriveLog);
+        //segmentService.updateOrCreateSegment(driveLogReceiveDTO, userData);
     }
     
     @Override
