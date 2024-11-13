@@ -256,6 +256,8 @@ def check_info(accel_value, brake_value, rpm_value):
             stop_sounds = True
             last_played_state = state  # 마지막으로 재생된 상태 업데이트
             is_playing_sounds = True
+            rpm_reached_5000 = True  # 5000 RPM 도달 시 플래그 설정
+            print("rpm 도착값", rpm_reached_5000)
             sounds = [rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound, rapidspeed_4_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
 
@@ -276,7 +278,7 @@ def check_info(accel_value, brake_value, rpm_value):
             sounds = [carstop_1_sound, carstop_2_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
-            rpm_reached_5000 = False
+            rpm_reached_5000 = False  # 2000 RPM 이하로 떨어지면 플래그 초기화
 
         prev_rpm = rpm_value
 
