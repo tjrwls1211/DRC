@@ -233,15 +233,15 @@ rpm_reached_5000 = False
 
 def check_info(accel_value, brake_value, rpm_value):
     print("acl : ", accel_value, "brk : ", brake_value, "rpm : ", rpm_value)
-    global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating, last_accel_time
+    global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating, last_accel_time, last_sound_time
     mqtt_state = None
     
     state = "Normal Driving"
     current_time = time.time()  # 현재 시간 기록
 
-    # Unintended Acceleration
-    if 200 < accel_value < 1000 and brake_value <= 30:
-        state = "Unintended Acceleration"
+    # Unintended Acceleration + 5000 RPM 조건 결합
+    if 200 < accel_value < 1000 and brake_value <= 30 and rpm_value >= 5000:
+        state = "Unintended Acceleration + High RPM"
         update_display_state(accel_value, brake_value, state)
 
         # 가속 상태 체크 및 경과 시간 측정
@@ -251,35 +251,34 @@ def check_info(accel_value, brake_value, rpm_value):
         else:
             elapsed_time = current_time - last_accel_time
 
-        elapsed_time = current_time - last_sound_time[state]
-        if (state != last_played_state) and elapsed_time >= state_hold_time and elapsed_time >= sound_delay:
+        elapsed_time = current_time - last_sound_time.get(state, 0)
+        if (state != last_played_state) and elapsed_time >= state_hold_time and elapsed_time >= sound_delay and not is_playing_sounds:
             stop_sounds = True
             last_played_state = state  # 마지막으로 재생된 상태 업데이트
-
-            # RPM이 5000 이상일 때 첫 번째 음성 출력
-        if rpm_value >= 5000:
-            rpm_reached_5000 = True
-            print("rpm 도착값", rpm_reached_5000)
+            is_playing_sounds = True
             sounds = [rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound, rapidspeed_4_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
 
-            # 이후 RPM 감소 구간에 따른 음성 출력
-        if rpm_reached_5000:
-            if rpm_value < 5000 and rpm_value >= 4000:
-                print("2번케이스", rpm_value, prev_rpm)
-                sounds = [nobrake_1_sound, nobrake_2_sound, nobrake_3_sound]
-                threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-            elif rpm_value < 4000 and rpm_value >= 3000:
-                print("3번케이스", rpm_value, prev_rpm)
-                sounds = [speedless_1_sound, speedless_2_sound]
-                threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-            elif rpm_value < 3000 and rpm_value >= 2000:
-                print("4번케이스", rpm_value, prev_rpm)
-                sounds = [carstop_1_sound, carstop_2_sound]
-                threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-                rpm_reached_5000 = False
+    # 이후 RPM 감소 구간에 따른 음성 출력
+    if rpm_reached_5000:
+        if rpm_value < 5000 and rpm_value >= 4000 and not is_playing_sounds:
+            print("2번케이스", rpm_value, prev_rpm)
+            sounds = [nobrake_1_sound, nobrake_2_sound, nobrake_3_sound]
+            threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
+            is_playing_sounds = True
+        elif rpm_value < 4000 and rpm_value >= 3000 and not is_playing_sounds:
+            print("3번케이스", rpm_value, prev_rpm)
+            sounds = [speedless_1_sound, speedless_2_sound]
+            threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
+            is_playing_sounds = True
+        elif rpm_value < 3000 and rpm_value >= 2000 and not is_playing_sounds:
+            print("4번케이스", rpm_value, prev_rpm)
+            sounds = [carstop_1_sound, carstop_2_sound]
+            threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
+            is_playing_sounds = True
+            rpm_reached_5000 = False
 
-            prev_rpm = rpm_value
+        prev_rpm = rpm_value
 
     # 가속 상태가 아니면 is_accelerating을 초기화하여 가속 종료 상태로 설정
     elif is_accelerating:
@@ -298,13 +297,14 @@ def check_info(accel_value, brake_value, rpm_value):
         else:
             elapsed_time = time.time() - last_speed_time
 
-        elapsed_time = current_time - last_sound_time[state]
-        if (state != last_played_state) and elapsed_time >= state_hold_time and elapsed_time >= sound_delay:
+        elapsed_time = current_time - last_sound_time.get(state, 0)
+        if (state != last_played_state) and elapsed_time >= state_hold_time and elapsed_time >= sound_delay and not is_playing_sounds:
             stop_sounds = False
             sounds = [accelaccel_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             last_sound_time[state] = current_time
             last_played_state = state  # 마지막 재생 상태 갱신
+            is_playing_sounds = True
 
     # Rapid Braking
     elif brake_value > 200 and accel_value <= 30:
@@ -319,13 +319,14 @@ def check_info(accel_value, brake_value, rpm_value):
         else:
             elapsed_time = time.time() - last_speed_time
 
-        elapsed_time = current_time - last_sound_time[state]
-        if (state != last_played_state) and elapsed_time >= state_hold_time and elapsed_time >= sound_delay:
+        elapsed_time = current_time - last_sound_time.get(state, 0)
+        if (state != last_played_state) and elapsed_time >= state_hold_time and elapsed_time >= sound_delay and not is_playing_sounds:
             stop_sounds = False
             sounds = [brakebrake_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             last_sound_time[state] = current_time
             last_played_state = state
+            is_playing_sounds = True
 
     # Both Feet Driving
     elif accel_value > 100 and brake_value > 100:
@@ -340,13 +341,14 @@ def check_info(accel_value, brake_value, rpm_value):
         else:
             elapsed_time = time.time() - last_speed_time
 
-        elapsed_time = current_time - last_sound_time[state]
-        if (state != last_played_state) and elapsed_time >= state_hold_time and elapsed_time >= sound_delay:
+        elapsed_time = current_time - last_sound_time.get(state, 0)
+        if (state != last_played_state) and elapsed_time >= state_hold_time and elapsed_time >= sound_delay and not is_playing_sounds:
             stop_sounds = False
             sounds = [bothdrive_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             last_sound_time[state] = current_time
             last_played_state = state
+            is_playing_sounds = True
 
     # 상태가 Normal로 돌아왔을 때
     else:
@@ -354,7 +356,8 @@ def check_info(accel_value, brake_value, rpm_value):
         update_display_state(accel_value, brake_value, state)
         is_accelerating = False
         stop_sounds = True  # 조건에 맞지 않으면 음성 중단
-        last_played_state = None  # 정상 상태로 돌아오면 마지막 재생 상태 초기화
+        last_played_state = None  # 정상 상태로 돌아오면 마지막 재생 상태 초기화 
+        is_playing_sounds = False  # 음성 상태 초기화 
 
     data["driveState"] = state
         
