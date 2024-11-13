@@ -26,53 +26,62 @@ const SettingsScreen = () => {
   const [otpKey, setOtpKey] = useState(null); // otpKey 상태
   const [isModalVisible, setModalVisible] = useState(false); // 모달 상태
   
-  const { is2FAEnabled, setIs2FAEnabled } = useTwoFA(); // 2차 인증 상태 가져오기
-  console.log("2차인증 전역 변수 상태 확인: ", is2FAEnabled);
-  // 2차 인증 드롭다운 기본값 로컬저장소에서 가져오기
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState([
+    { label: '비활성', value: false }, 
+    { label: '활성', value: true }, 
+  ]);
+  const { is2FAEnabled, setIs2FAEnabled } = useTwoFA();
+  console.log("2차인증 상태 확인: ", is2FAEnabled);
+
+  // 2차 인증 드롭다운 기본값 로컬 저장소에서 가져오기
   useEffect(() => {
     const loadTwoFASetting = async () => {
-      const storedStatus = await AsyncStorage.getItem('is2FAEnabled');
-      setIs2FAEnabled(storedStatus === 'false'); // 초기 상태
+        const storedStatus = await AsyncStorage.getItem('is2FAEnabled');
+        const status = storedStatus === 'true';
+        setIs2FAEnabled(status);
+        setOpen(false);
     };
 
     loadTwoFASetting();
   }, []);
 
-  const [open, setOpen] = useState(false); // DropDownPicker 열림/닫힘 상태
-  const [items, setItems] = useState([
-    { label: '비활성', value: false }, 
-    { label: '활성', value: true }, 
-  ]);
-  
-
   // 2차 인증 활성화/비활성 상태 변경 핸들러
   const handle2FAChange = async (value) => {
     if (value) {
-      console.log("2차인증 활성");
-      const { qrUrl, otpKey } = await enableTwoFactorAuth(); // 2차 인증 활성화 함수 호출 (QR URL 요청)
-      setQrUrl(qrUrl); // QR URL을 상태에 저장
-      setOtpKey(otpKey); 
-      setModalVisible(true); // 모달을 열도록 설정
-      Alert.alert("OTP 인증 정보가 생성되었습니다.", "QR 코드를 스캔하거나 설정 key를 사용하여 OTP 코드를 생성하세요."); // 알림 표시
+        console.log("2차인증 활성");
+        const { qrUrl, otpKey } = await enableTwoFactorAuth();
+        setQrUrl(qrUrl);
+        setOtpKey(otpKey);
+        setModalVisible(true);
+        Alert.alert("OTP 인증 정보가 생성되었습니다.", "QR 코드를 스캔하거나 설정 key를 사용하여 OTP 코드를 생성하세요.");
     } else {
-      console.log("2차인증 비활성");
-      try {
-        const response = await disableTwoFactorAuth(); // 비활성화 함수 호출
-        setQrUrl(null);
-        setOtpKey(null);
-        
-        // 2차 인증 비활성화 성공 시 Alert 표시
-        if (response.success) {
-          Alert.alert("성공", response.message); // Alert로 성공 메시지 표시
+        console.log("2차인증 비활성");
+        try {
+            const response = await disableTwoFactorAuth();
+            setQrUrl(null);
+            setOtpKey(null);
+
+            if (response.success) {
+                Alert.alert("성공", response.message);
+            }
+        } catch (error) {
+            console.error("2차 인증 비활성화 오류:", error);
+            Alert.alert("오류", "2차 인증 비활성화 중 문제가 발생했습니다.");
         }
-      } catch (error) {
-        console.error("2차 인증 비활성화 오류:", error);
-        Alert.alert("오류", "2차 인증 비활성화 중 문제가 발생했습니다.");
-      }
     }
-    setIs2FAEnabled(value); // Context를 통해 2차 인증 상태 업데이트
-    console.log("2차인증 전역상태 업데이트: ", is2FAEnabled);
+    setIs2FAEnabled(value);
+    console.log("2차인증 전역상태 업데이트: ", value);
   };
+
+  // 드롭다운에서 선택된 값에 따라 상태 업데이트
+  useEffect(() => {
+    if (is2FAEnabled) {
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+  }, [is2FAEnabled]);
 
   // 모달 닫기 함수
   const closeModal = () => {
