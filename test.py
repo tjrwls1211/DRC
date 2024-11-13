@@ -236,6 +236,7 @@ last_played_state = None  # 전역 변수로 설정
 
 rpm_reached_5000 = False
 
+
 def check_info(accel_value, brake_value, rpm_value):
     print("acl : ", accel_value, "brk : ", brake_value, "rpm : ", rpm_value)
     global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating, last_accel_time, last_sound_time
