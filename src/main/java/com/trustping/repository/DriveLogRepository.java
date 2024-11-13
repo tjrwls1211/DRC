@@ -11,7 +11,7 @@ import com.trustping.entity.UserData;
 
 @Repository
 public interface DriveLogRepository extends JpaRepository<DriveLog, Long> {
-    List<DriveLog> findByCarId(UserData carId);  // UserData 타입 사용
+    List<DriveLog> findByCarId(UserData carId); 
 
     void deleteByCarId(UserData carId);
 

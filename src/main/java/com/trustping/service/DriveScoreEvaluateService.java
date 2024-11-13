@@ -22,6 +22,7 @@ public class DriveScoreEvaluateService {
 	DriveScoreRepository driveScoreRepository;
 	
 	private Map<String, Integer> abnormalDriveCount = new HashMap<>();
+	private Map<String, Integer> normalDriveCount = new HashMap<>();
 
 	public void evaluateScore(DriveLogReceiveDTO driveLog) {
 		String carId = driveLog.getCarId(); 
@@ -34,6 +35,7 @@ public class DriveScoreEvaluateService {
 		if (userDataOpt.isEmpty()) {
 			return;
 		}
+		
 		UserData userData = userDataOpt.get();
 		
 		int count = abnormalDriveCount.getOrDefault(carId, 0);
