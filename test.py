@@ -235,7 +235,8 @@ def check_info(accel_value, brake_value, rpm_value):
     print("acl : ", accel_value, "brk : ", brake_value, "rpm : ", rpm_value)
     global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating, last_accel_time
     mqtt_state = None
-
+    
+    state = "Normal Driving"
     current_time = time.time()  # 현재 시간 기록
 
     # Unintended Acceleration
