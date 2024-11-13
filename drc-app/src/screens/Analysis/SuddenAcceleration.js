@@ -8,14 +8,15 @@ const SuddenAcceleration = () => {
     return await getWeeklySAcl(twoWeeksAgo, currentDate);
   };
 
-  const todayDate = async () => {
-    const today = new Date().toISOString().slice(0, 10); // 오늘 날짜
+  const todayData = async () => {
+    // const today = new Date().toISOString().slice(0, 10); // 오늘 날짜
+    const today = '2024-11-06'; // 테스트
     return await getSAcl(today); // 오늘 날짜로 급가속 데이터 조회
   };
 
   return (
     <AnalysisScreen 
-      todayDate={todayDate}
+      todayData={todayData}
       fetchData={fetchData}
       title="급가속 분석"
       chartDataKey="sacl"

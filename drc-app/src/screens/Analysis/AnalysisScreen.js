@@ -9,7 +9,7 @@ import { getDate } from '../../utils/getDate';
 import { weeklyDiff } from '../../utils/weekliyDiff';
 
 // ☆ 파라미터 { 하루주행데이터, 주행데이터, 화면 표시 제목, 서버 반환객체에서 값 추출용 key명(ex-sbrk), 로딩 표시 텍스트, 테마색}
-const AnalysisScreen = ({ todayDate, fetchData, title, chartDataKey, loadingText, themeColor }) => {
+const AnalysisScreen = ({ todayData, fetchData, title, chartDataKey, loadingText, themeColor }) => {
   const [weeklyChange, setWeeklyChange] = useState(0); // 주간 변화량
   const [todayChange, setTodayChange] = useState(0); // 오늘 주행 분석 저장용
   const [chartData, setChartData] = useState({ // 그래프 데이터
@@ -18,7 +18,11 @@ const AnalysisScreen = ({ todayDate, fetchData, title, chartDataKey, loadingText
   });
   const [loading, setLoading] = useState(true);
   const { isDarkMode } = useTheme();
-  const { currentDate, twoWeeksAgo } = getDate(); // 오늘, 2주전 날짜 가져오기
+
+  //const { currentDate, twoWeeksAgo } = getDate(); // 오늘, 2주전 날짜 가져오기
+  //테스트
+  const currentDate = '2024-11-19'; // 오늘 날짜
+  const twoWeeksAgo = '2024-11-06'; // 2주 전 날짜
 
   // 데이터 fetching 및 그래프 렌더링
   useEffect(() => {
@@ -31,17 +35,19 @@ const AnalysisScreen = ({ todayDate, fetchData, title, chartDataKey, loadingText
       try {
         console.log("---------", title, "---------");
         // 데이터 fetching
-        //const result = await fetchData(twoWeeksAgo, currentDate); // fetchData는 prop으로 전달된 (각 분석 항목 데이터 조회)함수
+        const result = await fetchData(twoWeeksAgo, currentDate); // fetchData는 prop으로 전달된 (각 분석 항목 데이터 조회)함수
+
         // 테스트 데이터 ↓ -----
-        const result = Array.from({ length: 14 }, (_, index) => {
-          const date = new Date();
-          date.setDate(date.getDate() - (14 - index)); // 오늘 날짜로부터 14일 전부터 오늘까지의 날짜 생성
-          return {
-            date: date.toISOString().split('T')[0], // ISO 포맷으로 날짜 생성 (YYYY-MM-DD)
-            [chartDataKey]: Math.floor(Math.random() * 21) // chartDataKey를 키로 사용
-          };
-        });
+        // const result = Array.from({ length: 14 }, (_, index) => {
+        //   const date = new Date();
+        //   date.setDate(date.getDate() - (14 - index)); // 오늘 날짜로부터 14일 전부터 오늘까지의 날짜 생성
+        //   return {
+        //     date: date.toISOString().split('T')[0], // ISO 포맷으로 날짜 생성 (YYYY-MM-DD)
+        //     [chartDataKey]: Math.floor(Math.random() * 21) // chartDataKey를 키로 사용
+        //   };
+        // });
         // 테스트 데이터 ↑ -----
+
         clearTimeout(timeoutId); // 응답 오면 타이머 종료
         console.log(title, "데이터 요청 결과: ", result);
         
@@ -63,10 +69,10 @@ const AnalysisScreen = ({ todayDate, fetchData, title, chartDataKey, loadingText
         setWeeklyChange(change.change);
 
         // 오늘 주행 분석 결과 서버에서 가져오기
-        // const dailyData = await todayDate();
-        // setTodayChange(dailyData.sacl || 0);
-        // console.log("오늘 주행 분석 결과: ", todayChange);
-        setTodayChange(4); // 테스트용
+        const dailyData = await todayData();
+        setTodayChange(dailyData[chartDataKey] || 0); // chartDataKey를 사용하여 값을 추출
+        console.log("오늘 주행 분석 결과: ", dailyData[chartDataKey] || 0);
+
       } catch (error) {
         console.error("데이터 가져오기 오류: ", error);
       } 
@@ -104,7 +110,8 @@ const AnalysisScreen = ({ todayDate, fetchData, title, chartDataKey, loadingText
         circleBackgroundColor={isDarkMode ? themeColor : '#FFFFFF'}
         borderColor={isDarkMode ? themeColor : themeColor}
         title={title} // 화면 제목 전달
-        todayDate={todayChange} // fetchCount 전달
+        todayData={todayData} // fetchCount 전달
+        DataKey={chartDataKey}
       />
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>

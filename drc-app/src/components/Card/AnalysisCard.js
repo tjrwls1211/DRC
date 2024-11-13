@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from "../Mode/ThemeContext"; // 다크 모드 Context import
 
-const AnalysisCard = ({ num, borderColor, title, todayData }) => {
+const AnalysisCard = ({ num, borderColor, title, todayData, DataKey }) => {
     const { isDarkMode } = useTheme(); // 다크 모드 상태 가져오기
     const [count, setCount] = useState(0);
     const [fadeAnim] = useState(new Animated.Value(1)); // 애니메이션 값 초기화
@@ -12,7 +12,7 @@ const AnalysisCard = ({ num, borderColor, title, todayData }) => {
         const fetchData = async () => {
             try {
                 const data = await todayData(); // 오늘 날짜로 데이터 조회
-                setCount(data.sacl || 0); // 데이터 설정 (sacl 값 사용)
+                setCount(data[DataKey] || 0); // 데이터 설정 (sacl 값 사용)
             } catch (error) {
                 console.error("데이터 조회 오류:", error);
                 setCount(0); // 오류 발생 시 0으로 설정
