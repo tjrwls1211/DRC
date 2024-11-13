@@ -12,7 +12,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(''); // 오류 메시지
   
-  const { is2FAEnabled } = useTwoFA(); // Context에서 2차 인증 상태 가져오기
+  const { setIs2FAEnabled } = useTwoFA(); // 2차 인증 상태 설정 함수 가져오기
   const [otp, setOtp] = useState(Array(6).fill('')); // 6자리 OTP 입력 상태
   const [is2FARequired, setIs2FARequired] = useState(false); // 2차 인증 필요 여부
   const otpRefs = useRef(Array(6).fill(null)); // 6자리 OTP 입력 필드에 대한 ref 배열
@@ -72,6 +72,7 @@ const LoginScreen = () => {
           setErrorMessage('');
           // JWT 토큰이 반환된 경우
           await AsyncStorage.setItem('token', response.token);
+          await AsyncStorage.setItem('is2FAEnabled', 'false'); // 2차 인증 비활성 상태 저장
           navigation.navigate("MainScreen", { screen: 'MainScreen' }); // 메인화면 이동
         } else if (response.loginStatus === 0) {
           // 로그인 실패 시 반환된 메시지를 오류 메시지로 설정

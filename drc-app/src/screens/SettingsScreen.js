@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Switch, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker'; // DropDownPicker 가져오기
 import { enableTwoFactorAuth, disableTwoFactorAuth } from '../api/authAPI'; // 2FA 관련 서버 통신 함수 가져오기
@@ -26,13 +26,24 @@ const SettingsScreen = () => {
   const [otpKey, setOtpKey] = useState(null); // otpKey 상태
   const [isModalVisible, setModalVisible] = useState(false); // 모달 상태
   
-  const { is2FAEnabled, setIs2FAEnabled } = useTwoFA(); // Context에서 2차인증 필요 상태 가져오기
+  const { is2FAEnabled, setIs2FAEnabled } = useTwoFA(); // 2차 인증 상태 가져오기
   console.log("2차인증 전역 변수 상태 확인: ", is2FAEnabled);
+  // 2차 인증 드롭다운 기본값 로컬저장소에서 가져오기
+  useEffect(() => {
+    const loadTwoFASetting = async () => {
+      const storedStatus = await AsyncStorage.getItem('is2FAEnabled');
+      setIs2FAEnabled(storedStatus === 'false'); // 초기 상태
+    };
+
+    loadTwoFASetting();
+  }, []);
+
   const [open, setOpen] = useState(false); // DropDownPicker 열림/닫힘 상태
   const [items, setItems] = useState([
     { label: '비활성', value: false }, 
     { label: '활성', value: true }, 
   ]);
+  
 
   // 2차 인증 활성화/비활성 상태 변경 핸들러
   const handle2FAChange = async (value) => {
