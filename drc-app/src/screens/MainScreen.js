@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState } from "react"; 
 import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'; 
 import ViewCard from "../components/Card/ViewCard"; 
-import DrivingScoreEvaluator from "../components/Score/DrivingScoreEvaluator"; 
 import TouchCard from "../components/Card/TouchCard"; 
 import DRCLogoText from "../../assets/DRCLogo-text.png";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'; 
 import Icon3 from 'react-native-vector-icons/Ionicons'; 
 import Icon4 from 'react-native-vector-icons/FontAwesome5';
-import { getSAcl, getSBrk, getSPedal } from "../api/driveInfoAPI";
+import { getSAcl, getSBrk, getSPedal, getScore } from "../api/driveInfoAPI";
 import { fetchUserInfo } from "../api/userInfoAPI";
- 
 import { useTheme } from "../components/Mode/ThemeContext";
-import { PanGestureHandler } from 'react-native-gesture-handler';
 
 const MainScreen = () => { 
     const [score, setScore] = useState(100); 
@@ -24,7 +21,7 @@ const MainScreen = () => {
     const navigation = useNavigation(); 
     const { isDarkMode } = useTheme();
 
-    // useFocuseEffect를 사용하여 화면 포커스 받을 때마다 정보 가져오기
+    // useFocusEffect를 사용하여 화면 포커스 받을 때마다 정보 가져오기
     useFocusEffect(
         React.useCallback(() => {
             const fetchData = async () => {
@@ -51,6 +48,15 @@ const MainScreen = () => {
                     console.log("메인 화면 닉네임", userInfo.nickname);
                 } catch (error) {
                     console.error("사용자 정보 가져오기 오류:", error);
+                }
+
+                // 주행 점수 가져오기(추후 수정 필요)
+                try {
+                    const driveScore = await getScore();
+                    setScore(driveScore.score);
+                    console.log("주행 점수: ", driveScore.score);
+                } catch (error) {
+                    console.error("주행 점수 가져오기 오류(메인화면): ", error);
                 }
             };
 
@@ -111,9 +117,6 @@ const MainScreen = () => {
                         onPress={goToSamePedal} 
                     /> 
                 </View> 
-
-                {/* Acceleration Monitor Component */} 
-                <DrivingScoreEvaluator score={score} setScore={setScore} /> 
 
                 {/* 챗봇 버튼 */} 
                 <TouchableOpacity 
