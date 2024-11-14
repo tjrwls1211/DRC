@@ -116,12 +116,6 @@ pygame.mixer.init()
 
 # 음성 재생 시간 기록
 is_accelerating = False
-last_sound_time = {
-    "Unintended Acceleration": 0,
-    "Rapid Acceleration": 0,
-    "Rapid Braking": 0,
-    "Both Feet Driving": 0
-}
 
 # MQTT 설정
 client = mqtt.Client()
@@ -235,7 +229,7 @@ rpm_reached_5000 = False
 # 유지 시간 설정 (상태가 3초 이상 유지되어야 음성 재생)
 MIN_STATE_HOLD_TIME = 3  # 상태 유지 최소 시간
 RESET_PLAYING_STATE_TIME = {  # 상태별 재생 가능 시간 설정
-    "Unintended Acceleration": 26,
+    "Unintended Acceleration": 27,
     "nobrake": 22,
     "speedless": 22,
     "carstop": 22,
@@ -249,12 +243,15 @@ state_start_times = {}
 
 # 함수 정의
 def reset_playing_state():
-    global is_playing_sounds
+    global is_playing_sounds, state_start_times, last_played_state
     is_playing_sounds = False
+    # 현재 유지 중인 상태의 시작 시간 제거 (다시 재생 조건 충족 가능)
+    if last_played_state in state_start_times:
+        del state_start_times[last_played_state]
     print("is_playing_sounds reset to False")
 
 def check_info(accel_value, brake_value, rpm_value):
-    global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating, last_accel_time, last_sound_time
+    global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating
     mqtt_state = None
     current_time = time.time()
 
