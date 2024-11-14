@@ -248,11 +248,14 @@ def check_info(accel_value, brake_value, rpm_value):
     # 기본 상태 설정 (Normal Driving 상태 유지)
     state = "Normal Driving" if not rpm_reached_5000 else "Unintended Acceleration"
 
-    # Unintended Acceleration + 5000 RPM 조건 결합
+    # 조건에 따른 상태 전환 및 음성 제어
     if 200 < accel_value < 1000 and brake_value <= 30 and rpm_value >= 5000:
+        # 급발진 상태
         state = "Unintended Acceleration"
         update_display_state(accel_value, brake_value, state)
-        if not is_playing_sounds:
+        if not is_playing_sounds or last_played_state != state:
+            # 새 상태가 발생할 때 이전 재생 중단
+            stop_sounds = True
             last_played_state = state
             is_playing_sounds = True
             rpm_reached_5000 = True
@@ -261,23 +264,26 @@ def check_info(accel_value, brake_value, rpm_value):
             threading.Timer(3, reset_playing_state).start()
 
     # 이후 RPM 감소 구간에 따른 음성 출력
-    if rpm_reached_5000:
-        if rpm_value < 5000 and rpm_value >= 4000 and not is_playing_sounds:
+    elif rpm_reached_5000:
+        if rpm_value < 5000 and rpm_value >= 4000 and (last_played_state != "nobrake"):
+            print("2번케이스", rpm_value, prev_rpm)
             sounds = [nobrake_1_sound, nobrake_2_sound, nobrake_3_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-            print("시험케이스(1) : ", rpm_value, prev_rpm)
+            last_played_state = "nobrake"
             is_playing_sounds = True
             threading.Timer(3, reset_playing_state).start()
-        elif rpm_value < 4000 and rpm_value >= 3000 and not is_playing_sounds:
+        elif rpm_value < 4000 and rpm_value >= 3000 and (last_played_state != "speedless"):
+            print("3번케이스", rpm_value, prev_rpm)
             sounds = [speedless_1_sound, speedless_2_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-            print("시험케이스(2) : ", rpm_value, prev_rpm)
+            last_played_state = "speedless"
             is_playing_sounds = True
             threading.Timer(3, reset_playing_state).start()
-        elif rpm_value < 3000 and rpm_value >= 2000 and not is_playing_sounds:
+        elif rpm_value < 3000 and rpm_value >= 2000 and (last_played_state != "carstop"):
+            print("4번케이스", rpm_value, prev_rpm)
             sounds = [carstop_1_sound, carstop_2_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-            print("시험케이스(3) : ", rpm_value, prev_rpm)
+            last_played_state = "carstop"
             is_playing_sounds = True
             rpm_reached_5000 = False
             threading.Timer(3, reset_playing_state).start()
@@ -289,7 +295,8 @@ def check_info(accel_value, brake_value, rpm_value):
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 1
-        if not is_playing_sounds:
+        if not is_playing_sounds or last_played_state != state:
+            stop_sounds = True
             last_played_state = state
             sounds = [accelaccel_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
@@ -301,7 +308,8 @@ def check_info(accel_value, brake_value, rpm_value):
         state = "Rapid Braking"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 2
-        if not is_playing_sounds:
+        if not is_playing_sounds or last_played_state != state:
+            stop_sounds = True
             last_played_state = state
             sounds = [brakebrake_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
@@ -313,7 +321,8 @@ def check_info(accel_value, brake_value, rpm_value):
         state = "Both Feet Driving"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 3
-        if not is_playing_sounds:
+        if not is_playing_sounds or last_played_state != state:
+            stop_sounds = True
             last_played_state = state
             sounds = [bothdrive_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
