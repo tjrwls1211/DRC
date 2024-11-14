@@ -162,3 +162,18 @@ export const downDriveInfo = async (date) => {
     throw error;
   }
 };
+
+// 주행 점수 가져오기 (추후 수정 필요)
+export const getScore = async () => {
+    try {
+        console.log("주행 점수 API 함수 실행");
+        const headers = await getTokenHeader();
+        const response = await apiClient.get("URL", {
+            headers,
+            params: {}
+        });
+    } catch (error) {
+        console.error("주행 점수 가져오기 오류: ", error.response?.data || error.message);
+        throw error;
+    }
+};
