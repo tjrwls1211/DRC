@@ -12,7 +12,6 @@ import AnalysisTabs from './src/screens/Analysis/AnalysisTabs';
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import ChatbotScreen from './src/screens/ChatbotScreen';
-import DrivingScoreEvaluator from './src/components/Score/DrivingScoreEvaluator'; // score 테스트 화면
 import { TwoFAProvider } from './src/context/TwoFAprovider'; // 2차 인증 상태 관리
 import SplashScreenComponent from './src/screens/SplashScreen';
 import { ThemeProvider, useTheme } from './src/components/Mode/ThemeContext'; // 다크 모드 Context 추가
@@ -60,11 +59,6 @@ const MainNavigator = () => {
           name="LoginScreen"
           component={LoginScreen} // 로그인 화면 추가
           options={{ headerShown: false}}
-        />
-        <Stack.Screen
-          name="DrivingScoreEvaluator"
-          component={DrivingScoreEvaluator}
-          options={{ headerShown: false, headerTitle: '점수 테스트 화면', headerTitleAlign: 'center' }}
         />
         <Stack.Screen
           name="MainScreen"
