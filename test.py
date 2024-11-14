@@ -261,7 +261,7 @@ def check_info(accel_value, brake_value, rpm_value):
             rpm_reached_5000 = True
             sounds = [rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound, rapidspeed_4_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-            threading.Timer(3, reset_playing_state).start()
+            threading.Timer(18, reset_playing_state).start()
 
     # 이후 RPM 감소 구간에 따른 음성 출력
     elif rpm_reached_5000:
@@ -271,14 +271,14 @@ def check_info(accel_value, brake_value, rpm_value):
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             last_played_state = "nobrake"
             is_playing_sounds = True
-            threading.Timer(3, reset_playing_state).start()
+            threading.Timer(18, reset_playing_state).start()
         elif rpm_value < 4000 and rpm_value >= 3000 and (last_played_state != "speedless"):
             print("3번케이스", rpm_value, prev_rpm)
             sounds = [speedless_1_sound, speedless_2_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             last_played_state = "speedless"
             is_playing_sounds = True
-            threading.Timer(3, reset_playing_state).start()
+            threading.Timer(18, reset_playing_state).start()
         elif rpm_value < 3000 and rpm_value >= 2000 and (last_played_state != "carstop"):
             print("4번케이스", rpm_value, prev_rpm)
             sounds = [carstop_1_sound, carstop_2_sound]
@@ -286,7 +286,7 @@ def check_info(accel_value, brake_value, rpm_value):
             last_played_state = "carstop"
             is_playing_sounds = True
             rpm_reached_5000 = False
-            threading.Timer(3, reset_playing_state).start()
+            threading.Timer(18, reset_playing_state).start()
 
         prev_rpm = rpm_value
 
@@ -301,7 +301,7 @@ def check_info(accel_value, brake_value, rpm_value):
             sounds = [accelaccel_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
-            threading.Timer(3, reset_playing_state).start()
+            threading.Timer(10, reset_playing_state).start()
 
     # Rapid Braking 조건
     elif brake_value > 200 and accel_value <= 30:
@@ -314,7 +314,7 @@ def check_info(accel_value, brake_value, rpm_value):
             sounds = [brakebrake_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
-            threading.Timer(3, reset_playing_state).start()
+            threading.Timer(10, reset_playing_state).start()
 
     # Both Feet Driving 조건
     elif accel_value > 100 and brake_value > 100:
@@ -327,7 +327,7 @@ def check_info(accel_value, brake_value, rpm_value):
             sounds = [bothdrive_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
-            threading.Timer(3, reset_playing_state).start()
+            threading.Timer(10, reset_playing_state).start()
 
     # Normal 상태로 돌아왔을 때 초기화
     else:
