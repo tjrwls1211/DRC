@@ -227,7 +227,7 @@ rpm_reached_5000 = False
 
 
 # 유지 시간 설정 (상태가 3초 이상 유지되어야 음성 재생)
-MIN_STATE_HOLD_TIME = 3  # 상태 유지 최소 시간
+MIN_STATE_HOLD_TIME = 3  # 상태 유지 최소 시간 
 RESET_PLAYING_STATE_TIME = {  # 상태별 재생 가능 시간 설정
     "Unintended Acceleration": 27,
     "nobrake": 22,
@@ -282,16 +282,21 @@ def check_info(accel_value, brake_value, rpm_value):
             if state not in state_start_times:
                 state_start_times[state] = current_time
             if current_time - state_start_times[state] >= MIN_STATE_HOLD_TIME:
+                # 기존 음성 중단
+                stop_sounds = True
                 sounds = [nobrake_1_sound, nobrake_2_sound, nobrake_3_sound]
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 last_played_state = state
                 is_playing_sounds = True
                 threading.Timer(RESET_PLAYING_STATE_TIME[state], reset_playing_state).start()
+
         elif rpm_value < 4000 and rpm_value >= 3000 and (last_played_state != "speedless"):
             state = "speedless"
             if state not in state_start_times:
                 state_start_times[state] = current_time
             if current_time - state_start_times[state] >= MIN_STATE_HOLD_TIME:
+                # 기존 음성 중단
+                stop_sounds = True
                 sounds = [speedless_1_sound, speedless_2_sound]
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 last_played_state = state
@@ -302,6 +307,8 @@ def check_info(accel_value, brake_value, rpm_value):
             if state not in state_start_times:
                 state_start_times[state] = current_time
             if current_time - state_start_times[state] >= MIN_STATE_HOLD_TIME:
+                # 기존 음성 중단
+                stop_sounds = True
                 sounds = [carstop_1_sound, carstop_2_sound]
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 last_played_state = state
