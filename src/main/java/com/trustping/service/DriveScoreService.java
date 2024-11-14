@@ -8,4 +8,6 @@ public interface DriveScoreService{
 	public void registerDriveScore(UserData userData);
 	
 	public DriveScoreDTO getDriveScoreByUserId(String id);
+	
+	public void updateDriveScore(UserData userData);
 }

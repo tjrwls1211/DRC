@@ -2,15 +2,11 @@ package com.trustping.service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.trustping.DTO.DriveLogReceiveDTO;
-import com.trustping.entity.DriveScore;
-import com.trustping.entity.UserData;
-import com.trustping.repository.DriveScoreRepository;
 
 @Service
 public class DriveScoreEvaluateService {
@@ -19,10 +15,9 @@ public class DriveScoreEvaluateService {
 	UserDataService userDataService;
 
 	@Autowired
-	DriveScoreRepository driveScoreRepository;
-
+	SegmentService segmentService;
+	
 	private Map<String, Integer> abnormalDriveCount = new HashMap<>();
-	private Map<String, Integer> normalDriveCount = new HashMap<>();
 
 	public void evaluateScore(DriveLogReceiveDTO driveLog) {
 		String carId = driveLog.getCarId();
@@ -30,19 +25,12 @@ public class DriveScoreEvaluateService {
 		int speed = driveLog.getSpeed();
 		String driveState = driveLog.getDriveState();
 
-		Optional<UserData> userDataOpt = userDataService.getUserDataByCarId(carId);
-		if (userDataOpt.isEmpty()) {
-			return;
-		}
-
-		UserData userData = userDataOpt.get();
-
 		int count = abnormalDriveCount.getOrDefault(carId, 0);
 
 		// 양발 운전 시 바로 점수 감점
 		if ("Both Feet Driving".equals(driveState)) {
 			abnormalDriveCount.put(carId, 0);
-			deductScore(userData);
+			deductScore(carId);
 			return;
 		}
 
@@ -59,7 +47,7 @@ public class DriveScoreEvaluateService {
 		if (count == 3) {
 			abnormalDriveCount.put(carId, 0);
 			System.out.println("카운트 초기화 " + carId);
-			deductScore(userData);
+			deductScore(carId);
 		}
 
 	}
@@ -115,18 +103,7 @@ public class DriveScoreEvaluateService {
 		return count;
 	}
 
-	private void deductScore(UserData userData) {
-		Optional<DriveScore> driveScoreOpt = driveScoreRepository.findByUserData(userData);
-
-		if (driveScoreOpt.isEmpty()) {
-			return;
-		}
-
-		DriveScore driveScore = driveScoreOpt.get();
-
-		int lastScore = driveScore.getScore();
-		driveScore.setScore(lastScore - 3);
-
-		driveScoreRepository.save(driveScore);
+	private void deductScore(String carId) {
+		segmentService.updateSegmentScore(carId);
 	}
 }

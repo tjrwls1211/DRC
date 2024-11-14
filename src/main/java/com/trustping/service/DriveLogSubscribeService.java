@@ -37,7 +37,7 @@ public class DriveLogSubscribeService implements MqttCallback {
     private DriveScoreEvaluateService driveScoreEvaluateService;
     
     @Autowired
-	private SegmentService segmentService;
+	private SegmentServiceImpl segmentService;
 	
     
     @PostConstruct
