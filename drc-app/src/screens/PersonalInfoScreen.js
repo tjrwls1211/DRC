@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Animated} from 'react-native';
 import { fetchUserInfo } from '../api/userInfoAPI';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useTheme } from '../components/Mode/ThemeContext'; // ThemeContext에서 useTheme 가져오기
+
 
 const PersonalInfoScreen = () => {
+    const { isDarkMode, setIsDarkMode } = useTheme(); // 다크 모드 상태 가져오기
     const [userInfo, setUserInfo] = useState({
         nickname: '임의의 닉네임',
         id: '임의의 ID (Email)',
@@ -48,8 +51,8 @@ const PersonalInfoScreen = () => {
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>개인 정보</Text>
+        <View style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#ffffff' }]}> 
+             <Text style={[styles.title, { color: isDarkMode ? '#009688' : '#121212' }]}>개인 정보</Text>
             {['닉네임', 'ID (Email)', '생년월일', '차량 번호'].map((label, index) => (
                 <Animated.View
                     key={index}

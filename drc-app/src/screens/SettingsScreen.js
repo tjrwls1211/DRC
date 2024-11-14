@@ -159,24 +159,24 @@ const SettingsScreen = () => {
   <Text style={styles.buttonText}>비밀번호 수정</Text>
 </TouchableOpacity>
   
-      <View style={[styles.section, { marginTop: 35 }]}>
-        <MaterialIcons name="lock" size={24} color={isDarkMode ? '#ffffff' : '#009688'} /> 
-        <Text style={[styles.label, styles.labelSpacing, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>2차 인증 설정</Text>
-      </View>
+<View style={[styles.section, { marginTop: 35 }]}>
+    <MaterialIcons name="lock" size={24} color={isDarkMode ? '#ffffff' : '#009688'} /> 
+    <Text style={[styles.label, styles.labelSpacing, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>2차 인증 설정</Text>
+</View>
   
-      <DropDownPicker
-        open={open}
-        value={is2FAEnabled}
-        items={items} 
-        setOpen={setOpen} 
-        setValue={setIs2FAEnabled} 
-        setItems={setItems} 
-        onChangeValue={handle2FAChange} 
-        style={[styles.dropdown, { marginTop: 5, backgroundColor: isDarkMode ? '#1f1f1f' : '#ffffff' }]} 
-        dropDownContainerStyle={styles.dropdownContainer}
-        labelStyle={{ color: isDarkMode ? '#ffffff' : '#009688', fontSize: 18 }} 
-        textStyle={{ color: isDarkMode ? '#ffffff' : '#009688', fontSize: 18 }} 
-      />
+<DropDownPicker
+    open={open}
+    value={is2FAEnabled}
+    items={items} 
+    setOpen={setOpen} 
+    setValue={setIs2FAEnabled} 
+    setItems={setItems} 
+    onChangeValue={handle2FAChange} 
+    style={[styles.dropdown, { marginTop: 5, backgroundColor: isDarkMode ? '#1f1f1f' : '#ffffff' }]} 
+    dropDownContainerStyle={[styles.dropdownContainer, { backgroundColor: isDarkMode ? '#1f1f1f' : '#ffffff' }]} // 드롭다운 컨테이너 배경색
+    labelStyle={{ color: isDarkMode ? '#ffffff' : '#009688', fontSize: 18 }} 
+    textStyle={{ color: isDarkMode ? '#ffffff' : '#009688', fontSize: 18 }} 
+/>
   
       <Modal isVisible={isModalVisible}>
         <View style={[styles.modalContent, { backgroundColor: isDarkMode ? '#1f1f1f' : '#ffffff' }]}>
