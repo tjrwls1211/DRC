@@ -242,8 +242,6 @@ def check_info(accel_value, brake_value, rpm_value):
     global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating, last_accel_time, last_sound_time
     mqtt_state = None
     
-     # 기본 state 설정을 제외하고 RPM 감소 구간에서는 상태 변경 안 함
-    state = "Normal Driving" if not rpm_reached_5000 else "Unintended Acceleration"
     current_time = time.time()  # 현재 시간 기록
 
     # Unintended Acceleration + 5000 RPM 조건 결합
@@ -261,16 +259,16 @@ def check_info(accel_value, brake_value, rpm_value):
         elapsed_time = current_time - last_sound_time.get(state, 0)
         if (state != last_played_state) and elapsed_time >= state_hold_time and elapsed_time >= sound_delay and not is_playing_sounds:
             stop_sounds = True
-            last_played_state = state  # 마지막으로 재생된 상태 업데이트
+            last_played_state = state
             is_playing_sounds = True
-            rpm_reached_5000 = True  # 5000 RPM 도달 시 플래그 설정
+            rpm_reached_5000 = True
             print("rpm 도착값", rpm_reached_5000)
             sounds = [rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound, rapidspeed_4_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-
             threading.Timer(3, reset_playing_state).start()
+    
     # 이후 RPM 감소 구간에 따른 음성 출력
-    if rpm_reached_5000:
+    elif rpm_reached_5000:
         if rpm_value < 5000 and rpm_value >= 4000 and not is_playing_sounds:
             print("2번케이스", rpm_value, prev_rpm)
             sounds = [nobrake_1_sound, nobrake_2_sound, nobrake_3_sound]
@@ -286,15 +284,11 @@ def check_info(accel_value, brake_value, rpm_value):
             sounds = [carstop_1_sound, carstop_2_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
-            rpm_reached_5000 = False  # 2000 RPM 이하로 떨어지면 플래그 초기화
+            rpm_reached_5000 = False
 
         prev_rpm = rpm_value
 
-    # 가속 상태가 아니면 is_accelerating을 초기화하여 가속 종료 상태로 설정
-    elif is_accelerating:
-        is_accelerating = False
-
-    # Rapid Acceleration
+    # Rapid Acceleration 조건
     elif accel_value > 1000 and brake_value <= 30:
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
@@ -313,10 +307,10 @@ def check_info(accel_value, brake_value, rpm_value):
             sounds = [accelaccel_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             last_sound_time[state] = current_time
-            last_played_state = state  # 마지막 재생 상태 갱신
+            last_played_state = state
             is_playing_sounds = True
 
-    # Rapid Braking
+    # Rapid Braking 조건
     elif brake_value > 200 and accel_value <= 30:
         state = "Rapid Braking"
         update_display_state(accel_value, brake_value, state)
@@ -338,7 +332,7 @@ def check_info(accel_value, brake_value, rpm_value):
             last_played_state = state
             is_playing_sounds = True
 
-    # Both Feet Driving
+    # Both Feet Driving 조건
     elif accel_value > 100 and brake_value > 100:
         state = "Both Feet Driving"
         update_display_state(accel_value, brake_value, state)
@@ -360,16 +354,18 @@ def check_info(accel_value, brake_value, rpm_value):
             last_played_state = state
             is_playing_sounds = True
 
-    # 상태가 Normal로 돌아왔을 때
+    # 모든 조건이 충족되지 않으면 Normal Driving 상태로 설정
     else:
-        state = "Normal Driving"
-        update_display_state(accel_value, brake_value, state)
-        is_accelerating = False
-        stop_sounds = True  # 조건에 맞지 않으면 음성 중단
-        last_played_state = None  # 정상 상태로 돌아오면 마지막 재생 상태 초기화 
-        is_playing_sounds = False  # 음성 상태 초기화 
+        if state not in ["Unintended Acceleration", "Rapid Acceleration", "Rapid Braking", "Both Feet Driving"]:
+            state = "Normal Driving"
+            update_display_state(accel_value, brake_value, state)
+            is_accelerating = False
+            stop_sounds = True
+            last_played_state = None
+            is_playing_sounds = False
 
     data["driveState"] = state
+
         
     # 상태가 변경되고 mqtt_state가 None이 아    닐 때만 MQTT 전송    
     if mqtt_state is not None and mqtt_state != prev_mqtt_state:
