@@ -223,10 +223,6 @@ def play_sounds_in_sequence(sounds):
 
     is_playing_sounds = False  # 모든 음성 재생 완료 후 플래그 해제
 
-# 특정시간이 지나면 다시 초기화하는 로직
-def reset_playing_state():
-    global is_playing_sounds
-    is_playing_sounds = False
     
 #전역 변수로 안전 상태 저장
 prev_mqtt_state = None
@@ -237,11 +233,16 @@ last_played_state = None  # 전역 변수로 설정
 rpm_reached_5000 = False
 
 
+import threading
+import time
+
 def check_info(accel_value, brake_value, rpm_value):
     print("acl : ", accel_value, "brk : ", brake_value, "rpm : ", rpm_value)
     global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating, last_accel_time, last_sound_time
     mqtt_state = None
     
+    # 기본 state 설정을 제외하고 RPM 감소 구간에서는 상태 변경 안 함
+    state = "Normal Driving" if not rpm_reached_5000 else "Unintended Acceleration"
     current_time = time.time()  # 현재 시간 기록
 
     # Unintended Acceleration + 5000 RPM 조건 결합
@@ -259,32 +260,37 @@ def check_info(accel_value, brake_value, rpm_value):
         elapsed_time = current_time - last_sound_time.get(state, 0)
         if (state != last_played_state) and elapsed_time >= state_hold_time and elapsed_time >= sound_delay and not is_playing_sounds:
             stop_sounds = True
-            last_played_state = state
+            last_played_state = state  # 마지막으로 재생된 상태 업데이트
             is_playing_sounds = True
-            rpm_reached_5000 = True
+            rpm_reached_5000 = True  # 5000 RPM 도달 시 플래그 설정
             print("rpm 도착값", rpm_reached_5000)
             sounds = [rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound, rapidspeed_4_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
+
+            # 3초 후 is_playing_sounds를 초기화하여 반복 재생 가능하도록 설정
             threading.Timer(3, reset_playing_state).start()
-    
+
     # 이후 RPM 감소 구간에 따른 음성 출력
-    elif rpm_reached_5000:
+    if rpm_reached_5000:
         if rpm_value < 5000 and rpm_value >= 4000 and not is_playing_sounds:
             print("2번케이스", rpm_value, prev_rpm)
             sounds = [nobrake_1_sound, nobrake_2_sound, nobrake_3_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
+            threading.Timer(3, reset_playing_state).start()  # 반복 재생을 위해 초기화 설정
         elif rpm_value < 4000 and rpm_value >= 3000 and not is_playing_sounds:
             print("3번케이스", rpm_value, prev_rpm)
             sounds = [speedless_1_sound, speedless_2_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
+            threading.Timer(3, reset_playing_state).start()  # 반복 재생을 위해 초기화 설정
         elif rpm_value < 3000 and rpm_value >= 2000 and not is_playing_sounds:
             print("4번케이스", rpm_value, prev_rpm)
             sounds = [carstop_1_sound, carstop_2_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
-            rpm_reached_5000 = False
+            rpm_reached_5000 = False  # 2000 RPM 이하로 떨어지면 플래그 초기화
+            threading.Timer(3, reset_playing_state).start()  # 반복 재생을 위해 초기화 설정
 
         prev_rpm = rpm_value
 
@@ -307,8 +313,9 @@ def check_info(accel_value, brake_value, rpm_value):
             sounds = [accelaccel_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             last_sound_time[state] = current_time
-            last_played_state = state
+            last_played_state = state  # 마지막 재생 상태 갱신
             is_playing_sounds = True
+            threading.Timer(3, reset_playing_state).start()  # 반복 재생을 위해 초기화 설정
 
     # Rapid Braking 조건
     elif brake_value > 200 and accel_value <= 30:
@@ -331,6 +338,7 @@ def check_info(accel_value, brake_value, rpm_value):
             last_sound_time[state] = current_time
             last_played_state = state
             is_playing_sounds = True
+            threading.Timer(3, reset_playing_state).start()  # 반복 재생을 위해 초기화 설정
 
     # Both Feet Driving 조건
     elif accel_value > 100 and brake_value > 100:
@@ -353,20 +361,19 @@ def check_info(accel_value, brake_value, rpm_value):
             last_sound_time[state] = current_time
             last_played_state = state
             is_playing_sounds = True
+            threading.Timer(3, reset_playing_state).start()  # 반복 재생을 위해 초기화 설정
 
-    # 모든 조건이 충족되지 않으면 Normal Driving 상태로 설정
+    # 상태가 Normal로 돌아왔을 때
     else:
-        if state not in ["Unintended Acceleration", "Rapid Acceleration", "Rapid Braking", "Both Feet Driving"]:
-            state = "Normal Driving"
-            update_display_state(accel_value, brake_value, state)
-            is_accelerating = False
-            stop_sounds = True
-            last_played_state = None
-            is_playing_sounds = False
+        state = "Normal Driving"
+        update_display_state(accel_value, brake_value, state)
+        is_accelerating = False
+        stop_sounds = True  # 조건에 맞지 않으면 음성 중단
+        last_played_state = None  # 정상 상태로 돌아오면 마지막 재생 상태 초기화 
+        is_playing_sounds = False  # 음성 상태 초기화 
 
-    data["driveState"] = state
+    data["driveState"] = state 
 
-        
     # 상태가 변경되고 mqtt_state가 None이 아    닐 때만 MQTT 전송    
     if mqtt_state is not None and mqtt_state != prev_mqtt_state:
         alert_data = {
@@ -377,6 +384,15 @@ def check_info(accel_value, brake_value, rpm_value):
         client.publish('AbnormalDriving', json.dumps(alert_data), 0, retain=False)
         #이전 상태  갱신
         prev_mqtt_state = mqtt_state
+        
+def reset_playing_state():
+    global is_playing_sounds
+    is_playing_sounds = False
+    print("is_playing_sounds reset to False after 3 seconds.")
+
+
+        
+    
 
 # 초기 값 설정
 previous_speed = 0  # 이전 속도 (km/h)
