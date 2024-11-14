@@ -79,9 +79,11 @@ max_speed = 200
 
 # 그래프 초기 설정
 fig, ax = plt.subplots(figsize=(2, 6))
+fig.patch.set_facecolor("black")  # Figure 배경색 설정
+fig.patch.set_alpha(0)  # Figure 배경 투명하게 설정
 ax.set_ylim(0, num_bins)
 ax.axis('off')
-ax.set_facecolor("black")
+ax.set_facecolor("black")  # 축 배경색 설정
 
 # 초기 막대 생성
 bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)]
