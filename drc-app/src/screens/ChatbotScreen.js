@@ -14,7 +14,7 @@ const ChatbotScreen = ({ navigation }) => {
     const [showBackOnly, setShowBackOnly] = useState(false);
     const [activeButton, setActiveButton] = useState(null);
     const { isDarkMode } = useTheme();
-
+    const [showHelpImages, setShowHelpImages] = useState([]);
   
     // GPT API 호출 함수
     const callGPTApi = async (userInput) => {
@@ -138,8 +138,20 @@ if (inputDate > currentDate) {
           setMessages(prevMessages => [...prevMessages, { text: botResponse, isBot: true }]);
       }
   
-      if (buttonText === "급가속" || buttonText === "급제동" || buttonText === "주행정보") {
-        setShowQueryButtons(true);
+      if (buttonText === "앱 도움말") {
+          // 여러 이미지 경로 추가
+          setShowHelpImages([
+              require('../../assets/help/메인화면.png'), 
+              require('../../assets/help/마이페이지.png'), 
+              require('../../assets/help/마이페이지 달력설정 화면.png'),
+              require('../../assets/help/설정화면.png'),
+              require('../../assets/help/설정 2차인증 설정 화면.png'),
+              require('../../assets/help/설정 다크모드 적용 화면.png'),
+              require('../../assets/help/급가속.png'),
+              require('../../assets/help/급정거.png'),
+              require('../../assets/help/양발운전.png'),
+              require('../../assets/help/챗봇 화면.png'),
+          ]);
       } else if (buttonText === "급발진") {
         setShowBackOnly(true);
       } else if (buttonText === "고객지원") {
@@ -226,7 +238,14 @@ if (inputDate > currentDate) {
                       )}
                   </View>
               ))}
-  
+              {showHelpImages.length > 0 && showHelpImages.map((image, index) => (
+        <View key={index} style={styles.imageContainer}>
+            <Image 
+                source={image}
+                style={styles.helpImage}
+            />
+        </View>
+   ))}
               {showQueryButtons ? (
                   <View style={styles.queryButtonsContainer}>
                       <TouchableOpacity style={styles.queryButton} onPress={handleQueryPress}>
@@ -446,6 +465,15 @@ buttonText: {
     color: '#fff',
     fontSize: 16,
   },
+  imageContainer: {
+    alignItems: 'center',
+    marginVertical: 10,
+},
+helpImage: {
+    width: '200%', // 원하는 너비
+    height: 400, // 원하는 높이
+    resizeMode: 'contain',
+},
 });
 
 export default ChatbotScreen;
