@@ -5,6 +5,7 @@ import { extractDateAndKeyword } from '../components/ChatBot/extractHelpers';
 import { chatbotResponses } from '../components/ChatBot/chatbotResponses';
 import axios from 'axios';
 import { useTheme } from '../components/Mode/ThemeContext';
+import HelpModal from '../components/Modal/HelpModal';
 
 
 const ChatbotScreen = ({ navigation }) => {
@@ -15,6 +16,8 @@ const ChatbotScreen = ({ navigation }) => {
     const [activeButton, setActiveButton] = useState(null);
     const { isDarkMode } = useTheme();
     const [showHelpImages, setShowHelpImages] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false); // 모달 상태 추가
+
   
     // GPT API 호출 함수
     const callGPTApi = async (userInput) => {
@@ -139,19 +142,19 @@ if (inputDate > currentDate) {
       }
   
       if (buttonText === "앱 도움말") {
-          // 여러 이미지 경로 추가
-          setShowHelpImages([
-              require('../../assets/help/메인화면.png'), 
-              require('../../assets/help/마이페이지.png'), 
-              require('../../assets/help/마이페이지 달력설정 화면.png'),
-              require('../../assets/help/설정화면.png'),
-              require('../../assets/help/설정 2차인증 설정 화면.png'),
-              require('../../assets/help/설정 다크모드 적용 화면.png'),
-              require('../../assets/help/급가속.png'),
-              require('../../assets/help/급정거.png'),
-              require('../../assets/help/양발운전.png'),
-              require('../../assets/help/챗봇 화면.png'),
-          ]);
+        setShowHelpImages([
+            require('../../assets/help/메인화면.png'), 
+            require('../../assets/help/마이페이지.png'), 
+            require('../../assets/help/마이페이지 달력설정 화면.png'),
+            require('../../assets/help/설정화면.png'),
+            require('../../assets/help/설정 2차인증 설정 화면.png'),
+            require('../../assets/help/설정 다크모드 적용 화면.png'),
+            require('../../assets/help/급가속.png'),
+            require('../../assets/help/급정거.png'),
+            require('../../assets/help/양발운전.png'),
+            require('../../assets/help/챗봇 화면.png'),
+        ]);
+        setModalVisible(true); // 모달 열기
       } else if (buttonText === "급발진") {
         setShowBackOnly(true);
       } else if (buttonText === "고객지원") {
@@ -238,14 +241,8 @@ if (inputDate > currentDate) {
                       )}
                   </View>
               ))}
-              {showHelpImages.length > 0 && showHelpImages.map((image, index) => (
-        <View key={index} style={styles.imageContainer}>
-            <Image 
-                source={image}
-                style={styles.helpImage}
-            />
-        </View>
-   ))}
+              
+
               {showQueryButtons ? (
                   <View style={styles.queryButtonsContainer}>
                       <TouchableOpacity style={styles.queryButton} onPress={handleQueryPress}>
@@ -285,6 +282,13 @@ if (inputDate > currentDate) {
                 </View>
               )}
           </ScrollView>
+
+          <HelpModal 
+    visible={modalVisible} 
+    images={showHelpImages} 
+    onClose={() => setModalVisible(false)} 
+/>
+
   
           <View style={[styles.inputContainer, { backgroundColor: isDarkMode ? '#1e1e1e' : '#fff' }]}>
           <TextInput
@@ -465,15 +469,6 @@ buttonText: {
     color: '#fff',
     fontSize: 16,
   },
-  imageContainer: {
-    alignItems: 'center',
-    marginVertical: 10,
-},
-helpImage: {
-    width: '200%', // 원하는 너비
-    height: 400, // 원하는 높이
-    resizeMode: 'contain',
-},
 });
 
 export default ChatbotScreen;
