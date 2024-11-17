@@ -35,17 +35,17 @@ const AnalysisScreen = ({ todayData, fetchData, title, chartDataKey, loadingText
       try {
         console.log("---------", title, "---------");
         // 데이터 fetching
-        const result = await fetchData(twoWeeksAgo, currentDate); // fetchData는 prop으로 전달된 (각 분석 항목 데이터 조회)함수
+        // const result = await fetchData(twoWeeksAgo, currentDate); // fetchData는 prop으로 전달된 (각 분석 항목 데이터 조회)함수
 
         // 테스트 데이터 ↓ -----
-        // const result = Array.from({ length: 14 }, (_, index) => {
-        //   const date = new Date();
-        //   date.setDate(date.getDate() - (14 - index)); // 오늘 날짜로부터 14일 전부터 오늘까지의 날짜 생성
-        //   return {
-        //     date: date.toISOString().split('T')[0], // ISO 포맷으로 날짜 생성 (YYYY-MM-DD)
-        //     [chartDataKey]: Math.floor(Math.random() * 21) // chartDataKey를 키로 사용
-        //   };
-        // });
+        const result = Array.from({ length: 14 }, (_, index) => {
+          const date = new Date();
+          date.setDate(date.getDate() - (14 - index)); // 오늘 날짜로부터 14일 전부터 오늘까지의 날짜 생성
+          return {
+            date: date.toISOString().split('T')[0], // ISO 포맷으로 날짜 생성 (YYYY-MM-DD)
+            [chartDataKey]: Math.floor(Math.random() * 21) // chartDataKey를 키로 사용
+          };
+        });
         // 테스트 데이터 ↑ -----
 
         clearTimeout(timeoutId); // 응답 오면 타이머 종료
@@ -115,7 +115,7 @@ const AnalysisScreen = ({ todayData, fetchData, title, chartDataKey, loadingText
       />
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <LineChart
+      <LineChart
           data={{
             labels: chartData.labels,
             datasets: chartData.datasets,
@@ -129,27 +129,58 @@ const AnalysisScreen = ({ todayData, fetchData, title, chartDataKey, loadingText
             backgroundGradientFrom: isDarkMode ? '#121212' : '#ffffff',
             backgroundGradientTo: isDarkMode ? '#121212' : '#ffffff',
             decimalPlaces: 0,
-            color: (opacity = 1) => isDarkMode ? `rgba(255, 255, 255, ${opacity})` : `rgba(47, 79, 79, ${opacity})`,
-            labelColor: () => isDarkMode ? '#ffffff' : '#2F4F4F',
+            color: (opacity = 1) =>
+              isDarkMode ? `rgba(255, 255, 255, ${opacity})` : `rgba(47, 79, 79, ${opacity})`,
+            labelColor: () => (isDarkMode ? '#ffffff' : '#2F4F4F'),
             style: {
               borderRadius: 16,
             },
             propsForDots: {
-              r: '4',  // 점 크기 줄이기
-              strokeWidth: '1.5',  // 점 외곽선 크기 줄이기
+              r: '4',
+              strokeWidth: '1.5',
               stroke: themeColor,
             },
+            propsForLabels: {
+              fontSize: 12,
+              fill: isDarkMode ? '#ffffff' : '#2F4F4F',
+            },
+          }}
+          withDots={true} // 점 표시 활성화
+          renderDotContent={({ x, y, index }) => {
+            const buffer = 25; // 점과 텍스트 사이 최소 여백
+            const dataValue = chartData.datasets[0].data[index];
+            const maxValue = Math.max(...chartData.datasets[0].data);
+            const adjustedY =
+              y < buffer
+                ? y + 10 // 그래프 상단에 가까우면 점 아래로 텍스트 표시
+                : y - 20; // 일반적으로 점 위에 텍스트 표시
+          
+            return (
+              <Text
+                key={index}
+                style={{
+                  position: 'absolute',
+                  left: x - 10, // 텍스트를 점의 x 좌표 중심에 맞춤
+                  top: adjustedY, // 조정된 y 좌표
+                  color: isDarkMode ? '#ffffff' : '#2F4F4F', // 다크 모드 여부에 따라 색상 조정
+                  fontSize: 12, // 텍스트 크기
+                  textAlign: 'center', // 텍스트 중앙 정렬
+                }}
+              >
+                {dataValue}회 {/* 데이터 값과 '회' 추가 */}
+              </Text>
+            );
           }}
           bezier
           style={{
             marginVertical: 8,
             marginHorizontal: 7,
             borderWidth: 1,
-            borderColor: isDarkMode ? themeColor : themeColor, // 테두리 색상
+            borderColor: isDarkMode ? themeColor : themeColor,
             borderRadius: 16,
             overflow: 'hidden',
           }}
-      />
+        />
       </ScrollView>
 
       <Text style={{
@@ -208,12 +239,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 16,
     overflow: 'hidden'
-  },
-  infoText: { 
-    textAlign: 'right',
-    marginRight: 10,
-    fontSize: 12,
-    marginBottom: 15
   },
 });
 
