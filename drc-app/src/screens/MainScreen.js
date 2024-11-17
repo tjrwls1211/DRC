@@ -1,11 +1,14 @@
 import React, { useState } from "react"; 
-import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'; 
+import { View, StyleSheet, TouchableOpacity, Text, Image, Platform, } from 'react-native';
 import ViewCard from "../components/Card/ViewCard"; 
 import TouchCard from "../components/Card/TouchCard"; 
+import HelpScoreModal from "../components/Modal/HelpScoreModal"; 
+import HelpDeductionModal from "../components/Modal/HelpDeductionModal";
 import DRCLogoText from "../../assets/DRCLogo-text.png";
 import { useNavigation, useFocusEffect } from '@react-navigation/native'; 
 import Icon3 from 'react-native-vector-icons/Ionicons'; 
 import Icon4 from 'react-native-vector-icons/FontAwesome5';
+import Icon5 from 'react-native-vector-icons/MaterialCommunityIcons'
 import { getSAcl, getSBrk, getSPedal, getScore } from "../api/driveInfoAPI";
 import { fetchUserInfo } from "../api/userInfoAPI";
 import { useTheme } from "../components/Mode/ThemeContext";
@@ -17,9 +20,16 @@ const MainScreen = () => {
         suddenBraking: 0,
         bothPedal: 0,
     });
-    const [nickname, setNickname] = useState("홍길동");
+    const [nickname, setNickname] = useState("OOO");
     const navigation = useNavigation(); 
     const { isDarkMode } = useTheme();
+    const [helpScoreVisible, setHelpScoreVisible] = useState(false);
+    const [helpDeductionVisible, setHelpDeductionVisible] = useState(false);
+
+    const openHelpScoreModal = () => setHelpScoreVisible(true);
+    const closeHelpScoreModal = () => setHelpScoreVisible(false);
+    const openHelpDeductionModal = () => setHelpDeductionVisible(true);
+    const closeHelpDeductionModal = () => setHelpDeductionVisible(false);
 
     // useFocusEffect를 사용하여 화면 포커스 받을 때마다 정보 가져오기
     useFocusEffect(
@@ -80,22 +90,33 @@ const MainScreen = () => {
     return( 
         <View style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#009688' }]}> 
             {/* 헤더 부분 */} 
-            <View style={[styles.headerContainer, { backgroundColor: isDarkMode ? '#009688' : '#009688' }]}> 
-                <View style={styles.header}> 
-                    <Icon4 name="user-circle" size={27} color="#ffffff" onPress={() => navigation.navigate('MypageScreen')} /> 
-                    <Image source={DRCLogoText} style={styles.logo} />
-                    <Icon3 name="settings-outline" size={27} color="#ffffff" onPress={() => navigation.navigate('SettingsScreen')} /> 
-                </View> 
-            </View> 
+            <View style={[styles.headerContainer, { backgroundColor: isDarkMode ? '#009688' : '#009688' }]}>
+                <View style={styles.header}>
+                    <Icon4 name="user-circle" size={27} color="#ffffff" onPress={() => navigation.navigate('MypageScreen')} />
+                    <View style={styles.logoContainer}>
+                        <Image source={DRCLogoText} style={styles.logo} />
+                        <Icon5 name="help-circle-outline" size={27} color="#ffffff" style={styles.helpScoreIcon} onPress={openHelpScoreModal} />
+                    </View>
+                    <Icon3 name="settings-outline" size={27} color="#ffffff" onPress={() => navigation.navigate('SettingsScreen')} />
+                </View>
+            </View>
+
+            {/* Help Modal */}
+            <HelpScoreModal visible={helpScoreVisible} onClose={closeHelpScoreModal} />
+            <HelpDeductionModal visible={helpDeductionVisible} onClose={closeHelpDeductionModal} />
 
             <View style={{ flex: 1, backgroundColor: isDarkMode ? '#121212' : '#ffffff', padding: 20 }}> 
+                
                 <ViewCard name={nickname} score={score} /> 
-                <Text style={{ 
-                    marginTop: -110, 
-                    fontWeight: 'bold', 
-                    fontSize: 15, 
-                    color: isDarkMode ? '#ffffff' : '#000' // 다크 모드일 때 글자색을 하얀색으로 설정
-                }}>운전 습관</Text>
+                <View style={styles.helpView}>
+                    <Text style={{ 
+                        fontWeight: 'bold', 
+                        fontSize: 15, 
+                        marginRight: 10,
+                        color: isDarkMode ? '#ffffff' : '#000' // 다크 모드일 때 글자색을 하얀색으로 설정
+                    }}>운전 습관</Text>
+                    <Icon5 name="help-circle-outline" size={27} color="#868f8e" style={styles.helpIcon} onPress={openHelpDeductionModal} />
+                </View>
                 <View style={styles.cardContainer}> 
                     {/* analysis_count= 변수설정하기 */} 
                     <TouchCard 
@@ -171,5 +192,22 @@ const styles = StyleSheet.create({
         resizeMode: 'contain', // 로고 크기 조정
         opacity: 0.8,
     },
+    logoContainer: {
+        alignItems: 'center',
+        position: 'relative',
+    },
+    helpScoreIcon: {
+        marginTop: Platform.OS === 'ios' ? '-10%' : '-20%', // 로고와 도움말 아이콘 간 간격
+        marginLeft: Platform.OS === 'ios' ? '-230%' : '-210%',
+    },
+    helpIcon: {
+        // marginTop: Platform.OS === 'ios' ? '-10%' : '-20%', // 로고와 도움말 아이콘 간 간격
+        // marginLeft: Platform.OS === 'ios' ? '-230%' : '-210%',
+    },
+    helpView: {
+        marginTop: -120, 
+        flexDirection: 'row',
+        alignItems: 'center',
+    }
 }); 
 export default MainScreen; 
