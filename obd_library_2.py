@@ -3,6 +3,7 @@ from obd import OBDStatus
 
 # OBD-II 연결 부분
 connection = obd.OBD()
+print(connection.status)
 
 # 연결 상태 확인 및 디버깅
 if connection.status == OBDStatus.NOT_CONNECTED:
@@ -20,6 +21,7 @@ else:
 if connection.status == OBDStatus.CAR_CONNECTED:  # 차량이 제대로 연결된 경우만 실행
     cmd = obd.commands.SPEED
     response = connection.query(cmd)
+    print(response)
     
     if response.value:  # 데이터가 유효한 경우
         print(f"속도: {response.value} km/h")
