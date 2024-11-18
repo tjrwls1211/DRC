@@ -1,94 +1,77 @@
 import serial
 import time
 
-# ELM327 Bluetooth 연결 및 초기화
+# ELM327 연결 초기화
 def initialize_obd():
     try:
         obd = serial.Serial(
             port='/dev/rfcomm0',  # Bluetooth 포트
-            baudrate=9600,       # ELM327 기본 Baudrate
-            timeout=1            # 1초 타임아웃
+            baudrate=9600,       # 기본 속도
+            timeout=1            # 1초 대기
         )
-        print("ELM327 연결 성공")
-
-        # 초기화 명령 전송
-        obd.write(b'ATZ\r')  # 장치 리셋
+        obd.write(b'ATZ\r')  # 초기화 명령 (리셋)
         time.sleep(1)
         obd.write(b'ATE0\r')  # 에코 끄기
         time.sleep(1)
-        print("ELM327 초기화 완료")
+        print("ELM327 연결 및 초기화 성공")
         return obd
     except Exception as e:
-        print(f"ELM327 연결 실패: {e}")
+        print(f"ELM327 초기화 실패: {e}")
         return None
 
-# OBD 명령 전송
-def send_command(obd, command):
+# 명령 전송 및 응답 읽기
+def send_and_receive(obd, command):
     try:
-        command += '\r'  # 명령어 끝에 '\r' 추가
-        obd.write(command.encode('utf-8'))
+        obd.write((command + '\r').encode('utf-8'))  # 명령 전송
         time.sleep(0.1)  # 응답 대기
-    except Exception as e:
-        print(f"명령 전송 실패: {e}")
-
-# OBD 응답 읽기
-def read_response(obd):
-    try:
-        response = obd.read(1024).decode('latin1').strip()  # 디코딩 문제 해결
-        print(f"Raw Response: {response}")  # 원시 응답 디버깅
+        response = obd.read(1024).decode('latin1').strip()  # 응답 읽기
         return response
     except Exception as e:
-        print(f"응답 읽기 실패: {e}")
+        print(f"명령 전송 또는 응답 실패: {e}")
         return ""
 
-# 데이터 파싱
-def parse_data(response):
+# 데이터 추출
+def extract_data(response):
     try:
         lines = response.splitlines()
         if not lines:
             return None
-        hex_data = lines[-1].split()[-1]  # 마지막 줄의 마지막 값 추출
+        hex_data = lines[-1].split()[-1]  # 마지막 줄에서 데이터 추출
         return int(hex_data, 16)         # 16진수를 정수로 변환
-    except Exception as e:
-        print(f"데이터 파싱 실패: {response} | 오류: {e}")
+    except Exception:
         return None
 
-# 속도와 RPM 데이터 수집
+# 속도 및 RPM 출력
 def run():
     obd = initialize_obd()
     if not obd:
         return
 
-    while True:
-        try:
-            # 속도 데이터 요청
-            send_command(obd, "010D")
-            speed_response = read_response(obd)
-            speed = parse_data(speed_response)
+    try:
+        while True:
+            # 속도 요청
+            speed_response = send_and_receive(obd, "010D")
+            speed = extract_data(speed_response)
             if speed is not None:
                 print(f"속도: {speed} km/h")
             else:
-                print("속도 데이터 없음")
+                print("속도 데이터를 가져올 수 없습니다.")
 
-            # RPM 데이터 요청
-            send_command(obd, "010C")
-            rpm_response = read_response(obd)
-            rpm = parse_data(rpm_response)
+            # RPM 요청
+            rpm_response = send_and_receive(obd, "010C")
+            rpm = extract_data(rpm_response)
             if rpm is not None:
                 print(f"RPM: {rpm} rpm")
             else:
-                print("RPM 데이터 없음")
+                print("RPM 데이터를 가져올 수 없습니다.")
 
-            # 1초 대기
-            time.sleep(1)
-
-        except KeyboardInterrupt:
-            print("프로그램 종료")
-            obd.close()
-            break
-        except Exception as e:
-            print(f"오류 발생: {e}")
-            continue
+            time.sleep(1)  # 1초 간격
+    except KeyboardInterrupt:
+        print("프로그램 종료")
+        obd.close()
+    except Exception as e:
+        print(f"오류 발생: {e}")
+        obd.close()
 
 if __name__ == "__main__":
     run()
