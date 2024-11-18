@@ -31,21 +31,20 @@ const HelpScoreModal = ({ visible, onClose }) => {
             <View style={styles.modalOverlay}>
                 <View style={[styles.modalContent, { backgroundColor: isDarkMode ? '#2f4f4f' : '#fff' }]}>
                     
-                    {/* Page Number */}
+                    {/* 페이지 번호 */}
                     <Text style={[styles.pageNumberText, { color: isDarkMode ? '#fff' : '#000' }]}>
                         {currentImageIndex + 1} / {images.length}
                     </Text>
 
+                    {/* 설명 이미지 */}
                     <Image source={images[currentImageIndex]} style={styles.image} />
                     
-                    {/* Text Description */}
+                    {/* 설명 Text */}
                     <Text style={[styles.descriptionText, { color: isDarkMode ? '#fff' : '#000' }]}>
                         {descriptions[currentImageIndex]}
                     </Text>
 
-                    
-
-                    {/* Arrow Buttons and Close Button */}
+                    {/* 화면이동 버튼 */}
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity onPress={prevImage} style={styles.arrowButton}>
                             <Text style={styles.arrowText}>◀</Text>
