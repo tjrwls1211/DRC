@@ -6,7 +6,7 @@ def connect_obd():
         # Bluetooth 포트 연결
         obd = serial.Serial(
             port='/dev/rfcomm0',  # 사용 중인 포트 확인 후 수정
-            baudrate=9600,       # 기본 속도
+            baudrate=38400,       # 기본 속도
             timeout=1            # 응답 대기 시간
         )
         # OBD-II 장치 초기화
