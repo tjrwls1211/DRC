@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, View, FlatList, Image, TouchableOpacity, StyleSheet, Text, KeyboardAvoidingView, Platform } from 'react-native';
+import { Modal, View, Image, TouchableOpacity, StyleSheet, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { useTheme } from '../Mode/ThemeContext'; // ThemeContext에서 useTheme 가져오기
 
 const HelpModal = ({ visible, images, onClose }) => {
@@ -27,22 +27,30 @@ const HelpModal = ({ visible, images, onClose }) => {
             >
                 <View style={[styles.modal, { backgroundColor: isDarkMode ? '#1f1f1f' : 'white' }]}>
                     <View style={styles.imageContainer}>
-                        <TouchableOpacity onPress={prevImage} style={styles.arrowButton}>
-                            <Text style={styles.arrowText}>◀</Text> {/* 이전 버튼 */}
-                        </TouchableOpacity>
-                        <View style={styles.imageWrapper}> {/* 이미지 래퍼 추가 */}
+                        {/* Page Number */}
+                        <Text style={[styles.pageNumberText, { color: isDarkMode ? '#fff' : '#000' }]}>
+                            {currentIndex + 1} / {images.length}
+                        </Text>
+                        
+                        <View style={styles.imageWrapper}>
                             <Image 
                                 source={images[currentIndex]} // 현재 이미지 표시
                                 style={styles.helpImage}
                             />
                         </View>
+                    </View>
+                    {/* Arrow Buttons and Close Button */}
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity onPress={prevImage} style={styles.arrowButton}>
+                            <Text style={styles.arrowText}>◀</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.closeButton, { backgroundColor: isDarkMode ? '#444' : '#009688' }]} onPress={onClose}>
+                            <Text style={[styles.closeText, { color: isDarkMode ? '#fff' : '#000' }]}>닫기</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={nextImage} style={styles.arrowButton}>
-                            <Text style={styles.arrowText}>▶</Text> {/* 다음 버튼 */}
+                            <Text style={styles.arrowText}>▶</Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={onClose} style={[styles.closeButton, { backgroundColor: isDarkMode ? '#444' : '#d5e3e2' }]}>
-                        <Text style={[styles.closeText, { color: isDarkMode ? '#fff' : 'black' }]}>닫기</Text>
-                    </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
         </Modal>
@@ -56,6 +64,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0,0,0,0.5)',
     },
+    buttonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '99%',
+    },
     modal: {
         width: '95%', // 모달 너비를 거의 꽉 차게 설정
         maxHeight: '90%', // 모달 최대 높이
@@ -68,22 +82,27 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     arrowButton: {
-        padding: 10,
+        marginHorizontal: 10,
+        marginTop: 15,
     },
     arrowText: {
-        fontSize: 24,
-        color: '#009688'
+        fontSize: 34,
+        color: '#009688',
     },
     helpImage: {
-        width: '100%', // 이미지 너비를 모달에 맞춤
-        height: 500, // 이미지 높이를 크게 설정
+        width: '105%', // 이미지 너비를 모달에 맞춤
+        height: 510, // 이미지 높이를 크게 설정
+        marginTop: 45,
         resizeMode: 'cover', // 이미지 비율 유지하면서 꽉 채우기
         borderRadius: 10,
     },
     closeButton: {
-        padding: 10,
+        padding: 9,
+        marginTop: 15,
         borderRadius: 5,
-        marginTop: 10,
+        width: "65%",
+        height: 40,
+        marginHorizontal: 5,
     },
     closeText: {
         fontWeight: 'bold',
@@ -94,6 +113,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginHorizontal: 10,
+    },
+    pageNumberText: {
+        position: 'absolute',
+        top: 10,
+        justifyContent: 'center',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });
 
