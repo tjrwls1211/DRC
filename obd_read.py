@@ -1,16 +1,22 @@
 import serial
 import time
 
-# ELM327 Bluetooth 연결
+# ELM327 Bluetooth 연결 및 초기화
 def initialize_obd():
     try:
-        # Bluetooth 포트 설정 (rfcomm0 사용)
         obd = serial.Serial(
             port='/dev/rfcomm0',  # Bluetooth 포트
             baudrate=9600,       # ELM327 기본 Baudrate
             timeout=1            # 1초 타임아웃
         )
         print("ELM327 연결 성공")
+
+        # 초기화 명령 전송
+        obd.write(b'ATZ\r')  # 장치 리셋
+        time.sleep(1)
+        obd.write(b'ATE0\r')  # 에코 끄기
+        time.sleep(1)
+        print("ELM327 초기화 완료")
         return obd
     except Exception as e:
         print(f"ELM327 연결 실패: {e}")
@@ -18,19 +24,30 @@ def initialize_obd():
 
 # OBD 명령 전송
 def send_command(obd, command):
-    command += '\r'  # 명령어 끝에 '\r' 추가
-    obd.write(command.encode('utf-8'))
-    time.sleep(0.1)  # 응답 대기
+    try:
+        command += '\r'  # 명령어 끝에 '\r' 추가
+        obd.write(command.encode('utf-8'))
+        time.sleep(0.1)  # 응답 대기
+    except Exception as e:
+        print(f"명령 전송 실패: {e}")
 
 # OBD 응답 읽기
 def read_response(obd):
-    response = obd.read(1024).decode('utf-8').strip()
-    return response
+    try:
+        response = obd.read(1024).decode('latin1').strip()  # 디코딩 문제 해결
+        print(f"Raw Response: {response}")  # 원시 응답 디버깅
+        return response
+    except Exception as e:
+        print(f"응답 읽기 실패: {e}")
+        return ""
 
 # 데이터 파싱
 def parse_data(response):
     try:
-        hex_data = response.split()[-1]  # 마지막 데이터 추출
+        lines = response.splitlines()
+        if not lines:
+            return None
+        hex_data = lines[-1].split()[-1]  # 마지막 줄의 마지막 값 추출
         return int(hex_data, 16)         # 16진수를 정수로 변환
     except Exception as e:
         print(f"데이터 파싱 실패: {response} | 오류: {e}")
@@ -65,6 +82,10 @@ def run():
             # 1초 대기
             time.sleep(1)
 
+        except KeyboardInterrupt:
+            print("프로그램 종료")
+            obd.close()
+            break
         except Exception as e:
             print(f"오류 발생: {e}")
             continue
