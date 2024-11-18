@@ -51,11 +51,17 @@ const SplashScreenComponent = ({ navigation }) => {
           }),
           Animated.timing(translateY, {
             toValue: -70, // 위로 이동
-            duration: 350, // 위로 튕기는 애니메이션
+            duration: 300, // 위로 튕기는 애니메이션
             easing: Easing.bounce, // 튕기는 효과
             useNativeDriver: true,
           }),
         ]),
+        Animated.timing(translateY, {
+          toValue: -40, // 원래 위치로 돌아오기
+          duration: 200,
+          easing: Easing.out(Easing.cubic), // 곡선 효과
+          useNativeDriver: true,
+        }),
 
         // "STOP!" 텍스트 애니메이션
         Animated.timing(opacity, {
@@ -78,12 +84,7 @@ const SplashScreenComponent = ({ navigation }) => {
             easing: Easing.out(Easing.cubic), // 부드러운 곡선 효과
             useNativeDriver: true,
           }),
-          Animated.timing(translateY, {
-            toValue: -40, // 원래 위치로 돌아오기
-            duration: 300,
-            easing: Easing.out(Easing.cubic), // 곡선 효과
-            useNativeDriver: true,
-          }),
+          
         ]),
       ];
 
@@ -124,7 +125,7 @@ const SplashScreenComponent = ({ navigation }) => {
     // 4초 후에 메인 화면으로 이동
     const timer = setTimeout(() => {
       navigation.replace('MainScreen');
-    }, 4000);
+    }, 4200);
 
     return () => clearTimeout(timer); // 클린업
   }, [navigation, translateX, translateY, opacity, warningOpacityLeft, warningOpacityRight]);
