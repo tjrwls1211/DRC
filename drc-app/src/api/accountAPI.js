@@ -3,6 +3,7 @@ import axios from 'axios';
 import { API_URL } from "@env";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Axios 클라이언트 설정 (기본 URL 및 헤더 설정)
 const apiClient = axios.create({
     baseURL: API_URL,
     headers: {
@@ -10,7 +11,18 @@ const apiClient = axios.create({
     }
   });
   
-// 비밀번호 확인 API
+
+/**
+ * 비밀번호 인증 API 요청
+ * 
+ * @param {string} pw - 사용자가 입력한 비밀번호
+ * @returns {Object} 서버 응답 데이터(객체)
+ * @returns {boolean} returns.success - 인증 성공 여부
+ * @returns {String} returns.message - 메시지
+ * 
+ * 비밀번호 확인 API를 호출하여, 서버에서 입력된 비밀번호가 맞는지 확인한다.
+ * 인증된 사용자인지 확인하기 위해 Authorization 헤더에 토큰을 포함시킨다.
+ */
 export const verifyPassword = async (password) => {
   console.log("비밀번호 인증 API 요청");
   try {
@@ -32,7 +44,18 @@ export const verifyPassword = async (password) => {
   }
 };
 
-// 비밀번호 변경 API
+
+/**
+ * 비밀번호 변경 API 요청
+ * 
+ * @param {string} pw - 새 비밀번호
+ * @returns {Object} 서버 응답 데이터(객체)
+ * @returns {boolean} returns.success - 변경 성공 여부
+ * @returns {String} returns.message - 메시지
+ *
+ * 사용자가 새 비밀번호를 입력하고, 서버에 변경 요청한다.
+ * 요청 시 Authorization 헤더에 토큰을 포함하여 인증된 사용자만 비밀번호를 변경할 수 있다.
+ */
 export const changePassword = async (newPassword) => {
   console.log("비밀번호 변경 API 요청");
   try {
@@ -58,7 +81,18 @@ export const changePassword = async (newPassword) => {
   }
 };
 
-// 회원 탈퇴 API
+
+/**
+ * 회원 탈퇴 API 요청
+ * 
+ * @param {string} pw - 회원 탈퇴를 위한 비밀번호
+ * @returns {Object} 서버 응답 데이터(객체)
+ * @returns {boolean} returns.success - 탈퇴 성공 여부
+ * @returns {String} returns.message - 메시지
+ * 
+ * 사용자가 비밀번호를 입력하고, 이를 통해 회원 탈퇴 요청을 서버에 보낸다.
+ * 인증을 위해 Authorization 헤더에 토큰을 포함시켜야 한다.
+ */
 export const deleteUserAccount = async (password) => {
   try {
     const token = await AsyncStorage.getItem('token');
@@ -79,4 +113,3 @@ export const deleteUserAccount = async (password) => {
     throw error;
   }
 };
-
