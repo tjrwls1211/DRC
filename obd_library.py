@@ -4,7 +4,7 @@ import obd
 #connection = obd.OBD() 
 
 # OBD 수동 연결 설정(위에 거 안되면 실행)
-connection = obd.OBD(port="/dev/rfcomm0")
+connection = obd.OBD("/dev/rfcomm0")
 
 # 차량 시동 상태 확인 코드
 # print(connection.protocol_name)
