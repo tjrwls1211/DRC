@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Alert, Image } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { loginUser, checkTokenValidity, checkOTP } from '../api/authAPI'; // api.js에서 loginUser 함수 가져오기
 import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차 인증 필요 상태 Context import
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,6 +17,15 @@ const LoginScreen = () => {
   const [is2FARequired, setIs2FARequired] = useState(false); // 2차 인증 필요 여부
   const otpRefs = useRef(Array(6).fill(null)); // 6자리 OTP 입력 필드에 대한 ref 배열
   const [isModalVisible, setModalVisible] = useState(false);
+
+  // 화면이 포커스를 받을 때 입력 필드 초기화
+  useFocusEffect(
+    React.useCallback(() => {
+      setEmail('');
+      setPassword('');
+      setErrorMessage('');
+    }, [])
+  );
 
   // 앱 재접속 시 JWT 유효성 검사 후 자동 로그인 처리
   useEffect(() => {
@@ -69,6 +78,8 @@ const LoginScreen = () => {
       } else if (response.token) {
           // 2차 인증 비활성 경우 그냥 로그인 처리
           console.log('로그인 성공');
+          setEmail('');
+          setPassword('');
           setErrorMessage('');
           // JWT 토큰이 반환된 경우
           await AsyncStorage.setItem('token', response.token);

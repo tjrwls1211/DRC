@@ -1,6 +1,6 @@
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Platform, Image } from "react-native"; 
-import { useNavigation } from "@react-navigation/native"; 
-import { useState } from 'react'; 
+import { useNavigation, useFocusEffect } from "@react-navigation/native"; 
 import { SignUpUser, checkID } from "../api/authAPI"; 
 import DateTimePicker from '@react-native-community/datetimepicker'; 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -24,6 +24,28 @@ const SignUpScreen = () => {
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [formError, setFormError] = useState('');// 전체 폼 오류 메시지 (필수 항목 누락 등)
+
+  // 화면이 포커스를 받을 때 입력 필드 초기화
+  useFocusEffect(
+    React.useCallback(() => {
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+      setCarNumber('');
+      setNickname('');
+      setBirthDate(new Date());
+      setIsDuplicateID(false);
+      setIsIDChecked(false);
+      setEmailError('');
+      setPasswordError('');
+      setConfirmPasswordError('');
+      setFormError('');
+
+      return () => {
+        // Cleanup function (optional)
+      };
+    }, [])
+  );
 
   // ID 유효성 검사 정규식
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
