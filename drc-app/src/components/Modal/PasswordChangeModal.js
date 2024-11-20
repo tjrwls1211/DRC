@@ -65,10 +65,20 @@ const PasswordChangeModal = ({ visible, onClose, onConfirm }) => {
     }
   };
 
+  const handleClose = () => {
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setIsVerified(false);
+    setVerificationMessage('');
+    setPasswordMatchMessage('');
+    onClose();
+  };
+
   return (
     <BasicModal 
       visible={visible} 
-      onClose={onClose} 
+      onClose={handleClose} 
       onConfirm={handleConfirm}
       title="비밀번호 변경"
     >

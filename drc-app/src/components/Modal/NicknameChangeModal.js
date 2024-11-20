@@ -38,37 +38,41 @@ const NicknameChangeModal = ({ visible, onClose, onConfirm }) => {
         }
     };
 
+    const handleClose = () => {
+        setNewNickname('');
+        onClose();
+    };
+
     return (
         <BasicModal 
             visible={visible} 
-            onClose={onClose} 
+            onClose={handleClose} 
             onConfirm={handleConfirm} // 수정된 confirm 핸들러
             title="닉네임 수정"
         >
-            <View style={styles.modalContainer}>
-    <TextInput
-        style={[
-            styles.input,
-            { backgroundColor: isDarkMode ? '#1f1f1f' : '#ffffff', color: isDarkMode ? '#d3d3d3' : '#000000' } // 텍스트 색상 설정
-        ]}
-        placeholder="현재 닉네임"
-        placeholderTextColor={isDarkMode ? '#d3d3d3' : '#808080'} // 플레이스홀더 색상
-        value={nickname}
-        editable={false} // 현재 닉네임은 수정 불가
-    />
-    <TextInput
-        style={[
-            styles.input,
-            { backgroundColor: isDarkMode ? '#1f1f1f' : '#ffffff', color: isDarkMode ? '#d3d3d3' : '#000000' } // 텍스트 색상 설정
-        ]}
-        placeholder="새 닉네임"
-        placeholderTextColor={isDarkMode ? '#d3d3d3' : '#808080'} // 플레이스홀더 색상
-        value={newNickname}
-        onChangeText={setNewNickname}
-    />
-</View>
-
-        </BasicModal>
+        <View style={styles.modalContainer}>
+            <TextInput
+                style={[
+                    styles.input,
+                    { backgroundColor: isDarkMode ? '#1f1f1f' : '#ffffff', color: isDarkMode ? '#d3d3d3' : '#000000' } // 텍스트 색상 설정
+                ]}
+                placeholder="현재 닉네임"
+                placeholderTextColor={isDarkMode ? '#d3d3d3' : '#808080'} // 플레이스홀더 색상
+                value={nickname}
+                editable={false} // 현재 닉네임은 수정 불가
+            />
+            <TextInput
+                style={[
+                    styles.input,
+                    { backgroundColor: isDarkMode ? '#1f1f1f' : '#ffffff', color: isDarkMode ? '#d3d3d3' : '#000000' } // 텍스트 색상 설정
+                ]}
+                placeholder="새 닉네임"
+                placeholderTextColor={isDarkMode ? '#d3d3d3' : '#808080'} // 플레이스홀더 색상
+                value={newNickname}
+                onChangeText={setNewNickname}
+            />
+        </View>
+    </BasicModal>
     );
 }
 
