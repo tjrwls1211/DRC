@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions } from 'react-native';
 import { useTheme } from '../Mode/ThemeContext';
 
 const HelpScoreModal = ({ visible, onClose }) => {
     const { isDarkMode } = useTheme();
+    const screenWidth = Dimensions.get('window').width; // 화면 너비를 가져옴
+    const scrollViewRef = useRef(null); // ScrollView 참조 생성
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const images = [
-        require('../../../assets/helpScore/HelpScore1.png'), // Replace with your image paths
+        require('../../../assets/helpScore/HelpScore1.png'), // 이미지 경로
         require('../../../assets/helpScore/HelpScore2.png'),
     ];
 
@@ -17,34 +19,55 @@ const HelpScoreModal = ({ visible, onClose }) => {
     ];
 
     const nextImage = () => {
-        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+        if (currentImageIndex < images.length - 1) {
+            setCurrentImageIndex((prevIndex) => prevIndex + 1);
+            scrollViewRef.current?.scrollTo({
+                x: (currentImageIndex + 1) * (screenWidth - 60),
+                animated: true,
+            });
+        }
     };
 
     const prevImage = () => {
-        setCurrentImageIndex((prevIndex) =>
-            prevIndex === 0 ? images.length - 1 : prevIndex - 1
-        );
+        if (currentImageIndex > 0) {
+            setCurrentImageIndex((prevIndex) => prevIndex - 1);
+            scrollViewRef.current?.scrollTo({
+                x: (currentImageIndex - 1) * (screenWidth - 60),
+                animated: true,
+            });
+        }
     };
 
     return (
         <Modal animationType="fade" transparent={true} visible={visible} onRequestClose={onClose}>
             <View style={styles.modalOverlay}>
                 <View style={[styles.modalContent, { backgroundColor: isDarkMode ? '#2f4f4f' : '#fff' }]}>
-                    
-                    {/* 페이지 번호 */}
-                    <Text style={[styles.pageNumberText, { color: isDarkMode ? '#fff' : '#000' }]}>
-                        {currentImageIndex + 1} / {images.length}
-                    </Text>
+                    {/* ScrollView 참조 연결 */}
+                    <ScrollView
+                        horizontal
+                        pagingEnabled // 한 번에 한 페이지씩 넘김
+                        showsHorizontalScrollIndicator={false} // 스크롤바 숨김
+                        ref={scrollViewRef} // 참조 연결
+                    >
+                        {images.map((image, index) => (
+                            <View key={index} style={[styles.pageContainer, { width: screenWidth - 60 }]}>
+                                {/* 페이지 번호 표시 */}
+                                <Text style={[styles.pageNumberText, { color: isDarkMode ? '#fff' : '#000' }]}>
+                                    {index + 1} / {images.length}
+                                </Text>
 
-                    {/* 설명 이미지 */}
-                    <Image source={images[currentImageIndex]} style={styles.image} />
-                    
-                    {/* 설명 Text */}
-                    <Text style={[styles.descriptionText, { color: isDarkMode ? '#fff' : '#000' }]}>
-                        {descriptions[currentImageIndex]}
-                    </Text>
+                                {/* 이미지 */}
+                                <Image source={image} style={styles.image} />
 
-                    {/* 화면이동 버튼 */}
+                                {/* 설명 텍스트 */}
+                                <Text style={[styles.descriptionText, { color: isDarkMode ? '#fff' : '#000' }]}>
+                                    {descriptions[index]}
+                                </Text>
+                            </View>
+                        ))}
+                    </ScrollView>
+
+                    {/* 화면 이동 버튼 */}
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity onPress={prevImage} style={styles.arrowButton}>
                             <Text style={styles.arrowText}>◀</Text>
@@ -75,8 +98,11 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: 'center',
     },
+    pageContainer: {
+        alignItems: 'center',
+    },
     image: {
-        width: 320,
+        width: 300,
         height: 200,
         resizeMode: 'contain',
         marginBottom: 20,
@@ -104,7 +130,7 @@ const styles = StyleSheet.create({
         padding: 9,
         borderRadius: 5,
         marginTop: 5,
-        width: "65%",
+        width: '65%',
         height: 40,
         backgroundColor: '#009688',
         marginHorizontal: 5,
@@ -120,6 +146,7 @@ const styles = StyleSheet.create({
         right: 20,
         fontSize: 16,
         fontWeight: 'bold',
+        zIndex: 10,
     },
 });
 
