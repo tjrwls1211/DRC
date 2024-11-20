@@ -9,13 +9,13 @@ const HelpDeductionModal = ({ visible, onClose }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const images = [
-        require(''), // 이미지 경로
-        require(''),
+        require('../../../assets/helpScore/HelpDeduction1.png'), // 이미지 경로
+        require('../../../assets/helpScore/HelpDeduction2.png'),
     ];
 
     const descriptions = [
-        '내용 추가1',
-        '내용 추가2'
+        '매초마다 급가감속 여부를 평가하여\n 3초동안 3번 연속으로 기준에 충족될 때\n 3점 감점됩니다\n\n',
+        '또한, 양발운전을 하였을 경우 3점 감점됩니다.',
     ];
 
     const nextImage = () => {
@@ -106,11 +106,12 @@ const styles = StyleSheet.create({
         height: 200,
         resizeMode: 'contain',
         marginBottom: 20,
+        marginTop: 40,
     },
     descriptionText: {
         fontSize: 16,
         textAlign: 'center',
-        marginBottom: 20,
+        marginBottom: 5,
     },
     buttonContainer: {
         flexDirection: 'row',
