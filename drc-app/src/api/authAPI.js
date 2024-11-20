@@ -57,7 +57,13 @@ export const loginUser = async (email, password) => {
     return response.data; // 서버 반환 성공 여부
   } catch (error) {
     if (error.response) {
-      console.error('로그인 실패 이유:', error.response.data);
+      const errorData = error.response.data;
+
+      if (errorData && typeof errorData.message === 'string') {
+        console.error('로그인 실패 이유:', errorData.message);
+      } else {
+        console.error('로그인 실패 이유:', errorData); // errorData 문자열 아닌 다른 형식일 때 오류가 발생 방지
+      }
     } else {
       console.error('로그인 데이터 전송 오류:', error);
     }
