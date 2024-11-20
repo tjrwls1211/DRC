@@ -50,7 +50,7 @@ const HelpScoreModal = ({ visible, onClose }) => {
                         ref={scrollViewRef} // 참조 연결
                     >
                         {images.map((image, index) => (
-                            <View key={index} style={[styles.pageContainer, { width: screenWidth - 60 }]}>
+                            <View key={index} style={[styles.pageContainer, { width: screenWidth - 78 }]}>
                                 {/* 페이지 번호 표시 */}
                                 <Text style={[styles.pageNumberText, { color: isDarkMode ? '#fff' : '#000' }]}>
                                     {index + 1} / {images.length}
@@ -100,12 +100,14 @@ const styles = StyleSheet.create({
     },
     pageContainer: {
         alignItems: 'center',
+        marginHorizontal: 10, // 이미지 사이 간격 추가
     },
     image: {
         width: 300,
         height: 200,
         resizeMode: 'contain',
         marginBottom: 20,
+        marginTop: 30,
     },
     descriptionText: {
         fontSize: 16,

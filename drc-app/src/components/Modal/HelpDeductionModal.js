@@ -50,7 +50,7 @@ const HelpDeductionModal = ({ visible, onClose }) => {
                         ref={scrollViewRef} // 참조 연결
                     >
                         {images.map((image, index) => (
-                            <View key={index} style={[styles.pageContainer, { width: screenWidth - 60 }]}>
+                            <View key={index} style={[styles.pageContainer, { width: screenWidth - 62 }]}>
                                 {/* 페이지 번호 표시 */}
                                 <Text style={[styles.pageNumberText, { color: isDarkMode ? '#fff' : '#000' }]}>
                                     {index + 1} / {images.length}
@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
     },
     pageContainer: {
         alignItems: 'center',
+        marginHorizontal: 2, // 이미지 사이 간격 추가
     },
     image: {
         width: 300,
