@@ -19,6 +19,8 @@ const MypageScreen = () => {
   const [sacl, setSacl] = useState(0);
   const [sbrk, setSbrk] = useState(0);
   const [bothPedal, setBothPedal] = useState(0);
+  const [totalTimeDrive, setTotalTimeDrive] = useState(0);
+  const [timeDrive, setTimeDrive] = useState(0);
 
   const fetchUserData = async () => {
     try {
@@ -146,6 +148,17 @@ const MypageScreen = () => {
         </View>
       </View>
 
+      <View style={styles.timeRecordContainer}>
+        <View style={[styles.leftTimeRecordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
+          <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>총 주행시간</Text>
+          <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{totalTimeDrive}</Text>
+        </View>
+        <View style={[styles.rightTimeRecordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
+          <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>선택 날짜 주행시간</Text>
+          <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{timeDrive}</Text>
+        </View>
+      </View>
+
       <TouchableOpacity style={[styles.button, { backgroundColor: isDarkMode ? '#009688' : '#009688' }]} onPress={fetchData}>
         <Text style={styles.buttonText}>주행 기록 조회하기</Text>
       </TouchableOpacity>
@@ -179,7 +192,7 @@ const styles = StyleSheet.create({
   headerVar: {
     backgroundColor: '#009688',
     height: 3,
-    marginBottom: 60,
+    marginBottom: 40,
   },
   dateContainer: {
     flexDirection: 'row',
@@ -227,18 +240,13 @@ const styles = StyleSheet.create({
   recordContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 20,
-    height: 150,
+    marginBottom: 2,
+    marginTop: 10,
     alignItems: 'center',
   },
   recordBox:
  {
     alignItems: 'center',
-    backgroundColor: '#d5e3e2',
-    width: 105,
-    height: 125,
-    borderRadius: 5,
-    justifyContent: 'center',
     backgroundColor: '#d5e3e2',
     width: 105,
     height: 125,
@@ -287,6 +295,36 @@ const styles = StyleSheet.create({
     color: '#009688',
     fontSize: 16,
     marginLeft: 5,
+  },
+  timeRecordContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  leftTimeRecordBox: {
+    alignItems: 'center',
+    backgroundColor: '#d5e3e2',
+    width: '49.5%',
+    height: 95,
+    borderTopLeftRadius: 5,     
+    borderBottomLeftRadius: 5,   
+    justifyContent: 'center',
+    marginRight:1
+  },
+  rightTimeRecordBox: {
+    alignItems: 'center',
+    backgroundColor: '#d5e3e2',
+    width: '49.5%',
+    height: 95,
+    borderTopRightRadius: 5,     
+    borderBottomRightRadius: 5,   
+    justifyContent: 'center',
+  },
+  timeVar: {
+    backgroundColor: '#000',
+    height: 1,
+    zIndex: 20,
   },
 });
 
