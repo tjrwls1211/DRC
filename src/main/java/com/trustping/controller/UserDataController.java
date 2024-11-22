@@ -176,6 +176,7 @@ public class UserDataController {
 	    return ResponseEntity.ok(response);
 	}
 	
+	// 총 주행 시간 조회
 	@GetMapping("driveTime")
 	public ResponseEntity<DriveTimeDTO> getDriveTime(@RequestHeader("Authorization") String token){
 	    String jwtToken = token.substring(7);
