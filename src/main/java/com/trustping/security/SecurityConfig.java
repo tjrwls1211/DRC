@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Configuration
 @EnableWebSecurity
@@ -39,6 +40,8 @@ public class SecurityConfig {
                     .requestMatchers("/api/user/validate").permitAll()
                     .requestMatchers("/api/user/disableMfa").hasRole("USER")
             	    .requestMatchers("/api/abnormal/**").hasRole("USER")
+            	    .requestMatchers("/api/driveLog/**").hasRole("USER")
+            	    .requestMatchers("/api/score/**").hasRole("USER")
             	    .requestMatchers("/api/driveLog/**").hasRole("USER")
             	    .anyRequest().authenticated()  // 그 외 요청은 인증 필요
             	)

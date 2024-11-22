@@ -38,9 +38,6 @@ public class AbnormalDataController {
 	    String userId = jwtUtil.extractUsername(jwtToken);
 	    SAclDTO result = abnormalDataService.getSAclByUserIdAndDate(userId, date);
 	    System.out.println(result);
-	    if (result == null) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
-	    }
 	    return ResponseEntity.ok(result);
 	}
 

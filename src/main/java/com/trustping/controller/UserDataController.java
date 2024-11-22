@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.trustping.DTO.DriveTimeDTO;
 import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
@@ -174,4 +175,12 @@ public class UserDataController {
 	    System.out.println(response);
 	    return ResponseEntity.ok(response);
 	}
+	
+	@GetMapping("driveTime")
+	public ResponseEntity<DriveTimeDTO> getDriveTime(@RequestHeader("Authorization") String token){
+	    String jwtToken = token.substring(7);
+	    DriveTimeDTO result= userDataService.getDriveTime(jwtToken);
+	    return ResponseEntity.ok(result);
+	}
+
 }

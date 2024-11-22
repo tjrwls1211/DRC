@@ -41,13 +41,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>("예기치 못한 오류 : " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
-    // JWT 토큰 만료 예외 처리
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<TokenValidationDTO> handleExpiredJwtException(ExpiredJwtException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                             .body(new TokenValidationDTO(false, "토큰이 만료되었습니다."));
-    }
-
     // JWT 예외 처리 (형식 오류 등 포함)
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<TokenValidationDTO> handleJwtException(JwtException e) {

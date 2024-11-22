@@ -1,5 +1,6 @@
 package com.trustping.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class SegmentServiceImpl implements SegmentService {
 	@Autowired
 	private DriveScoreService driveScoreService;
 
+	// 세그먼트 생성 및 업데이트
 	@Override
 	public void updateOrCreateSegment(DriveLogReceiveDTO dto) {
 		Optional<Segment> currentSegmentOpt = segmentRepository
@@ -57,6 +59,7 @@ public class SegmentServiceImpl implements SegmentService {
 		segmentRepository.save(currentSegment); // currentSegment 저장
 	}
 
+	// 세그먼트 점수 감점
 	@Override
 	public void updateSegmentScore(String carId) {
 		Optional<Segment> currentSegmentOpt = segmentRepository.findTopByCarId_CarIdOrderByStartTimeDesc(carId);
@@ -78,6 +81,20 @@ public class SegmentServiceImpl implements SegmentService {
 		currentSegment.setAverageScore(updatedAverageScore);
 		segmentRepository.save(currentSegment);
 		driveScoreService.updateDriveScore(userData);
+	}
+	
+	// 총 주행 시간 조회
+	public int findAllSegmentDriveTime(String carId) {
+		List<Segment> allSegments = segmentRepository.findByCarId_CarId(carId);
+		
+		int totalDriveTime = 0;
+		
+		for (Segment segment : allSegments) {
+            totalDriveTime += segment.getTotalDuration();
+        }
+		
+		System.out.println(totalDriveTime);
+		return totalDriveTime;
 	}
 
 }

@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.trustping.DTO.DriveTimeDTO;
 import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
@@ -24,7 +25,6 @@ import com.trustping.DTO.ResponseDTO;
 import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.DTO.UpdateNicknameDTO;
 import com.trustping.DTO.UpdateResponseDTO;
-import com.trustping.entity.DriveScore;
 import com.trustping.entity.UserData;
 import com.trustping.repository.UserDataRepository;
 import com.trustping.utils.JwtUtil;
@@ -40,6 +40,9 @@ public class UserDataServiceImpl implements UserDataService {
 	
 	@Autowired
 	private DriveScoreService driveScoreService;
+	
+	@Autowired
+	private SegmentService segmentService;
 
 	@Autowired
 	private JwtUtil jwtUtil;
@@ -348,6 +351,22 @@ public class UserDataServiceImpl implements UserDataService {
 		userDataRepository.save(userData);
 		
 		return new ResponseDTO(true, "2차 인증 비활성화 되었습니다");
+	}
+	
+	@Override
+	public DriveTimeDTO getDriveTime(String jwtToken) {
+		String userId = jwtUtil.extractUsername(jwtToken);
+		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
+
+		// 사용자가 존재하지 않을 경우 처리
+		if (userDataOptional.isEmpty()) {
+			return new DriveTimeDTO(0);
+		}	
+		UserData userData = userDataOptional.get();
+
+		int totalDriveTime = segmentService.findAllSegmentDriveTime(userData.getCarId());
+	
+		return new DriveTimeDTO(totalDriveTime);
 	}
 
 }

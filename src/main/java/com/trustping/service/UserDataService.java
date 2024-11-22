@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.trustping.DTO.DriveTimeDTO;
 import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
@@ -34,4 +35,5 @@ public interface UserDataService {
 	public ResponseDTO disableMfa(String jwtToken);
 	public Optional<UserData> getUserDataById(String id);
 	public Optional<UserData> getUserDataByCarId(String carId);
+	public DriveTimeDTO getDriveTime(String jwtToken);
 }
