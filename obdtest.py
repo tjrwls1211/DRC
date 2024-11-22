@@ -40,6 +40,17 @@ def cleanAndExit():
     print("Bye!")
     sys.exit()
 
+# COM 포트 설정 및 타임아웃 증가
+connection = obd.OBD("/dev/rfcomm0", fast=False)
+
+# 연결 상태 확인
+if connection.is_connected():
+    print("OBD-II 연결 성공!")
+else:
+    print("OBD-II 연결 실패!")
+    exit()
+
+
 # 첫 번째 HX711 - 엑셀(Accelerator)
 hx1 = HX711(20, 16)
 # 두 번째 HX711 - 브레이크(Brake)
@@ -433,13 +444,14 @@ def run_code():
             # 상태 업데이트 및 UI 갱신
             update_display_state(val_accelerator, val_brake, state)
             
-            speed_cmd = obd.commands.speed
+            # RPM 데이터 요청
             rpm_cmd = obd.commands.RPM
-
-            #데이터 요청 및 출력
-            speed_response = connection.query(speed_cmd)
             rpm_response = connection.query(rpm_cmd)
-                          
+
+            # 속도 데이터 요청
+            speed_cmd = obd.commands.SPEED
+            speed_response = connection.query(speed_cmd)
+              
              # 속도 및 RPM 데이터 추가
             if speed_response.value is not None:
                 #현재속도("km/h")
