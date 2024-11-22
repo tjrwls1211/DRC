@@ -2,7 +2,7 @@ import obd
 import time
 
 # COM 포트 설정 및 타임아웃 증가
-connection = obd.OBD("/dev/rfcomm1", fast=False)
+connection = obd.OBD("/dev/rfcomm3", fast=False)
 
 # 연결 상태 확인
 if connection.is_connected():
