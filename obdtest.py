@@ -456,7 +456,8 @@ def run_code():
             if speed_response.value is not None:
                 #현재속도("km/h")
                 speed_kmh = speed_response.value
-                speed_value = float(speed_kmh)
+                speed_value = float(speed_kmh.split()[0])
+                print(speed_value)
                 
             if rpm_response.value is not None:
                 rpm_value = int(rpm_response.value)
