@@ -451,11 +451,13 @@ def run_code():
             speed_response = connection.query(speed_cmd)
              
             print(speed_response)
-            print(speed_response.value) 
+            print(speed_response.value)
+            print(type(speed_response.value))  # 데이터 타입 출력
+ 
              # 속도 및 RPM 데이터 추가
             if speed_response.value is not None:
                 #현재속도("km/h")
-                speed_kmh = speed_response.value
+                speed_kmh = str(speed_response.value)
                 speed_value = float(speed_kmh.split()[0])
                 print(speed_value)
                 
