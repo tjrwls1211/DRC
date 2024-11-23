@@ -80,7 +80,7 @@ root.configure(bg="black")
 # 폰트 설정
 font_large = ("Arial", 35, "bold")
 
-# 속도 구간 설정
+""" # 속도 구간 설정
 num_bins = 10
 bin_width = 20
 max_speed = 200
@@ -94,7 +94,7 @@ ax.axis('off')
 ax.set_facecolor("black")  # 축 배경색 설정
 
 # 초기 막대 생성
-bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)]
+bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)] """
 
 
 
@@ -138,7 +138,7 @@ state_hold_time = 3  # 상태 유지 시간
 client = mqtt.Client()
 client.connect(ip(), 1222, 60)
 
-# 애니메이션 업데이트 함수
+""" # 애니메이션 업데이트 함수
 def update(frame):
     # CSV에서 speed_value 가져오기
     if pd.isna(speed_value):
@@ -159,7 +159,7 @@ ani = FuncAnimation(fig, update, interval=1000)  # 1000ms마다 업데이트
 
 # Tkinter 창에 그래프 추가
 canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().place(relx=0.84, rely=0.2, anchor="n", width=300, height=400)
+canvas.get_tk_widget().place(relx=0.84, rely=0.2, anchor="n", width=300, height=400) """
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
