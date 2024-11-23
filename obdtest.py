@@ -450,7 +450,8 @@ def run_code():
             speed_cmd = obd.commands.SPEED
             speed_response = connection.query(speed_cmd)
              
-            print(speed_response) 
+            print(speed_response)
+            print(speed_response.value) 
              # 속도 및 RPM 데이터 추가
             if speed_response.value is not None:
                 #현재속도("km/h")
