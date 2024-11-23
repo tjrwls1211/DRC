@@ -420,13 +420,12 @@ def delta_speed(current_speed):
 
 # 데이터 수집 및 업데이트 함수
 def run_code():
-    i = 0
     state = "Normal Driving"
     global previous_speed, previous_time  # 전역 변수로 초기화 필요
     previous_speed = 0  # 이전 속도 초기값 설정
     previous_time = time.time()  # 이전 시간 초기값 설정
     
-    while i < len(df):  # 데이터프레임의 길이에 따라 반복
+    while True:  # 데이터프레임의 길이에 따라 반복
         try:
             # 첫 번째 로드셀 (엑셀)
             val_accelerator = hx1.get_weight(5)
@@ -486,7 +485,6 @@ def run_code():
             text_label.config(text=f"현재 : {int(speed_value)}")    
             
             client.publish('pedal', json.dumps(data), 0, retain=False)
-            i += 1
             time.sleep(1)
 
         except Exception as error:
