@@ -245,7 +245,7 @@ rpm_reached_5000 = False
 import threading
 import time
 
-def check_info(accel_value, brake_value, rpm_value):
+def check_info(accel_value, brake_value, rpm_value, speed_value):
     print("acl : ", accel_value, "brk : ", brake_value, "rpm : ", rpm_value)
     global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating, last_accel_time, last_sound_time
     mqtt_state = None
@@ -255,7 +255,7 @@ def check_info(accel_value, brake_value, rpm_value):
     current_time = time.time()  # 현재 시간 기록
 
     # Unintended Acceleration + 5000 RPM 조건 결합
-    if 200 < accel_value < 1000 and brake_value <= 30 and rpm_value >= 5000:
+    if 700 < accel_value < 2000 and brake_value <= 30 and rpm_value >= 5000 and speed_value >= 40:
         state = "Unintended Acceleration"
         update_display_state(accel_value, brake_value, state)
     
@@ -304,7 +304,7 @@ def check_info(accel_value, brake_value, rpm_value):
         prev_rpm = rpm_value
 
     # Rapid Acceleration 조건
-    elif accel_value > 1000 and brake_value <= 30:
+    elif accel_value > 3000 and brake_value <= 30 and rpm_value >= 3000:
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 1
@@ -327,7 +327,7 @@ def check_info(accel_value, brake_value, rpm_value):
             threading.Timer(3, reset_playing_state).start()  # 반복 재생을 위해 초기화 설정
 
     # Rapid Braking 조건
-    elif brake_value > 200 and accel_value <= 30:
+    elif brake_value > 3000 and accel_value <= 30:
         state = "Rapid Braking"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 2
@@ -350,7 +350,7 @@ def check_info(accel_value, brake_value, rpm_value):
             threading.Timer(3, reset_playing_state).start()  # 반복 재생을 위해 초기화 설정
 
     # Both Feet Driving 조건
-    elif accel_value > 100 and brake_value > 100:
+    elif accel_value > 500 and brake_value > 500:
         state = "Both Feet Driving"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 3
@@ -460,7 +460,7 @@ def run_code():
             if rpm_response.value is not None:
                 rpm_value = rpm_response.value.magnitude
 
-            print("rpm : ", rpm_value, "speed : ", speed_value)
+            #print("rpm : ", rpm_value, "speed : ", speed_value)
             # 속도 변화 계산
             speed_change = delta_speed(speed_value)  # 속도 변화(kmh) 계산
             speed_change = round(speed_change, 1)
