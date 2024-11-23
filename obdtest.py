@@ -17,7 +17,7 @@ import numpy as np
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
-
+import pint
 
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
@@ -450,19 +450,15 @@ def run_code():
             speed_cmd = obd.commands.SPEED
             speed_response = connection.query(speed_cmd)
              
-            print(speed_response)
-            print(speed_response.value)
-            print(type(speed_response.value))  # 데이터 타입 출력
  
              # 속도 및 RPM 데이터 추가
             if speed_response.value is not None:
                 #현재속도("km/h")
-                speed_kmh = str(speed_response.value)
-                speed_value = float(speed_kmh.split()[0])
+                speed_value = speed_response.value.magnitude
                 print(speed_value)
                 
             if rpm_response.value is not None:
-                rpm_value = int(rpm_response.value)
+                rpm_value = rpm_response.value.magnitude
 
             print("rpm : ", rpm_value, "speed : ", speed_value)
             # 속도 변화 계산
