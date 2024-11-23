@@ -141,7 +141,6 @@ client.connect(ip(), 1222, 60)
 # 애니메이션 업데이트 함수
 def update(frame):
     # CSV에서 speed_value 가져오기
-    speed_value = df.iloc[frame]['Ground Speed']
     if pd.isna(speed_value):
         speed_value = 0  # 기본값 설정
     
@@ -454,7 +453,7 @@ def run_code():
              # 속도 및 RPM 데이터 추가
             if speed_response.value is not None:
                 #현재속도("km/h")
-                speed_kmh = speed_response.value.to("km/h")
+                speed_kmh = speed_response.value
                 speed_value = float(speed_kmh)
                 
             if rpm_response.value is not None:
