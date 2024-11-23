@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.trustping.DTO.DriveLogReceiveDTO;
+import com.trustping.DTO.DriveTimeDTO;
 import com.trustping.entity.Segment;
 import com.trustping.entity.UserData;
 import com.trustping.repository.SegmentRepository;
+import com.trustping.utils.JwtUtil;
 
 @Service
 public class SegmentServiceImpl implements SegmentService {
@@ -18,17 +20,20 @@ public class SegmentServiceImpl implements SegmentService {
 	private SegmentRepository segmentRepository;
 
 	@Autowired
-	private UserDataService userDataService;
+    private UserDataHelperService userDataHelperService; // 헬퍼 사용
 
 	@Autowired
 	private DriveScoreService driveScoreService;
 
+	@Autowired
+	private JwtUtil jwtUtil;
+	
 	// 세그먼트 생성 및 업데이트
 	@Override
 	public void updateOrCreateSegment(DriveLogReceiveDTO dto) {
 		Optional<Segment> currentSegmentOpt = segmentRepository
 				.findTopByCarId_CarIdOrderByStartTimeDesc(dto.getCarId());
-		Optional<UserData> userDataOpt = userDataService.getUserDataByCarId(dto.getCarId());
+		Optional<UserData> userDataOpt = userDataHelperService.getUserDataByCarId(dto.getCarId());
 
 		if (userDataOpt.isEmpty()) {
 			return;
@@ -72,20 +77,30 @@ public class SegmentServiceImpl implements SegmentService {
 		int totalDuration = currentSegment.getTotalDuration();
 		int existingScore = currentSegment.getAverageScore();
 		UserData userData = currentSegment.getCarId();
-		int newScore = existingScore - 3;
 		
+		/*
 		// 새로운 평균 점수 계산
+		int newScore = existingScore - 3;
 		int updatedAverageScore = (existingScore * totalDuration + newScore) / (totalDuration + 1);
-
-		// int updatedAverageScore = existingScore -3;
+		*/
+		
+		int updatedAverageScore = existingScore -3;
 		currentSegment.setAverageScore(updatedAverageScore);
 		segmentRepository.save(currentSegment);
 		driveScoreService.updateDriveScore(userData);
 	}
 	
-	// 총 주행 시간 조회
-	public int findAllSegmentDriveTime(String carId) {
-		List<Segment> allSegments = segmentRepository.findByCarId_CarId(carId);
+	@Override
+	public DriveTimeDTO getDriveTime(String userId) {
+		Optional<UserData> userDataOpt = userDataHelperService.getUserDataById(userId);
+		
+		if (userDataOpt.isEmpty()) {
+			return new DriveTimeDTO(0);
+		}
+		
+		UserData userData = userDataOpt.get();
+		
+		List<Segment> allSegments = segmentRepository.findByCarId_CarId(userData.getCarId());
 		
 		int totalDriveTime = 0;
 		
@@ -94,7 +109,7 @@ public class SegmentServiceImpl implements SegmentService {
         }
 		
 		System.out.println(totalDriveTime);
-		return totalDriveTime;
+		return new DriveTimeDTO(totalDriveTime);
 	}
 
 }

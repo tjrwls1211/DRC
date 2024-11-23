@@ -24,7 +24,7 @@ public class DriveLogStorageService {
 	private DriveLogService driveLogService;
 
 	@Autowired
-	private UserDataService userDataService;
+	private UserDataHelperService userDataHelperService;
 
 	// 정상 주행 데이터 삭제
 	@Scheduled(fixedRate = 10000)
@@ -35,7 +35,7 @@ public class DriveLogStorageService {
 
 	// 주행 로그 저장
 	public void saveData(DriveLogReceiveDTO driveLogReceiveDTO) {
-        Optional<UserData> userDataOpt = userDataService.getUserDataByCarId(driveLogReceiveDTO.getCarId());
+        Optional<UserData> userDataOpt = userDataHelperService.getUserDataByCarId(driveLogReceiveDTO.getCarId());
 
         if (userDataOpt.isEmpty()) {
             return;

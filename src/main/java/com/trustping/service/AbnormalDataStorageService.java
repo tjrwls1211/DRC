@@ -20,7 +20,7 @@ public class AbnormalDataStorageService {
 	private AbnormalDataRepository abnormalDataRepository;
 	
 	@Autowired
-	private UserDataService userDataService;
+	private UserDataHelperService userDataHelperService;
 
 	// 비정상 주행 데이터 저장
 	public void saveData(String message) {
@@ -28,7 +28,7 @@ public class AbnormalDataStorageService {
 	        ObjectMapper objectMapper = new ObjectMapper();
 	        DriveStateDTO driveStateDTO = objectMapper.readValue(message, DriveStateDTO.class);
 	        String carId = driveStateDTO.getCarId();
-	        Optional<UserData> user = userDataService.getUserDataByCarId(carId);
+	        Optional<UserData> user = userDataHelperService.getUserDataByCarId(carId);
 	        int state = driveStateDTO.getState();
 	        LocalDate date = LocalDate.now();
 

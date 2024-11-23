@@ -42,9 +42,6 @@ public class UserDataServiceImpl implements UserDataService {
 	private DriveScoreService driveScoreService;
 	
 	@Autowired
-	private SegmentService segmentService;
-
-	@Autowired
 	private JwtUtil jwtUtil;
 
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -76,17 +73,6 @@ public class UserDataServiceImpl implements UserDataService {
 		} else {
 			return null;
 		}
-	}
-	
-	// UserData 가져오기
-	public Optional<UserData> getUserDataById(String id) {
-	    return userDataRepository.findById(id); // Optional<UserData>를 직접 반환
-	}
-
-	
-	// UserData 가져오기 carId
-	public Optional<UserData> getUserDataByCarId(String carId) {
-	    return userDataRepository.findByCarId(carId);
 	}
 
 	// 차 번호로 id 조회
@@ -353,20 +339,5 @@ public class UserDataServiceImpl implements UserDataService {
 		return new ResponseDTO(true, "2차 인증 비활성화 되었습니다");
 	}
 	
-	@Override
-	public DriveTimeDTO getDriveTime(String jwtToken) {
-		String userId = jwtUtil.extractUsername(jwtToken);
-		Optional<UserData> userDataOptional = userDataRepository.findById(userId);
-
-		// 사용자가 존재하지 않을 경우 처리
-		if (userDataOptional.isEmpty()) {
-			return new DriveTimeDTO(0);
-		}	
-		UserData userData = userDataOptional.get();
-
-		int totalDriveTime = segmentService.findAllSegmentDriveTime(userData.getCarId());
-	
-		return new DriveTimeDTO(totalDriveTime);
-	}
 
 }

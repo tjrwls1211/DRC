@@ -6,7 +6,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.trustping.entity.UserData;
 import com.trustping.service.RequestLogService;
-import com.trustping.service.UserDataService;
+import com.trustping.service.UserDataHelperService;
 import com.trustping.utils.JwtUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +19,7 @@ public class LogInterceptor implements HandlerInterceptor{
 	private RequestLogService requestLogService;
 	
 	@Autowired
-	private UserDataService userDataService;
+	private UserDataHelperService userDataHelperService;
 	
 	@Autowired
 	private JwtUtil jwtUtil;
@@ -44,7 +44,7 @@ public class LogInterceptor implements HandlerInterceptor{
         if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
             jwtToken = jwtToken.substring(7);
             String id = jwtUtil.extractUsername(jwtToken); 
-            userId = userDataService.getUserDataById(id).orElse(null);
+            userId = userDataHelperService.getUserDataById(id).orElse(null);
         }
         
     	String method = request.getMethod();

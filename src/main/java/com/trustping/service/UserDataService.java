@@ -33,7 +33,4 @@ public interface UserDataService {
 	public String getCarIdById(String id);
 	public String getIdByCarId(String carId);
 	public ResponseDTO disableMfa(String jwtToken);
-	public Optional<UserData> getUserDataById(String id);
-	public Optional<UserData> getUserDataByCarId(String carId);
-	public DriveTimeDTO getDriveTime(String jwtToken);
 }

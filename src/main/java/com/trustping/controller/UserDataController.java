@@ -26,6 +26,7 @@ import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.DTO.TokenValidationDTO;
 import com.trustping.DTO.UpdateNicknameDTO;
 import com.trustping.DTO.UpdateResponseDTO;
+import com.trustping.service.SegmentService;
 import com.trustping.service.UserDataService;
 import com.trustping.utils.JwtUtil;
 
@@ -37,6 +38,9 @@ public class UserDataController {
 
 	@Autowired
 	private UserDataService userDataService;
+	
+	@Autowired
+	private SegmentService segmentService;
 
 	@Autowired
 	private JwtUtil jwtUtil;
@@ -180,7 +184,7 @@ public class UserDataController {
 	@GetMapping("driveTime")
 	public ResponseEntity<DriveTimeDTO> getDriveTime(@RequestHeader("Authorization") String token){
 	    String jwtToken = token.substring(7);
-	    DriveTimeDTO result= userDataService.getDriveTime(jwtToken);
+	    DriveTimeDTO result= segmentService.getDriveTime(jwtToken);
 	    return ResponseEntity.ok(result);
 	}
 

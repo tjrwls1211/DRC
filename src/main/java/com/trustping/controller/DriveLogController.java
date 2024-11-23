@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trustping.DTO.DriveLogExcelDTO;
 import com.trustping.entity.UserData;
 import com.trustping.service.DriveLogService;
-import com.trustping.service.UserDataService;
+import com.trustping.service.UserDataHelperService;
 import com.trustping.utils.ExcelUtil;
 import com.trustping.utils.JwtUtil;
 
@@ -31,7 +31,7 @@ public class DriveLogController {
 	private DriveLogService driveLogService;
 	
 	@Autowired
-	private UserDataService userDataService;
+	private UserDataHelperService userDataHelperService;
 
 	@Autowired
 	private ExcelUtil excelUtil;
@@ -41,7 +41,7 @@ public class DriveLogController {
 	    LocalDate searchDate = LocalDate.parse(date); 
 	    String jwtToken = token.substring(7);
 	    String id = jwtUtil.extractUsername(jwtToken);
-	    Optional<UserData> car = userDataService.getUserDataById(id);
+	    Optional<UserData> car = userDataHelperService.getUserDataById(id);
 	    UserData carId = car.get();
 	    
 	    // 엑셀 다운로드를 위한 데이터 리스트
