@@ -91,16 +91,8 @@ public class SegmentServiceImpl implements SegmentService {
 	}
 	
 	@Override
-	public DriveTimeDTO getDriveTime(String userId) {
-		Optional<UserData> userDataOpt = userDataHelperService.getUserDataById(userId);
-		
-		if (userDataOpt.isEmpty()) {
-			return new DriveTimeDTO(0);
-		}
-		
-		UserData userData = userDataOpt.get();
-		
-		List<Segment> allSegments = segmentRepository.findByCarId_CarId(userData.getCarId());
+	public DriveTimeDTO getDriveTime(String carId) {
+		List<Segment> allSegments = segmentRepository.findByCarId_CarId(carId);
 		
 		int totalDriveTime = 0;
 		

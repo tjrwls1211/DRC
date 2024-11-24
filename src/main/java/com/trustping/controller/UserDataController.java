@@ -1,5 +1,7 @@
 package com.trustping.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +28,9 @@ import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.DTO.TokenValidationDTO;
 import com.trustping.DTO.UpdateNicknameDTO;
 import com.trustping.DTO.UpdateResponseDTO;
+import com.trustping.entity.UserData;
 import com.trustping.service.SegmentService;
+import com.trustping.service.UserDataHelperService;
 import com.trustping.service.UserDataService;
 import com.trustping.utils.JwtUtil;
 
@@ -41,6 +45,9 @@ public class UserDataController {
 	
 	@Autowired
 	private SegmentService segmentService;
+	
+	@Autowired
+	private UserDataHelperService userDataHelperService;
 
 	@Autowired
 	private JwtUtil jwtUtil;
@@ -183,8 +190,14 @@ public class UserDataController {
 	// 총 주행 시간 조회
 	@GetMapping("driveTime")
 	public ResponseEntity<DriveTimeDTO> getDriveTime(@RequestHeader("Authorization") String token){
-	    String jwtToken = token.substring(7);
-	    DriveTimeDTO result= segmentService.getDriveTime(jwtToken);
+		String jwtToken = token.substring(7);
+		String userId = jwtUtil.extractUsername(jwtToken); 
+		Optional<UserData> userDataOpt = userDataHelperService.getUserDataById(userId);
+		if (userDataOpt.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new DriveTimeDTO(0));
+		}
+		UserData userData = userDataOpt.get();
+		DriveTimeDTO result= segmentService.getDriveTime(userData.getCarId());
 	    return ResponseEntity.ok(result);
 	}
 
