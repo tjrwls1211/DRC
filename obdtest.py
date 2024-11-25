@@ -438,6 +438,9 @@ def run_code():
                 
             if rpm_response.value is not None:
                 rpm_value = rpm_response.value.magnitude
+            
+            else :
+                rpm_value = 0
 
             #print("rpm : ", rpm_value, "speed : ", speed_value)
             # 속도 변화 계산
@@ -462,7 +465,7 @@ def run_code():
             # 레이블 업데이트 (정수 형식)
             text_label.config(text=f"현재 : {int(speed_value)}")    
             
-            client.publish('pedal', json.dumps(data), 0, retain=False)
+            client.publish('DriveLog', json.dumps(data), 0, retain=False)
             now2 = datetime.now()
             print("종료시간", now2)
             print("걸린시간 : ", now2-now)
