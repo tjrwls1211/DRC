@@ -463,7 +463,8 @@ def run_code():
             
             client.publish('pedal', json.dumps(data), 0, retain=False)
             now2 = datetime.now()
-            print("시작시간", now2)
+            print("종료시간", now2)
+            print("걸린시간 : ", now2-now)
             time.sleep(1)
 
         except Exception as error:
