@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Platform, Modal } from 'react
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Ionicons'; 
-import { getSAcl, getSBrk, getSPedal, downDriveInfo } from '../api/driveInfoAPI';
+import { getSAcl, getSBrk, getSPedal, downDriveInfo, getTotalTimeDrive } from '../api/driveInfoAPI';
 import { formatDate } from '../utils/formatDate';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -20,7 +20,6 @@ const MypageScreen = () => {
   const [sbrk, setSbrk] = useState(0);
   const [bothPedal, setBothPedal] = useState(0);
   const [totalTimeDrive, setTotalTimeDrive] = useState(0);
-  const [timeDrive, setTimeDrive] = useState(0);
 
   const fetchUserData = async () => {
     try {
@@ -32,8 +31,19 @@ const MypageScreen = () => {
     }
   };
 
+  const fetchTotalTimeDrive = async () => {     
+    try {       
+      const driveTimeData = await getTotalTimeDrive();       
+      console.log("Backend Response:", driveTimeData); // Log the entire response
+      setTotalTimeDrive(driveTimeData.totalDriveTime); // 주행시간 상태 업데이트     
+    } catch (error) {       
+      console.error('총 주행시간 조회 실패:', error);     
+    }   
+  };
+
   useEffect(() => {
     fetchUserData();
+    fetchTotalTimeDrive(); // 주행시간 조회  
   }, []);
 
   const fetchData = async () => {
@@ -134,34 +144,49 @@ const MypageScreen = () => {
       )}
 
       <View style={styles.recordContainer}>
-        <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
-          <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>급가속</Text>
-          <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{sacl}</Text> 
+
+        <View>
+          <View style={[styles.recordTextBox, { backgroundColor: isDarkMode ? '#40807F' : '#009688' }]}>
+            <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>급가속</Text>
+          </View>
+          <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
+            <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{sacl}</Text> 
+          </View>
         </View>
-        <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
-          <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>급정거</Text>
-          <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{sbrk}</Text>
+
+        <View>
+          <View style={[styles.recordTextBox, { backgroundColor: isDarkMode ? '#40807F' : '#009688' }]}>
+            <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>급정거</Text>
+          </View>
+          <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
+            <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{sbrk}</Text> 
+          </View>
         </View>
-        <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
-          <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>동시페달</Text>
-          <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{bothPedal}</Text>
+
+        <View>
+          <View style={[styles.recordTextBox, { backgroundColor: isDarkMode ? '#40807F' : '#009688' }]}>
+            <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>동시페달</Text>
+          </View>
+          <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
+            <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{bothPedal}</Text> 
+          </View>
         </View>
       </View>
 
-      <View style={styles.timeRecordContainer}>
-        <View style={[styles.leftTimeRecordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
-          <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>총 주행시간</Text>
-          <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{totalTimeDrive}</Text>
-        </View>
-        <View style={[styles.rightTimeRecordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
-          <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>선택 날짜 주행시간</Text>
-          <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{timeDrive}</Text>
-        </View>
-      </View>
-
-      <TouchableOpacity style={[styles.button, { backgroundColor: isDarkMode ? '#009688' : '#009688' }]} onPress={fetchData}>
+      <TouchableOpacity style={[styles.button, { backgroundColor: isDarkMode ? '#009688' : '#016b61' }]} onPress={fetchData}>
         <Text style={styles.buttonText}>주행 기록 조회하기</Text>
       </TouchableOpacity>
+
+      <View style={styles.timeRecordContainer}>
+        <View style={[styles.TimeRecordTextBox, { backgroundColor: isDarkMode ? '#40807F' : '#009688' }]}>
+          <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>총 주행시간</Text>
+        </View>
+        <View style={[styles.TimeRecordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
+          <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{totalTimeDrive}</Text>
+        </View>
+      </View>
+
+      
       <TouchableOpacity style={[styles.downloadButton, { borderColor: isDarkMode ? '#009688' : '#009688' }]} onPress={handleDownload}>
       <Icon name="download" size={16} color={isDarkMode ? '#009688' : '#009688'} />
         <Text style={[styles.downloadButtonText, { color: isDarkMode ? '#009688' : '#009688' }]}>주행 기록 다운로드</Text>
@@ -192,7 +217,7 @@ const styles = StyleSheet.create({
   headerVar: {
     backgroundColor: '#009688',
     height: 3,
-    marginBottom: 40,
+    marginBottom: 35,
   },
   dateContainer: {
     flexDirection: 'row',
@@ -240,7 +265,7 @@ const styles = StyleSheet.create({
   recordContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 2,
+    marginBottom: 15,
     marginTop: 10,
     alignItems: 'center',
   },
@@ -248,31 +273,36 @@ const styles = StyleSheet.create({
  {
     alignItems: 'center',
     backgroundColor: '#d5e3e2',
-    width: 105,
-    height: 125,
-    borderRadius: 5,
+    width: Platform.OS === 'ios' ? 115  : 105,
+    height: Platform.OS === 'ios' ? 105  : 100,
+    borderBottomRightRadius: 5,  
+    borderBottomLeftRadius: 5, 
     justifyContent: 'center',
+  },
+  recordTextBox: {
+    alignItems: 'center',
+    backgroundColor: '#2F4F4F',
+    width: '100%',
+    height: 40,
+    borderTopRightRadius: 5,  
+    borderTopLeftRadius: 5,  
+    justifyContent: 'center',
+    marginRight: 1,
+    marginBottom: 1,
   },
   recordTitle: {
     fontSize: 16,
     color: '#2F4F4F',
-    marginBottom: 13,
-    color: '#2F4F4F',
-    marginBottom: 13,
   },
   recordValue: {
     fontSize: 27,
-    fontSize: 27,
     fontWeight: 'bold',
-    color: '#2F4F4F',
     color: '#2F4F4F',
   },
   button: {
     backgroundColor: '#009688',
-    backgroundColor: '#009688',
     paddingVertical: 10,
     borderRadius: 5,
-    marginBottom: 15,
     marginBottom: 15,
   },
   buttonText: {
@@ -292,34 +322,35 @@ const styles = StyleSheet.create({
   },
   downloadButtonText: {
     color: '#009688',
-    color: '#009688',
     fontSize: 16,
     marginLeft: 5,
   },
   timeRecordContainer: {
-    flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 20,
+    marginTop: 15,
     alignItems: 'center',
   },
-  leftTimeRecordBox: {
+  TimeRecordBox: {
     alignItems: 'center',
     backgroundColor: '#d5e3e2',
-    width: '49.5%',
-    height: 95,
-    borderTopLeftRadius: 5,     
-    borderBottomLeftRadius: 5,   
+    width: '100%',
+    height: 85,
+    borderBottomRightRadius: 5,  
+    borderBottomLeftRadius: 5,      
     justifyContent: 'center',
     marginRight:1
   },
-  rightTimeRecordBox: {
+  TimeRecordTextBox: {
     alignItems: 'center',
-    backgroundColor: '#d5e3e2',
-    width: '49.5%',
-    height: 95,
-    borderTopRightRadius: 5,     
-    borderBottomRightRadius: 5,   
+    backgroundColor: '#2F4F4F',
+    width: '100%',
+    height: 40,
+    borderTopRightRadius: 5,  
+    borderTopLeftRadius: 5,  
     justifyContent: 'center',
+    marginRight:1,
+    marginBottom: 1,
   },
   timeVar: {
     backgroundColor: '#000',
