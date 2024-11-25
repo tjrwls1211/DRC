@@ -143,7 +143,7 @@ def update(frame):
     global speed_value
     
     # 현재 레벨 계산 (0~9 범위)
-    current_level = min(int(speed_value // 20), 9)  # 0~9로 제한
+    current_level = min(int(speed_value // 10), 18)  # 0~9로 제한
 
     # 막대 색상 업데이트
     colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
@@ -300,7 +300,7 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
         prev_rpm = rpm_value
 
     # Rapid Acceleration 조건
-    elif accel_value > 3000 and brake_value <= 30 and rpm_value >= 3000:
+    elif accel_value > 3000 and brake_value <= 30 and rpm_value >= 2000:
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 1
