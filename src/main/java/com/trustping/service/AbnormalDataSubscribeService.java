@@ -20,10 +20,10 @@ public class AbnormalDataSubscribeService implements MqttCallback {
 
     @Autowired
     @Qualifier("abnormalDataMqttClient")
-    private MqttClient abnormalDataMqttClient; // 구성에서 mqttclient 받아옴
+    private MqttClient abnormalDataMqttClient;
     
     @Autowired
-    private EnvConfig envConfig; // 구독 토픽도 가져옴
+    private EnvConfig envConfig;
     
     @Autowired
     private AbnormalDataStorageService abnormalDataStorageService;
@@ -55,32 +55,44 @@ public class AbnormalDataSubscribeService implements MqttCallback {
         reconnect();
     }
 
+    // 재연결 로직
     private void reconnect() {
         int retryCount = 0;
         int backoffTime = 2000;
 
-        while (retryCount < 5) { 
+        // 무제한 재시도
+        while (true) { 
             try {
                 System.out.println("Attempting to reconnect");
-                abnormalDataMqttClient.connect(); 
-                String mqttTopic = envConfig.getMqttAbnormalDrivingTopic();
-                abnormalDataMqttClient.subscribe(mqttTopic); 
-                System.out.println("Reconnected and subscribed to topic: " + mqttTopic);
-                return; 
-            } catch (MqttException e) {
-                System.out.println("Reconnection attempt failed: " + e.getMessage());
-                retryCount++;
-                try {
-                    Thread.sleep(backoffTime); 
-                    backoffTime *= 2; 
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
+                abnormalDataMqttClient.connect();
+                
+                if (abnormalDataMqttClient.isConnected()) {
+                    String mqttTopic = envConfig.getMqttAbnormalDrivingTopic();
+                    abnormalDataMqttClient.subscribe(mqttTopic);
+                    System.out.println("Reconnected and subscribed to topic: " + mqttTopic);
+                    // 재연결 성공 시 메서드 종료
+                    return;
+                } else {
+                    System.out.println("Connected to MQTT client, but isConnected() check failed.");
                 }
+            } catch (MqttException e) {
+                System.err.println("Reconnection attempt failed: " + e.getMessage());
+            }
+
+            retryCount++;
+            try {
+                Thread.sleep(backoffTime);
+                // 최대 1분 대기
+                backoffTime = Math.min(backoffTime * 2, 60000);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt(); // 인터럽트 상태 복구
+            }
+
+            if (retryCount >= 5) {
+                System.err.println("Failed attempts : " + retryCount);
             }
         }
-        System.out.println("Failed to reconnect after 5 attempts.");
     }
-
     
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
