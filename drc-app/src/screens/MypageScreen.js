@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Ionicons'; 
 import { getSAcl, getSBrk, getSPedal, downDriveInfo, getTotalTimeDrive } from '../api/driveInfoAPI';
 import { formatDate } from '../utils/formatDate';
+import { formatDrivingTime } from '../utils/formatDrivingTime';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { useTheme } from '../components/Mode/ThemeContext'; // 다크 모드 Context import
@@ -35,7 +36,7 @@ const MypageScreen = () => {
     try {       
       const driveTimeData = await getTotalTimeDrive();       
       console.log("Backend Response:", driveTimeData); // Log the entire response
-      setTotalTimeDrive(driveTimeData.totalDriveTime); // 주행시간 상태 업데이트     
+      setTotalTimeDrive(driveTimeData.totalDrvieTime || 0); // 주행시간 상태 업데이트     
     } catch (error) {       
       console.error('총 주행시간 조회 실패:', error);     
     }   
@@ -182,7 +183,7 @@ const MypageScreen = () => {
           <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>총 주행시간</Text>
         </View>
         <View style={[styles.TimeRecordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
-          <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{totalTimeDrive}</Text>
+          <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{formatDrivingTime(totalTimeDrive)}</Text>
         </View>
       </View>
 
