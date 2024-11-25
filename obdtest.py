@@ -406,12 +406,9 @@ def run_code():
             now = datetime.now()
             print("시작시간", now)
             # 첫 번째 로드셀 (엑셀)
-            val_accelerator = hx1.get_weight(5)
-            print(f"현재상태 : 액셀(Accelerator)  무게: {val_accelerator} g")
-
+            val_accelerator = hx1.get_weight(4)
             # 두 번째 로드셀 (브레이크)
-            val_brake = hx2.get_weight(5)
-            print(f"현재상태 : 브레이크(Brake) 무게: {val_brake} g")
+            val_brake = hx2.get_weight(4)
             
             hx1.power_down()
             hx2.power_down()
