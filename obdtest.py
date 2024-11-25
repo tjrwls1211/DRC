@@ -83,7 +83,7 @@ font_large = ("Arial", 35, "bold")
 """ # 속도 구간 설정
 num_bins = 10
 bin_width = 20
-max_speed = 200
+max_speed = 220
 
 # 그래프 초기 설정
 fig, ax = plt.subplots(figsize=(2, 6))
