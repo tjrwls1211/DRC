@@ -465,7 +465,6 @@ def run_code():
             now2 = datetime.now()
             print("종료시간", now2)
             print("걸린시간 : ", now2-now)
-            time.sleep(1)
 
         except Exception as error:
             print(error)
