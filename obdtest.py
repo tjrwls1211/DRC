@@ -401,6 +401,9 @@ def run_code():
     
     while True:  # 데이터프레임의 길이에 따라 반복
         try:
+            # 현재 시간 추가
+            now = datetime.now()
+            print("시작시간", now)
             # 첫 번째 로드셀 (엑셀)
             val_accelerator = hx1.get_weight(5)
             print(f"현재상태 : 액셀(Accelerator)  무게: {val_accelerator} g")
@@ -443,8 +446,7 @@ def run_code():
             # check_info 호출하여 음성 상태 평가 및 재생
             check_info(val_accelerator, val_brake, rpm_value, speed_value)
             
-            # 현재 시간 추가
-            now = datetime.now()
+            
             data.update({
                 "carId": "01가1234",  # 차량 ID 유지
                 "aclPedal": int(val_accelerator),
@@ -460,6 +462,8 @@ def run_code():
             text_label.config(text=f"현재 : {int(speed_value)}")    
             
             client.publish('pedal', json.dumps(data), 0, retain=False)
+            now2 = datetime.now()
+            print("시작시간", now2)
             time.sleep(1)
 
         except Exception as error:
