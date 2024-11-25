@@ -391,11 +391,12 @@ def delta_speed(current_speed):
     previous_time = now_time
     return speed_change / max(time_elapsed, 1)  # 속도 변화율 (초 단위)
 
+speed_value = 0
 
 # 데이터 수집 및 업데이트 함수
-def run_code():
+def run_code(): 
     state = "Normal Driving"
-    global previous_speed, previous_time  # 전역 변수로 초기화 필요
+    global speed_value, previous_speed, previous_time  # 전역 변수로 초기화 필요
     previous_speed = 0  # 이전 속도 초기값 설정
     previous_time = time.time()  # 이전 시간 초기값 설정
     
@@ -434,6 +435,9 @@ def run_code():
                 #현재속도("km/h")
                 speed_value = speed_response.value.magnitude
                 print(speed_value)
+
+            else :
+                speed_value = 0
                 
             if rpm_response.value is not None:
                 rpm_value = rpm_response.value.magnitude

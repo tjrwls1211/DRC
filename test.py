@@ -131,7 +131,7 @@ def update(frame):
     # 현재 레벨 계산 (0~9 범위)
     current_level = min(int(speed_value // 20), 9)  # 0~9로 제한
 
-    # 막대 색상 업데이트
+    # 막대 색상 업데이트    
     colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
     for i, bar in enumerate(bars):
         bar[0].set_color(colors[i] if i <= current_level else "lightgray")
