@@ -19,9 +19,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
 import pint
 
-# 서버 URL 설정
-url = f'http://{ip()}:{port()}/data'
-
 # 데이터 구조 정의
 data = {
     "carId": "01가1234",  # 차량 ID 설정
@@ -80,24 +77,6 @@ root.configure(bg="black")
 # 폰트 설정
 font_large = ("Arial", 35, "bold")
 
-# 속도 구간 설정
-#num_bins = 20
-#bin_width = 10
-#max_speed = 200
-
-# 그래프 초기 설정
-#fig, ax = plt.subplots(figsize=(2, 6))
-#fig.patch.set_facecolor("black")  # Figure 배경색 설정
-#ax.set_ylim(0, num_bins)
-#ax.axis('off')
-#ax.set_facecolor("black")  # 축 배경색 설정
-
-# 초기 막대 생성
-#bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)] 
-
-# 그래프 출력 필요없을경우 바로 삭제할것 
-#plt.show()
-
 # 이미지 로드
 accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((365, 500)))
 accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((365, 500)))
@@ -138,26 +117,6 @@ state_hold_time = 3  # 상태 유지 시간
 client = mqtt.Client()
 client.connect(ip(), 1222, 60)
 
-# 애니메이션 업데이트 함수
-#def update(frame):
-    #global speed_value
-    
-    # 현재 레벨 계산 (0~9 범위)
-    #current_level = min(int(speed_value // 10), 18)  # 0~9로 제한
-
-    # 막대 색상 업데이트
-    #colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
-    #for i, bar in enumerate(bars):
-        #bar[0].set_color(colors[i] if i <= current_level else "lightgray")
-
-    #canvas.draw()  # 그래프 업데이트
-
-# 애니메이션 실행
-#ani = FuncAnimation(fig, update, interval=500)  # 5000ms마다 업데이트
-
-# Tkinter 창에 그래프 추가
-#canvas = FigureCanvasTkAgg(fig, master=root)
-#canvas.get_tk_widget().place(relx=0.84, rely=0.2, anchor="n", width=300, height=400)
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
@@ -239,10 +198,6 @@ last_played_state = None  # 전역 변수로 설정
 
 rpm_reached_5000 = False
 
-
-import threading
-import time
-
 def check_info(accel_value, brake_value, rpm_value, speed_value):
     global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating, last_accel_time, last_sound_time
     mqtt_state = None
@@ -252,7 +207,7 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
     current_time = time.time()  # 현재 시간 기록
 
     # Unintended Acceleration + 5000 RPM 조건 결합
-    if 700 < accel_value < 2000 and brake_value <= 30 and rpm_value >= 5000 and speed_value >= 40:
+    if 700 < accel_value < 2000 and brake_value <= 100 and rpm_value >= 5000 and speed_value >= 40:
         state = "Unintended Acceleration"
         update_display_state(accel_value, brake_value, state)
 
@@ -300,7 +255,7 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
         prev_rpm = rpm_value
 
     # Rapid Acceleration 조건
-    elif accel_value > 3000 and brake_value <= 30 and rpm_value >= 2000:
+    elif accel_value > 3000 and brake_value < 100 and rpm_value >= 2000:
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 1
@@ -316,7 +271,7 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
             threading.Timer(3, reset_playing_state).start()
 
     # Rapid Braking 조건
-    elif brake_value > 3000 and accel_value <= 30:
+    elif brake_value > 3000 and accel_value <= 100:
         state = "Rapid Braking"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 2
@@ -433,14 +388,14 @@ def run_code():
                 speed_value = speed_response.value.magnitude
                 print(speed_value)
 
-            #else :
-                #speed_value = 0
+            else :
+                speed_value = 0
                 
             if rpm_response.value is not None:
                 rpm_value = rpm_response.value.magnitude
             
-            #else :
-                #rpm_value = 0
+            else :
+                rpm_value = 0
 
             #print("rpm : ", rpm_value, "speed : ", speed_value)
             # 속도 변화 계산
