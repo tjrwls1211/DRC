@@ -81,22 +81,22 @@ root.configure(bg="black")
 font_large = ("Arial", 35, "bold")
 
 # 속도 구간 설정
-#num_bins = 20
-#bin_width = 10
-#max_speed = 200
+num_bins = 10
+bin_width = 20
+max_speed = 220
 
 # 그래프 초기 설정
-#fig, ax = plt.subplots(figsize=(2, 6))
-#fig.patch.set_facecolor("black")  # Figure 배경색 설정
-#ax.set_ylim(0, num_bins)
-#ax.axis('off')
-#ax.set_facecolor("black")  # 축 배경색 설정
+fig, ax = plt.subplots(figsize=(2, 6))
+fig.patch.set_facecolor("black")  # Figure 배경색 설정
+fig.patch.set_alpha(0)  # Figure 배경 투명하게 설정
+ax.set_ylim(0, num_bins)
+ax.axis('off')
+ax.set_facecolor("black")  # 축 배경색 설정
 
 # 초기 막대 생성
-#bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)] 
+bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)] 
 
-# 그래프 출력 필요없을경우 바로 삭제할것 
-#plt.show()
+
 
 # 이미지 로드
 accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((365, 500)))
@@ -139,25 +139,25 @@ client = mqtt.Client()
 client.connect(ip(), 1222, 60)
 
 # 애니메이션 업데이트 함수
-#def update(frame):
-    #global speed_value
-    
+def update(frame):
+    global speed_value
+
     # 현재 레벨 계산 (0~9 범위)
-    #current_level = min(int(speed_value // 10), 18)  # 0~9로 제한
+    current_level = min(int(speed_value // 10), 18)  # 0~9로 제한
 
     # 막대 색상 업데이트
-    #colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
-    #for i, bar in enumerate(bars):
-        #bar[0].set_color(colors[i] if i <= current_level else "lightgray")
+    colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
+    for i, bar in enumerate(bars):
+        bar[0].set_color(colors[i] if i <= current_level else "lightgray")
 
-    #canvas.draw()  # 그래프 업데이트
+    canvas.draw()  # 그래프 업데이트
 
 # 애니메이션 실행
-#ani = FuncAnimation(fig, update, interval=500)  # 5000ms마다 업데이트
+ani = FuncAnimation(fig, update, interval=500)  # 5000ms마다 업데이트
 
 # Tkinter 창에 그래프 추가
-#canvas = FigureCanvasTkAgg(fig, master=root)
-#canvas.get_tk_widget().place(relx=0.84, rely=0.2, anchor="n", width=300, height=400)
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas.get_tk_widget().place(relx=0.84, rely=0.2, anchor="n", width=300, height=400)
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
@@ -230,7 +230,7 @@ def play_sounds_in_sequence(sounds):
     is_playing_sounds = False  # 모든 음성 재생 완료 후 플래그 초기화
 
 
-    
+
 #전역 변수로 안전 상태 저장
 prev_mqtt_state = None
 
@@ -246,7 +246,7 @@ import time
 def check_info(accel_value, brake_value, rpm_value, speed_value):
     global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating, last_accel_time, last_sound_time
     mqtt_state = None
-    
+
     # 기본 상태 설정
     state = "Normal Driving" if not rpm_reached_5000 else "Unintended Acceleration"
     current_time = time.time()  # 현재 시간 기록
@@ -355,9 +355,9 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
         stop_sounds = True
         last_played_state = None
         is_playing_sounds = False
-    
+
     data["driveState"] = state
-    
+
     # MQTT 상태 전송
     if mqtt_state is not None and mqtt_state != prev_mqtt_state:
         alert_data = {
@@ -367,7 +367,7 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
         print(alert_data)
         client.publish('AbnormalDriving', json.dumps(alert_data), 0, retain=False)
         prev_mqtt_state = mqtt_state
-        
+
 def reset_playing_state():
     global is_playing_sounds, stop_sounds
     is_playing_sounds = False
@@ -375,8 +375,8 @@ def reset_playing_state():
     print("플래그 초기화 완료: is_playing_sounds=False, stop_sounds=False")
 
 
-        
-    
+
+
 
 # 초기 값 설정
 previous_speed = 0  # 이전 속도 (km/h)
@@ -391,15 +391,14 @@ def delta_speed(current_speed):
     previous_time = now_time
     return speed_change / max(time_elapsed, 1)  # 속도 변화율 (초 단위)
 
-#speed_value = 0
 
 # 데이터 수집 및 업데이트 함수
-def run_code(): 
+def run_code():
     state = "Normal Driving"
-    global previous_speed, previous_time  # 전역 변수로 초기화 필요 speed_value,
+    global previous_speed, previous_time  # 전역 변수로 초기화 필요
     previous_speed = 0  # 이전 속도 초기값 설정
     previous_time = time.time()  # 이전 시간 초기값 설정
-    
+
     while True:  # 데이터프레임의 길이에 따라 반복
         try:
             # 현재 시간 추가
@@ -407,17 +406,20 @@ def run_code():
             print("시작시간", now)
             # 첫 번째 로드셀 (엑셀)
             val_accelerator = hx1.get_weight(5)
+            print(f"현재상태 : 액셀(Accelerator)  무게: {val_accelerator} g")
+
             # 두 번째 로드셀 (브레이크)
             val_brake = hx2.get_weight(5)
-            
+            print(f"현재상태 : 브레이크(Brake) 무게: {val_brake} g")
+
             hx1.power_down()
             hx2.power_down()
             hx1.power_up()
             hx2.power_up()
-            
+
             # 상태 업데이트 및 UI 갱신
             update_display_state(val_accelerator, val_brake, state)
-            
+
             # RPM 데이터 요청
             rpm_cmd = obd.commands.RPM
             rpm_response = connection.query(rpm_cmd)
@@ -425,32 +427,26 @@ def run_code():
             # 속도 데이터 요청
             speed_cmd = obd.commands.SPEED
             speed_response = connection.query(speed_cmd)
-             
- 
+
+
              # 속도 및 RPM 데이터 추가
             if speed_response.value is not None:
                 #현재속도("km/h")
                 speed_value = speed_response.value.magnitude
                 print(speed_value)
 
-            #else :
-                #speed_value = 0
-                
             if rpm_response.value is not None:
                 rpm_value = rpm_response.value.magnitude
-            
-            #else :
-                #rpm_value = 0
 
             #print("rpm : ", rpm_value, "speed : ", speed_value)
             # 속도 변화 계산
             speed_change = delta_speed(speed_value)  # 속도 변화(kmh) 계산
             speed_change = round(speed_change, 1)
-            
+
             # check_info 호출하여 음성 상태 평가 및 재생
             check_info(val_accelerator, val_brake, rpm_value, speed_value)
-            
-            
+
+
             data.update({
                 "carId": "01가1234",  # 차량 ID 유지
                 "aclPedal": int(val_accelerator),
@@ -464,8 +460,8 @@ def run_code():
             print(data)
             # 레이블 업데이트 (정수 형식)
             text_label.config(text=f"현재 : {int(speed_value)}")    
-            
-            client.publish('DriveLog', json.dumps(data), 0, retain=False)
+
+            client.publish('pedal', json.dumps(data), 0, retain=False)
             now2 = datetime.now()
             print("종료시간", now2)
             print("걸린시간 : ", now2-now)
