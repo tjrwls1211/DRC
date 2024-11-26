@@ -94,9 +94,11 @@ brake_label.place(relx=-0.04, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
 
 
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
-text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
+text_label = tk.Label(root, text=f"현재 속도", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
 text_label.place(relx=0.85, rely=0.05, anchor='ne')
 
+rpm_label = tk.Label(root, text=f"현재 RPM", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
+rpm_label.place(relx=0.85, rely=0.25, anchor='ne')
 
 # pygame 초기화
 pygame.mixer.init()
@@ -387,15 +389,9 @@ def run_code():
                 #현재속도("km/h")
                 speed_value = speed_response.value.magnitude
                 print(speed_value)
-
-            else :
-                speed_value = 0
                 
             if rpm_response.value is not None:
                 rpm_value = rpm_response.value.magnitude
-            
-            else :
-                rpm_value = 0
 
             #print("rpm : ", rpm_value, "speed : ", speed_value)
             # 속도 변화 계산
@@ -418,7 +414,8 @@ def run_code():
             })             
             print(data)
             # 레이블 업데이트 (정수 형식)
-            text_label.config(text=f"현재 : {int(speed_value)}")    
+            text_label.config(text=f"현재 속도 : {int(speed_value)}")
+            rpm_label.config(text=f"현재 RPM : {rpm_value}")
             
             client.publish('DriveLog', json.dumps(data), 0, retain=False)
             now2 = datetime.now()
