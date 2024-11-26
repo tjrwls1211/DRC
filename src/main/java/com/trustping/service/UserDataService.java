@@ -1,22 +1,18 @@
 package com.trustping.service;
 
-import java.util.Optional;
-
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.trustping.DTO.DriveTimeDTO;
 import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
 import com.trustping.DTO.MfaResponseDTO;
-import com.trustping.DTO.UpdateNicknameDTO;
-import com.trustping.DTO.UpdateResponseDTO;
-import com.trustping.entity.UserData;
 import com.trustping.DTO.MyDataResponseDTO;
 import com.trustping.DTO.OtpResponseDTO;
 import com.trustping.DTO.PasswordDTO;
 import com.trustping.DTO.ResponseDTO;
 import com.trustping.DTO.SignUpRequestDTO;
+import com.trustping.DTO.UpdateNicknameDTO;
+import com.trustping.DTO.UpdateResponseDTO;
 
 public interface UserDataService {
 	public boolean duplicateCheckUser(String id);
