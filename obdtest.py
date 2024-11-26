@@ -81,19 +81,19 @@ root.configure(bg="black")
 font_large = ("Arial", 35, "bold")
 
 # 속도 구간 설정
-num_bins = 20
-bin_width = 10
-max_speed = 200
+#num_bins = 20
+#bin_width = 10
+#max_speed = 200
 
 # 그래프 초기 설정
-fig, ax = plt.subplots(figsize=(2, 6))
-fig.patch.set_facecolor("black")  # Figure 배경색 설정
-ax.set_ylim(0, num_bins)
-ax.axis('off')
-ax.set_facecolor("black")  # 축 배경색 설정
+#fig, ax = plt.subplots(figsize=(2, 6))
+#fig.patch.set_facecolor("black")  # Figure 배경색 설정
+#ax.set_ylim(0, num_bins)
+#ax.axis('off')
+#ax.set_facecolor("black")  # 축 배경색 설정
 
 # 초기 막대 생성
-bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)] 
+#bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)] 
 
 # 그래프 출력 필요없을경우 바로 삭제할것 
 #plt.show()
@@ -139,25 +139,25 @@ client = mqtt.Client()
 client.connect(ip(), 1222, 60)
 
 # 애니메이션 업데이트 함수
-def update(frame):
-    global speed_value
+#def update(frame):
+    #global speed_value
     
     # 현재 레벨 계산 (0~9 범위)
-    current_level = min(int(speed_value // 10), 18)  # 0~9로 제한
+    #current_level = min(int(speed_value // 10), 18)  # 0~9로 제한
 
     # 막대 색상 업데이트
-    colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
-    for i, bar in enumerate(bars):
-        bar[0].set_color(colors[i] if i <= current_level else "lightgray")
+    #colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
+    #for i, bar in enumerate(bars):
+        #bar[0].set_color(colors[i] if i <= current_level else "lightgray")
 
-    canvas.draw()  # 그래프 업데이트
+    #canvas.draw()  # 그래프 업데이트
 
 # 애니메이션 실행
-ani = FuncAnimation(fig, update, interval=500)  # 5000ms마다 업데이트
+#ani = FuncAnimation(fig, update, interval=500)  # 5000ms마다 업데이트
 
 # Tkinter 창에 그래프 추가
-canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().place(relx=0.84, rely=0.2, anchor="n", width=300, height=400)
+#canvas = FigureCanvasTkAgg(fig, master=root)
+#canvas.get_tk_widget().place(relx=0.84, rely=0.2, anchor="n", width=300, height=400)
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
@@ -396,7 +396,7 @@ speed_value = 0
 # 데이터 수집 및 업데이트 함수
 def run_code(): 
     state = "Normal Driving"
-    global speed_value, previous_speed, previous_time  # 전역 변수로 초기화 필요
+    global  previous_speed, previous_time  # 전역 변수로 초기화 필요 speed_value,
     previous_speed = 0  # 이전 속도 초기값 설정
     previous_time = time.time()  # 이전 시간 초기값 설정
     
@@ -433,14 +433,14 @@ def run_code():
                 speed_value = speed_response.value.magnitude
                 print(speed_value)
 
-            else :
-                speed_value = 0
+            #else :
+                #speed_value = 0
                 
             if rpm_response.value is not None:
                 rpm_value = rpm_response.value.magnitude
             
-            else :
-                rpm_value = 0
+            #else :
+                #rpm_value = 0
 
             #print("rpm : ", rpm_value, "speed : ", speed_value)
             # 속도 변화 계산
