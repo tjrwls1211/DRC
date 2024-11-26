@@ -11,7 +11,6 @@ import threading
 import pygame
 from server import ip, port
 import obd
-import random
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FuncAnimation
@@ -31,12 +30,6 @@ data = {
     "speedChange" : 0
 }
 
-def cleanAndExit():
-    print("Cleaning...")
-    GPIO.cleanup()  # GPIO 핀 해제
-    print("Bye!")
-    sys.exit()
-
 # COM 포트 설정 및 타임아웃 증가
 connection = obd.OBD("/dev/rfcomm0", fast=False)
 
@@ -47,6 +40,11 @@ else:
     print("OBD-II 연결 실패!")
     exit()
 
+def cleanAndExit():
+    print("Cleaning...")
+    GPIO.cleanup()  # GPIO 핀 해제
+    print("Bye!")
+    sys.exit()
 
 # 첫 번째 HX711 - 엑셀(Accelerator)
 hx1 = HX711(20, 16)
@@ -67,6 +65,10 @@ hx1.reset()
 hx2.reset()
 hx1.tare()
 hx2.tare()
+
+# MQTT 설정
+client = mqtt.Client()
+client.connect(ip(), 1222, 60)
 
 # Tkinter 창생성
 root = tk.Tk()
@@ -92,33 +94,12 @@ brake_label = tk.Label(root, image=brake_img_dark, bg="black")
 brake_label.config(width=brake_img_normal.width(), height=brake_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
 brake_label.place(relx=-0.04, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
 
-
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
 text_label = tk.Label(root, text=f"현재 속도", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
 text_label.place(relx=0.85, rely=0.05, anchor='ne')
 
 rpm_label = tk.Label(root, text=f"현재 RPM", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
 rpm_label.place(relx=0.85, rely=0.25, anchor='ne')
-
-# pygame 초기화
-pygame.mixer.init()
-
-# 음성 재생 시간 기록
-is_accelerating = False
-last_sound_time = {
-    "Unintended Acceleration": 0,
-    "Rapid Acceleration": 0,
-    "Rapid Braking": 0,
-    "Both Feet Driving": 0
-}
-
-sound_delay = 3  # 음성 재생 간격
-state_hold_time = 3  # 상태 유지 시간
-
-# MQTT 설정
-client = mqtt.Client()
-client.connect(ip(), 1222, 60)
-
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
@@ -163,6 +144,20 @@ brakebrake_sound = pygame.mixer.Sound("brakebrake.wav")
 #양발운전 
 bothdrive_sound = pygame.mixer.Sound("bothdrive.wav")
 
+# pygame 초기화
+pygame.mixer.init()
+
+# 음성 재생 시간 기록
+is_accelerating = False
+last_sound_time = {
+    "Unintended Acceleration": 0,
+    "Rapid Acceleration": 0,
+    "Rapid Braking": 0,
+    "Both Feet Driving": 0
+}
+
+sound_delay = 3  # 음성 재생 간격
+state_hold_time = 3  # 상태 유지 시간
 
 # 전역 변수
 stop_sounds = False
@@ -189,15 +184,12 @@ def play_sounds_in_sequence(sounds):
         time.sleep(3) # 음성간 3초대기 
 
     is_playing_sounds = False  # 모든 음성 재생 완료 후 플래그 초기화
-
-
     
 #전역 변수로 안전 상태 저장
 prev_mqtt_state = None
-
 # 마지막으로 재생된 상태를 저장하는 변수
 last_played_state = None  # 전역 변수로 설정
-
+# 5000 RPM 도달 여부 플래그
 rpm_reached_5000 = False
 
 def check_info(accel_value, brake_value, rpm_value, speed_value):
@@ -227,7 +219,6 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
             print("RPM 도달 상태:", rpm_reached_5000)
             sounds = [rapidspeed_1_sound, rapidspeed_2_sound, rapidspeed_3_sound, rapidspeed_4_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-
             # 3초 후 플래그 초기화
             threading.Timer(3, reset_playing_state).start()
 
@@ -235,25 +226,25 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
     if rpm_reached_5000:
         elapsed_time = current_time - last_sound_time.get(state, 0)
         if rpm_value < 5000 and rpm_value >= 4000 and not is_playing_sounds:
-            print("2번 케이스", rpm_value, prev_rpm)
+            print("노브레이크 상황", rpm_value, prev_rpm)
             sounds = [nobrake_1_sound, nobrake_2_sound, nobrake_3_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
             threading.Timer(3, reset_playing_state).start()
         elif rpm_value < 4000 and rpm_value >= 3000 and not is_playing_sounds:
-            print("3번 케이스", rpm_value, prev_rpm)
+            print("점점 스피드가 줄어드는 상황", rpm_value, prev_rpm)
             sounds = [speedless_1_sound, speedless_2_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
             threading.Timer(3, reset_playing_state).start()
         elif rpm_value < 3000 and rpm_value >= 2000 and not is_playing_sounds:
-            print("4번 케이스", rpm_value, prev_rpm)
+            print("차가 점점 멈추는 상황", rpm_value, prev_rpm)
             sounds = [carstop_1_sound, carstop_2_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
             rpm_reached_5000 = False  # 2000 RPM 이하로 떨어지면 플래그 초기화
             threading.Timer(3, reset_playing_state).start()
-
+            
         prev_rpm = rpm_value
 
     # Rapid Acceleration 조건
@@ -331,10 +322,6 @@ def reset_playing_state():
     stop_sounds = False
     print("플래그 초기화 완료: is_playing_sounds=False, stop_sounds=False")
 
-
-        
-    
-
 # 초기 값 설정
 previous_speed = 0  # 이전 속도 (km/h)
 previous_time = time.time()
@@ -348,12 +335,10 @@ def delta_speed(current_speed):
     previous_time = now_time
     return speed_change / max(time_elapsed, 1)  # 속도 변화율 (초 단위)
 
-#speed_value = 0
-
 # 데이터 수집 및 업데이트 함수
 def run_code(): 
     state = "Normal Driving"
-    global previous_speed, previous_time  # 전역 변수로 초기화 필요 speed_value,
+    global previous_speed, previous_time  # 전역 변수로 초기화 필요
     previous_speed = 0  # 이전 속도 초기값 설정
     previous_time = time.time()  # 이전 시간 초기값 설정
     
@@ -382,8 +367,7 @@ def run_code():
             # 속도 데이터 요청
             speed_cmd = obd.commands.SPEED
             speed_response = connection.query(speed_cmd)
-             
- 
+            
              # 속도 및 RPM 데이터 추가
             if speed_response.value is not None:
                 #현재속도("km/h")
@@ -393,14 +377,12 @@ def run_code():
             if rpm_response.value is not None:
                 rpm_value = rpm_response.value.magnitude
 
-            #print("rpm : ", rpm_value, "speed : ", speed_value)
             # 속도 변화 계산
             speed_change = delta_speed(speed_value)  # 속도 변화(kmh) 계산
             speed_change = round(speed_change, 1)
             
             # check_info 호출하여 음성 상태 평가 및 재생
             check_info(val_accelerator, val_brake, rpm_value, speed_value)
-            
             
             data.update({
                 "carId": "01가1234",  # 차량 ID 유지
