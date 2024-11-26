@@ -18,7 +18,7 @@ public class DriveScoreEvaluateService {
 	SegmentService segmentService;
 	
 	private Map<String, Integer> abnormalDriveCount = new HashMap<>();
-
+	
 	public void evaluateScore(DriveLogReceiveDTO driveLog) {
 		String carId = driveLog.getCarId();
 		double speedChange = driveLog.getSpeedChange();
@@ -37,7 +37,7 @@ public class DriveScoreEvaluateService {
 		// 속도 변화량이 양수이면 급가속 체크
 		if (speedChange > 0) {
 			count = checkSuddenAcceleration(carId, count, speed, speedChange);
-			// 음수인 경우 급정거 체크
+		// 음수인 경우 급정거 체크
 		} else {
 			count = checkSuddenDeceleration(carId, count, speed, speedChange);
 		}
@@ -49,11 +49,10 @@ public class DriveScoreEvaluateService {
 			System.out.println("카운트 초기화 " + carId);
 			deductScore(carId);
 		}
-
 	}
 
 	private int checkSuddenAcceleration(String carId, int count, int speed, double speedChange) {
-
+		
 		// 급가속 조건을 충족하는지 확인하는 변수
 		boolean isSuddenAcceleration = false;
 
@@ -83,7 +82,8 @@ public class DriveScoreEvaluateService {
 	}
 
 	private int checkSuddenDeceleration(String carId, int count, int speed, double speedChange) {
-
+		
+		// 급정거 조건을 충족하는지 확인하는 변수
 		boolean isSuddenDeceleration = false;
 
 		// 속도가 20Km 이하 속도 변화량 -12Km 이상
@@ -96,10 +96,10 @@ public class DriveScoreEvaluateService {
 			isSuddenDeceleration = true;
 		}
 
+		// 급정거가 아닌 경우 카운트 초기화
 		if (!isSuddenDeceleration) {
 			count = 0;
 		}
-
 		return count;
 	}
 

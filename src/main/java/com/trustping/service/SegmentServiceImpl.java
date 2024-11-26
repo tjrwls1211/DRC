@@ -31,37 +31,43 @@ public class SegmentServiceImpl implements SegmentService {
 	// 세그먼트 생성 및 업데이트
 	@Override
 	public void updateOrCreateSegment(DriveLogReceiveDTO dto) {
+		// 가장 최근의 세그먼트 불러오기
 		Optional<Segment> currentSegmentOpt = segmentRepository
 				.findTopByCarId_CarIdOrderByStartTimeDesc(dto.getCarId());
+		// 차량 번호로 사용자 정보 불러오기
 		Optional<UserData> userDataOpt = userDataHelperService.getUserDataByCarId(dto.getCarId());
 
 		if (userDataOpt.isEmpty()) {
 			return;
 		}
-
+		
 		UserData userData = userDataOpt.get();
 
+		// 세그먼트가 없거나 현재 세그먼트 1개당 시간(18000초 == 5시간)일 경우 새로운 세그먼트 생성
 		if (currentSegmentOpt.isEmpty() || currentSegmentOpt.get().getTotalDuration() >= 18000) {
 			Segment newSegment = new Segment();
 			newSegment.setCarId(userData);
 			newSegment.setStartTime(dto.getCreateDate());
 			newSegment.setTotalDuration(0);
+			// 감점을 위해 첫 점수는 100점으로 시작
 			newSegment.setAverageScore(100);
-
-			// currentSegment가 존재할 경우, endTime을 설정하고 저장
+			// 이전 세그먼트가 존재할 경우, endTime을 설정하고 저장하고 세그먼트 종료
 			currentSegmentOpt.ifPresent(currentSegment -> {
 				currentSegment.setEndTime(dto.getCreateDate());
-				segmentRepository.save(currentSegment); // currentSegment 저장
+				// 이전 세그먼트 저장
+				segmentRepository.save(currentSegment);
 			});
-
-			segmentRepository.save(newSegment); // newSegment 저장
+			// 새로운 세그먼트 저장
+			segmentRepository.save(newSegment); 
 			return;
 		}
 
-		// currentSegment가 null이 아니고, totalDuration이 18000 미만일 경우
+		// currentSegment가 null이 아니고, totalDuration이 18000 미만일 경우 세그먼트 정보 불러오기
 		Segment currentSegment = currentSegmentOpt.get();
+		// 세그먼트의 주행시간 +1초 추가
 		currentSegment.setTotalDuration(currentSegment.getTotalDuration() + 1);
-		segmentRepository.save(currentSegment); // currentSegment 저장
+		// currentSegment 저장
+		segmentRepository.save(currentSegment); 
 	}
 
 	// 세그먼트 점수 감점
@@ -74,16 +80,10 @@ public class SegmentServiceImpl implements SegmentService {
 		}
 
 		Segment currentSegment = currentSegmentOpt.get();
-		int totalDuration = currentSegment.getTotalDuration();
 		int existingScore = currentSegment.getAverageScore();
 		UserData userData = currentSegment.getCarId();
 		
-		/*
-		// 새로운 평균 점수 계산
-		int newScore = existingScore - 3;
-		int updatedAverageScore = (existingScore * totalDuration + newScore) / (totalDuration + 1);
-		*/
-		
+		// 비정상 주행 시 -3점 감점
 		int updatedAverageScore = existingScore -3;
 		currentSegment.setAverageScore(updatedAverageScore);
 		segmentRepository.save(currentSegment);
@@ -100,8 +100,6 @@ public class SegmentServiceImpl implements SegmentService {
             totalDriveTime += segment.getTotalDuration();
         }
 		
-		System.out.println(totalDriveTime);
 		return new DriveTimeDTO(totalDriveTime);
 	}
-
 }

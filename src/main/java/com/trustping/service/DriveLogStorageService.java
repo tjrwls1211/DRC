@@ -26,12 +26,14 @@ public class DriveLogStorageService {
 	@Autowired
 	private UserDataHelperService userDataHelperService;
 
+	/*
 	// 정상 주행 데이터 삭제
 	@Scheduled(fixedRate = 10000)
 	public void deleteOldNormalLogs() {
 		LocalDateTime targetTime = LocalDateTime.now().minusMinutes(5);
 		driveLogService.deleteOldNormalLogs(targetTime);
 	}
+	*/
 
 	// 주행 로그 저장
 	public void saveData(DriveLogReceiveDTO driveLogReceiveDTO) {

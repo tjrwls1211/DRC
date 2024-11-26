@@ -35,7 +35,7 @@ public class AbnormalDataStorageService {
 	        if (user.isEmpty()) {
 	            // 유저 데이터가 없을 경우 처리 (예: 로그를 남기거나 예외 발생)
 	            System.out.println("User not found for carId: " + carId);
-	            return; // 또는 적절한 예외를 던질 수 있습니다.
+	            return;
 	        }
 	        
 	        UserData userData = user.get();
