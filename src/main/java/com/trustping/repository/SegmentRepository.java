@@ -11,7 +11,7 @@ import com.trustping.entity.Segment;
 public interface SegmentRepository extends JpaRepository<Segment, Long> {
 	Optional<Segment> findTopByCarId_CarIdOrderByStartTimeDesc(String carId);
 	
-	List<Segment> findTop6ByCarId_CarIdOrderByStartTimeDesc(String carId, PageRequest pageRequest);
+	List<Segment> findTop6ByCarId_CarIdOrderByStartTimeDesc(String carId);
 	
 	List<Segment> findByCarId_CarId(String carId);
 	
