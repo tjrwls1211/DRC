@@ -96,7 +96,7 @@ ax.set_facecolor("black")  # 축 배경색 설정
 bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)] 
 
 # 그래프 출력 필요없을경우 바로 삭제할것 
-plt.show()
+#plt.show()
 
 # 이미지 로드
 accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((365, 500)))
