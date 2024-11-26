@@ -391,7 +391,7 @@ def delta_speed(current_speed):
     previous_time = now_time
     return speed_change / max(time_elapsed, 1)  # 속도 변화율 (초 단위)
 
-speed_value = 0
+#speed_value = 0
 
 # 데이터 수집 및 업데이트 함수
 def run_code(): 
