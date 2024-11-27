@@ -114,74 +114,89 @@ const AnalysisScreen = ({ todayData, fetchData, title, chartDataKey, loadingText
         DataKey={chartDataKey}
       />
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+<View
+  style={{
+    marginVertical: 8,
+    marginHorizontal: 7,
+    paddingHorizontal: 0,
+    borderWidth: 1,
+    borderColor: isDarkMode ? themeColor : themeColor,
+    borderRadius: 16, // 라운드 처리
+    overflow: 'hidden', // 라운드 밖으로 내용이 넘어가지 않도록
+    backgroundColor: isDarkMode ? '#121212' : '#ffffff',
+  }}
+>
+  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+    <View
+      style={{
+        paddingHorizontal: 10, // 스크롤 뷰 안의 좌우 여백 조정
+      }}
+    >
       <LineChart
-          data={{
-            labels: chartData.labels,
-            datasets: chartData.datasets,
-          }}
-          width={chartWidth}
-          height={chartHeight}
-          yAxisLabel=""
-          yAxisSuffix="회"
-          chartConfig={{
-            backgroundColor: isDarkMode ? '#121212' : '#ffffff',
-            backgroundGradientFrom: isDarkMode ? '#121212' : '#ffffff',
-            backgroundGradientTo: isDarkMode ? '#121212' : '#ffffff',
-            decimalPlaces: 0,
-            color: (opacity = 1) =>
-              isDarkMode ? `rgba(255, 255, 255, ${opacity})` : `rgba(47, 79, 79, ${opacity})`,
-            labelColor: () => (isDarkMode ? '#ffffff' : '#2F4F4F'),
-            style: {
-              borderRadius: 16,
-            },
-            propsForDots: {
-              r: '4',
-              strokeWidth: '1.5',
-              stroke: themeColor,
-            },
-            propsForLabels: {
-              fontSize: 12,
-              fill: isDarkMode ? '#ffffff' : '#2F4F4F',
-            },
-          }}
-          withDots={true} // 점 표시 활성화
-          renderDotContent={({ x, y, index }) => {
-            const buffer = 25; // 점과 텍스트 사이 최소 여백
-            const dataValue = chartData.datasets[0].data[index];
-            const maxValue = Math.max(...chartData.datasets[0].data);
-            const adjustedY =
-              y < buffer
-                ? y + 10 // 그래프 상단에 가까우면 점 아래로 텍스트 표시
-                : y - 20; // 일반적으로 점 위에 텍스트 표시
-          
-            return (
-              <Text
-                key={index}
-                style={{
-                  position: 'absolute',
-                  left: x - 10, // 텍스트를 점의 x 좌표 중심에 맞춤
-                  top: adjustedY, // 조정된 y 좌표
-                  color: isDarkMode ? '#ffffff' : '#2F4F4F', // 다크 모드 여부에 따라 색상 조정
-                  fontSize: 12, // 텍스트 크기
-                  textAlign: 'center', // 텍스트 중앙 정렬
-                }}
-              >
-                {dataValue}회 {/* 데이터 값과 '회' 추가 */}
-              </Text>
-            );
-          }}
-          bezier
-          style={{
-            marginVertical: 8,
-            marginHorizontal: 7,
-            borderWidth: 1,
-            borderColor: isDarkMode ? themeColor : themeColor,
-            borderRadius: 16,
-            overflow: 'hidden',
-          }}
-        />
+        data={{
+          labels: chartData.labels,
+          datasets: chartData.datasets,
+        }}
+        width={chartWidth}
+        height={chartHeight}
+        yAxisLabel=""
+        yAxisSuffix="회"
+        chartConfig={{
+          backgroundColor: isDarkMode ? '#121212' : '#ffffff',
+          backgroundGradientFrom: isDarkMode ? '#121212' : '#ffffff',
+          backgroundGradientTo: isDarkMode ? '#121212' : '#ffffff',
+          decimalPlaces: 0,
+          color: (opacity = 1) =>
+            isDarkMode ? `rgba(255, 255, 255, ${opacity})` : `rgba(47, 79, 79, ${opacity})`,
+          labelColor: () => (isDarkMode ? '#ffffff' : '#2F4F4F'),
+          style: {
+            borderRadius: 16, // 차트 자체에도 라운드
+          },
+          propsForDots: {
+            r: '4',
+            strokeWidth: '1.5',
+            stroke: themeColor,
+          },
+          propsForLabels: {
+            fontSize: 12,
+            fill: isDarkMode ? '#ffffff' : '#2F4F4F',
+          },
+        }}
+        withDots={true}
+        renderDotContent={({ x, y, index }) => {
+          const buffer = 25;
+          const dataValue = chartData.datasets[0].data[index];
+          const maxValue = Math.max(...chartData.datasets[0].data);
+          const adjustedY =
+            y < buffer
+              ? y + 10
+              : y - 20;
+
+              return (
+                <Text
+                  key={index}
+                  style={{
+                    position: 'absolute',
+                    left: x - 10,
+                    top: adjustedY,
+                    color: isDarkMode ? '#ffffff' : '#2F4F4F',
+                    fontSize: 12,
+                    textAlign: 'center',
+                  }}
+                >
+                  {dataValue}회
+                </Text>
+              );
+            }}
+            bezier
+            style={{
+              borderRadius: 16, // 차트 자체 모서리도 라운드 처리
+              paddingTop: 20,
+            }}
+          />
+        </View>
       </ScrollView>
+    </View>
 
       <Text style={{
             color: isDarkMode ? '#b0b0b0' : '#2F4F4F',
