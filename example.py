@@ -72,7 +72,7 @@ brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((400, 53
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
 accel_label.config(width=accel_img_normal.width(), height=accel_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
-accel_label.place(relx=0.95, rely=0.5, anchor="ne")  # 윈도우 중앙에 배치
+accel_label.place(relx=1.1, rely=0.5, anchor="ne")  # 윈도우 중앙에 배치
 
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
 brake_label.config(width=brake_img_normal.width(), height=brake_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
