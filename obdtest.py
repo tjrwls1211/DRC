@@ -88,18 +88,19 @@ brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((365, 50
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
 accel_label.config(width=accel_img_normal.width(), height=accel_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
-accel_label.place(relx=0.42, rely=0.5, anchor="center")  # 윈도우 중앙에 배치
+accel_label.place(relx=1, rely=0.5, anchor="e")  # 윈도우 중앙에 배치
 
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
 brake_label.config(width=brake_img_normal.width(), height=brake_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
 brake_label.place(relx=-0.04, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
 
-#data부분을 나중에 속도 데이터로 넣으면될꺼같음 
-text_label = tk.Label(root, text=f"현재 속도", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
-text_label.place(relx=0.85, rely=0.05, anchor='ne')
 
-rpm_label = tk.Label(root, text=f"현재 RPM", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
-rpm_label.place(relx=0.85, rely=0.25, anchor='ne')
+#data부분을 나중에 속도 데이터로 넣으면될꺼같음 
+text_label = tk.Label(root, text=f"현재 속도", font=font_large, bg="black", fg="white", padx=2, pady=10, width=11)
+text_label.place(relx=0.5, rely=0.3, anchor='center')
+
+rpm_label = tk.Label(root, text=f"현재 RPM", font=font_large, bg="black", fg="white", padx=2, pady=10, width=11)
+rpm_label.place(relx=0.5, rely=0.5, anchor='center')
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
@@ -396,8 +397,8 @@ def run_code():
             })             
             print(data)
             # 레이블 업데이트 (정수 형식)
-            text_label.config(text=f"현재 속도 : {int(speed_value)}")
-            rpm_label.config(text=f"현재 RPM : {rpm_value}")
+            text_label.config(text=f"속도 : {int(speed_value)}")
+            rpm_label.config(text=f"RPM : {rpm_value}")
             
             client.publish('DriveLog', json.dumps(data), 0, retain=False)
             now2 = datetime.now()
