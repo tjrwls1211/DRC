@@ -83,6 +83,8 @@ brake_label.place(relx=-0.04, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
 text_label = tk.Label(root, text=f"현재 속도", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
 text_label.place(relx=0.85, rely=0.05, anchor='ne')
 
+rpm_label = tk.Label(root, text=f"현재 RPM", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
+rpm_label.place(relx=0.85, rely=0.25, anchor='ne')
 
 # pygame 초기화
 pygame.mixer.init()
@@ -330,6 +332,7 @@ def delta_speed(current_speed):
     return kmh
  """
 
+rpm_value = 461
 
 # 속도 예시 입력
 current_speeds = [0, 20, 40, 60, 80]  # 속도를 순차적으로 증가시킴 (km/h)
@@ -404,7 +407,7 @@ def run_code():
             print(data)
             #레이블 업데이트 (정수 형식)
             text_label.config(text=f"현재 : {random_speed}")    
-            
+            rpm_label.config(text=f"현재 RPM : {rpm_value}")
             client.publish('pedal', json.dumps(data), 0, retain=False)
             check_info(val_accelerator, val_brake)
 
