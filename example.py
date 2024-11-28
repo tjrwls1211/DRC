@@ -64,10 +64,10 @@ root.configure(bg="black")
 font_large = ("Arial", 40, "bold")
 
 # 이미지 로드
-accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((400, 530)))
-accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((400, 530)))
-brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((400, 530)))
-brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((400, 530)))
+accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((430, 560)))
+accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((430, 560)))
+brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((430, 560)))
+brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((430, 560)))
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
@@ -81,10 +81,10 @@ brake_label.place(relx=-0.04, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
 
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
 text_label = tk.Label(root, text=f"현재 속도", font=font_large, bg="black", fg="white", padx=2, pady=10, width=11)
-text_label.place(relx=0.5, rely=0.25, anchor='center')
+text_label.place(relx=0.5, rely=0.3, anchor='center')
 
 rpm_label = tk.Label(root, text=f"현재 RPM", font=font_large, bg="black", fg="white", padx=2, pady=10, width=11)
-rpm_label.place(relx=0.5, rely=0.45, anchor='center')
+rpm_label.place(relx=0.5, rely=0.5, anchor='center')
 
 # pygame 초기화
 pygame.mixer.init()
