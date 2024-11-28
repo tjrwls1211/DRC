@@ -26,7 +26,6 @@ const MainScreen = () => {
     const [helpScoreVisible, setHelpScoreVisible] = useState(false);
     const [helpDeductionVisible, setHelpDeductionVisible] = useState(false);
 
-    const openHelpScoreModal = () => setHelpScoreVisible(true);
     const closeHelpScoreModal = () => setHelpScoreVisible(false);
     const openHelpDeductionModal = () => setHelpDeductionVisible(true);
     const closeHelpDeductionModal = () => setHelpDeductionVisible(false);
@@ -92,12 +91,11 @@ const MainScreen = () => {
             {/* 헤더 부분 */} 
             <View style={[styles.headerContainer, { backgroundColor: isDarkMode ? '#009688' : '#009688' }]}>
                 <View style={styles.header}>
-                    <Icon4 name="user-circle" size={27} color="#ffffff" onPress={() => navigation.navigate('MypageScreen')} />
+                    <Icon4 name="user-circle" size={29} color="#ffffff" onPress={() => navigation.navigate('MypageScreen')} />
                     <View style={styles.logoContainer}>
                         <Image source={DRCLogoText} style={styles.logo} />
-                        <Icon5 name="help-circle-outline" size={27} color="#ffffff" style={styles.helpScoreIcon} onPress={openHelpScoreModal} />
                     </View>
-                    <Icon3 name="settings-outline" size={27} color="#ffffff" onPress={() => navigation.navigate('SettingsScreen')} />
+                    <Icon3 name="settings-outline" size={29} color="#ffffff" onPress={() => navigation.navigate('SettingsScreen')} />
                 </View>
             </View>
 
@@ -111,11 +109,11 @@ const MainScreen = () => {
                 <View style={styles.helpView}>
                     <Text style={{ 
                         fontWeight: 'bold', 
-                        fontSize: 15, 
+                        fontSize: 20, 
                         marginRight: 10,
                         color: isDarkMode ? '#ffffff' : '#000' // 다크 모드일 때 글자색을 하얀색으로 설정
                     }}>운전 습관</Text>
-                    <Icon5 name="help-circle-outline" size={27} color="#868f8e" style={styles.helpIcon} onPress={openHelpDeductionModal} />
+                    <Icon5 name="help-circle-outline" size={20} color="#868f8e" style={styles.helpIcon} onPress={openHelpDeductionModal} />
                 </View>
                 <View style={styles.cardContainer}> 
                     {/* analysis_count= 변수설정하기 */} 
@@ -164,7 +162,7 @@ const styles = StyleSheet.create({
     header: { 
         flexDirection: 'row', 
         justifyContent: 'space-between', 
-        marginBottom: 20, 
+        marginBottom: 10, 
         marginTop: 10,
     }, 
     cardContainer: { 
@@ -185,6 +183,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3, 
         shadowRadius: 4, 
         elevation: 5, 
+        marginRight:-10,
     }, 
     logo: {
         width: 130, // 로고의 너비 설정
@@ -196,16 +195,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         position: 'relative',
     },
-    helpScoreIcon: {
-        marginTop: Platform.OS === 'ios' ? '-10%' : '-20%', // 로고와 도움말 아이콘 간 간격
-        marginLeft: Platform.OS === 'ios' ? '-230%' : '-210%',
-    },
     helpIcon: {
         // marginTop: Platform.OS === 'ios' ? '-10%' : '-20%', // 로고와 도움말 아이콘 간 간격
         // marginLeft: Platform.OS === 'ios' ? '-230%' : '-210%',
     },
     helpView: {
-        marginTop: -120, 
+        marginTop: -200, 
         flexDirection: 'row',
         alignItems: 'center',
     }

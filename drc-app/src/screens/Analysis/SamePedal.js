@@ -23,7 +23,7 @@ const SamePedal = () => {
       chartDataKey="bothPedal" // 서버 반환 객체에서 값 추출 키
       loadingText="양발운전 분석 중..." // 로딩 텍스트
 
-      themeColor="#009B77" // 테마 색
+      themeColor="#009688" // 테마 색
     />
   );
 };

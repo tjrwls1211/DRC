@@ -158,23 +158,21 @@ return (
           <Image source={require('../../assets/drcsplash.png')} style={styles.logo} />
         </View>
         <View style={styles.LoginView}>
-            <Text style={styles.text}>ID (Email)</Text>
             <TextInput
               style={styles.TextInput}
               onChangeText={setEmail}
               value={email}
-              placeholder="ID (Email)"
+              placeholder="아이디"
               placeholderTextColor="#D9D9D9"
               keyboardType="email-address"
               autoCapitalize="none"
             />
 
-            <Text style={styles.text}>Password</Text>
             <TextInput
               style={styles.TextInput}
               onChangeText={setPassword}
               value={password}
-              placeholder="Password"
+              placeholder="비밀번호"
               placeholderTextColor="#D9D9D9"
               secureTextEntry={true}
             />
@@ -184,14 +182,14 @@ return (
             ) : null}
 
             <TouchableOpacity style={styles.LoginBtn} onPress={handleLogin}>
-              <Text style={styles.BtnText}>Login</Text>
+              <Text style={styles.BtnText}>로그인</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={{ marginTop: 20 }}
               onPress={() => navigation.navigate("SignUpScreen", { screen: 'SignUpScreen' })}
             >
-              <Text style={styles.SignUpText}>회원가입하러가기</Text>
+              <Text style={styles.SignUpText}>회원가입 하러가기</Text>
             </TouchableOpacity>
             </View>
           </ScrollView>
@@ -239,13 +237,17 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   logo: {
-    width: 130,                 // 로고 너비
-    height: 130,                // 로고 높이
-    marginTop: "25%",           // 수직 위치 조정
+    width: 150,                 // 로고 너비
+    height: 150,                // 로고 높이
+    marginTop: "35%",    
+    marginBottom:-55,       // 수직 위치 조정
     resizeMode: 'contain',      // 로고 크기를 너비와 높이에 맞게 조정
   },
   text:{
-    color: '#2F4F4F'
+    color: '#2F4F4F',
+    marginTop:17,
+    marginBottom:-10,
+    marginLeft:-14,
   },
   LoginView: {
     flex: 1,
@@ -253,8 +255,6 @@ const styles = StyleSheet.create({
     margin: 35,
     marginBottom: "40%",
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#009688',
     borderRadius: 6,
   },
   scrollContent: {
@@ -271,31 +271,37 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   TextInput: {
-    marginTop: 10,
-    marginBottom: 15,
+    marginTop: 8,
     paddingHorizontal: 10,
-    height: 35,
+    height: 45,
     borderRadius: 6,
     borderColor: '#009688',
-    borderWidth: 1
+    borderWidth: 1,
+    width: '110%',  // 너비를 90%로 설정 (부모 컨테이너의 90%)
+    alignSelf: 'center', // 중앙 정렬
   },
   LoginBtn: {
     margin: 10,
+    marginTop:20,
     backgroundColor: "#009688",
     padding: 10,
-    width: "100%",
+    width: "110%",
     alignSelf: "center",
     borderRadius: 10
   },
   BtnText: {
     fontWeight: 'bold',
+    fontSize:16,
     textAlign: 'center',
     color: 'white',
+    paddingTop:7,
+    height:30
   },
   SignUpText: {
     fontSize: 14,
     textAlign: 'center',
     color: '#009688',
+    marginTop:-10,
   },
   ErrorMessage: {
     color: 'red', 

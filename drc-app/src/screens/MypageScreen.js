@@ -16,7 +16,7 @@ const MypageScreen = () => {
   const [selectedDate, setSelectedDate] = useState(new Date()); 
   const [showPicker, setShowPicker] = useState(false); 
   const [nickname, setNickname] = useState('OOO');
-  const [email, setEmail] = useState('asdf_1234@gmail.com');
+  const [email, setEmail] = useState('as*******@*****.com');
   const [sacl, setSacl] = useState(0);
   const [sbrk, setSbrk] = useState(0);
   const [bothPedal, setBothPedal] = useState(0);
@@ -45,8 +45,8 @@ const MypageScreen = () => {
   useEffect(() => {
     fetchUserData();
     fetchTotalTimeDrive(); // 주행시간 조회  
+    fetchData(); // 초기 로딩 시 주행 기록 조회
   }, []);
-
   const fetchData = async () => {
     try {
       const dateString = formatDate(selectedDate);
@@ -65,9 +65,10 @@ const MypageScreen = () => {
   const handleDateChange = (event, newDate) => {
     if (newDate && event.type !== 'dismissed') {
       setSelectedDate(new Date(newDate));
+      fetchData(); // 날짜 변경 시 주행 기록 자동 조회
     }
   };
-
+  
   const dateNotation = (date) => {
     return date.toLocaleDateString('en-US', {
       month: 'short',
@@ -151,8 +152,12 @@ const MypageScreen = () => {
             <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>급가속</Text>
           </View>
           <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
-            <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{sacl}</Text> 
-          </View>
+    <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>
+        {sacl}
+        <Text style={{ fontSize: 14 }}>회</Text> {/* "회"의 크기를 줄임 */}
+    </Text>
+</View>
+
         </View>
 
         <View>
@@ -160,8 +165,12 @@ const MypageScreen = () => {
             <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>급정거</Text>
           </View>
           <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
-            <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{sbrk}</Text> 
-          </View>
+    <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>
+        {sbrk}
+        <Text style={{ fontSize: 14 }}>회</Text> {/* "회"의 크기를 줄임 */}
+    </Text>
+</View>
+
         </View>
 
         <View>
@@ -169,21 +178,24 @@ const MypageScreen = () => {
             <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>동시페달</Text>
           </View>
           <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
-            <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{bothPedal}</Text> 
-          </View>
+    <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>
+        {bothPedal}
+        <Text style={{ fontSize: 14 }}>회</Text> {/* "회"의 크기를 줄임 */}
+    </Text>
+</View>
+
+
+
         </View>
       </View>
 
-      <TouchableOpacity style={[styles.button, { backgroundColor: isDarkMode ? '#009688' : '#016b61' }]} onPress={fetchData}>
-        <Text style={styles.buttonText}>주행 기록 조회하기</Text>
-      </TouchableOpacity>
 
       <View style={styles.timeRecordContainer}>
         <View style={[styles.TimeRecordTextBox, { backgroundColor: isDarkMode ? '#40807F' : '#009688' }]}>
           <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>총 주행시간</Text>
         </View>
         <View style={[styles.TimeRecordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
-          <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{formatDrivingTime(totalTimeDrive)}</Text>
+          <Text style={[styles.TimeRecordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{formatDrivingTime(totalTimeDrive)}</Text>
         </View>
       </View>
 
@@ -210,6 +222,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 5,
     color: '#2F4F4F',
+    marginBottom:10,
   },
   email: {
     fontSize: 16,
@@ -296,7 +309,7 @@ const styles = StyleSheet.create({
     color: '#2F4F4F',
   },
   recordValue: {
-    fontSize: 27,
+    fontSize: 34,
     fontWeight: 'bold',
     color: '#2F4F4F',
   },
@@ -358,6 +371,11 @@ const styles = StyleSheet.create({
     height: 1,
     zIndex: 20,
   },
+  TimeRecordValue: {
+    fontSize: 27,
+    fontWeight: 'bold',
+    color: '#2F4F4F',
+  }
 });
 
 

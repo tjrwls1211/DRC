@@ -9,8 +9,8 @@ const HelpDeductionModal = ({ visible, onClose }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const images = [
-        require('../../../assets/helpScore/HelpDeduction1.png'), // 이미지 경로
-        require('../../../assets/helpScore/HelpDeduction2.png'),
+        require('../../../assets/helpScore/HelpDeduction11.png'), // 이미지 경로
+        require('../../../assets/helpScore/HelpDeduction22.png'),
     ];
 
     const descriptions = [
@@ -51,11 +51,6 @@ const HelpDeductionModal = ({ visible, onClose }) => {
                     >
                         {images.map((image, index) => (
                             <View key={index} style={[styles.pageContainer, { width: screenWidth - 62 }]}>
-                                {/* 페이지 번호 표시 */}
-                                <Text style={[styles.pageNumberText, { color: isDarkMode ? '#fff' : '#000' }]}>
-                                    {index + 1} / {images.length}
-                                </Text>
-
                                 {/* 이미지 */}
                                 <Image source={image} style={styles.image} />
 
@@ -73,7 +68,7 @@ const HelpDeductionModal = ({ visible, onClose }) => {
                             <Text style={styles.arrowText}>◀</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                            <Text style={styles.closeText}>닫기</Text>
+                            <Text style={styles.closeText}>확인</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={nextImage} style={styles.arrowButton}>
                             <Text style={styles.arrowText}>▶</Text>
@@ -103,8 +98,8 @@ const styles = StyleSheet.create({
         marginHorizontal: 2, // 이미지 사이 간격 추가
     },
     image: {
-        width: 300,
-        height: 200,
+        width: 330,
+        height: 230,
         resizeMode: 'contain',
         marginBottom: 20,
         marginTop: 40,
@@ -119,19 +114,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         width: '100%',
+        marginRight:6,
     },
     arrowButton: {
         padding: 10,
     },
     arrowText: {
-        fontSize: 24,
+        fontSize: 46,
         fontWeight: 'bold',
         color: '#009688',
+        
     },
     closeButton: {
         padding: 9,
         borderRadius: 5,
-        marginTop: 5,
+        marginTop: 2,
         width: '65%',
         height: 40,
         backgroundColor: '#009688',

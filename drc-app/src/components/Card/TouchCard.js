@@ -9,12 +9,12 @@ const Card = ({ analysis_item, analysis_count, iconSource, onPress }) => {
 
     return (
         <TouchableOpacity onPress={onPress}>
-            <BaseCard style={[styles.baseCard, { backgroundColor: isDarkMode ? '#444444' : '#fff' }]}> 
+            <BaseCard style={[styles.baseCard, { backgroundColor: isDarkMode ? '#444444' : '#fff'}]}> 
                 <View style={styles.container}>
                     <View style={[
                         styles.iconContainer, 
                         { 
-                            borderColor: isDarkMode ? '#009688' : 'rgba(0, 150, 136, 1)', 
+                            borderColor: isDarkMode ? '#fff' : 'rgba(0, 150, 136, 1)', 
                             backgroundColor: isDarkMode ? '#d3d3d3' : '#fff' // 다크 모드일 때 배경색 하얀색
                         }
                     ]}>
@@ -27,7 +27,7 @@ const Card = ({ analysis_item, analysis_count, iconSource, onPress }) => {
                         <Text style={[styles.analysis_count, { color: isDarkMode ? '#ffffff' : '#000' }]}>
                             {analysis_count}
                         </Text>
-                        <Text style={[styles.arrow, { color: isDarkMode ? '#ffffff' : '#000' }]}>
+                        <Text style={[styles.arrow, { color: isDarkMode ? '#ffffff' : '#A3A3A3' }]}>
                             {'>'}
                         </Text>
                     </View>
@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginRight: -4,
         marginLeft: 0,
-        borderWidth: 2,
     },
     icon: {
         width: 32,

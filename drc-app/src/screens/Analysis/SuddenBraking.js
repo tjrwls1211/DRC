@@ -23,7 +23,7 @@ const SuddenBraking = () => {
       chartDataKey="sbrk" // 서버 반환 객체에서 값 추출 키
       loadingText="급정거 분석 중..." // 로딩 텍스트
 
-      themeColor="#0095A1" // 테마 색
+      themeColor="#009688" // 테마 색
     />
   );
 };

@@ -68,7 +68,7 @@ const MainNavigator = () => {
         <Stack.Screen
           name="MypageScreen"
           component={MypageScreen}
-          options={{ headerTitle: 'MY 페이지', headerTitleAlign: 'center' }} 
+          options={{ headerTitle: '마이 페이지', headerTitleAlign: 'center' }} 
         />
         <Stack.Screen 
           name="SettingsScreen" 

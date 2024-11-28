@@ -73,7 +73,7 @@ const HelpScoreModal = ({ visible, onClose }) => {
                             <Text style={styles.arrowText}>◀</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                            <Text style={styles.closeText}>닫기</Text>
+                            <Text style={styles.closeText}>확인</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={nextImage} style={styles.arrowButton}>
                             <Text style={styles.arrowText}>▶</Text>

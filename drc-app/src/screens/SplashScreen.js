@@ -35,7 +35,7 @@ const SplashScreenComponent = ({ navigation }) => {
 
     // 3초 후에 메인 화면으로 이동
     const timer = setTimeout(() => {
-      navigation.replace('MainScreen');
+      navigation.replace('LoginScreen');
     }, 1500);
 
     return () => clearTimeout(timer); // 클린업

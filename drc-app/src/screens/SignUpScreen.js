@@ -194,19 +194,19 @@ const SignUpScreen = () => {
           {/* 필드들이 RegisterView 밖으로 벗어나지 않도록 하고, 벗어날 경우 스크롤 */}
           <ScrollView contentContainerStyle={Styles.scrollContent}>
             <View style={Styles.formContainer}>
-              <Text style={Styles.text}>ID (Email)</Text>
+              <Text style={Styles.text}>아이디 (이메일)</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                 <TextInput 
                   style={[Styles.TextInput, {flex: 1}]} 
                   onChangeText={setEmail}
-                  placeholder="ID (Email)"
+                  placeholder="아이디 (이메일)"
                   placeholderTextColor="#D9D9D9"
                   value={email}
                 />
                 <TouchableOpacity
                   style={Styles.CheckDuplicateBtn}
                   onPress={handleCheckDuplicate}>
-                  <Text style={Styles.BtnText}>중복 확인</Text>
+                  <Text style={Styles.BtnText}>중복확인</Text>
                 </TouchableOpacity>
               </View>
 
@@ -214,12 +214,12 @@ const SignUpScreen = () => {
               {emailError ? <Text style={Styles.error}>{emailError}</Text> : null}
               
 
-              <Text style={Styles.text}>Password</Text>
+              <Text style={Styles.text}>비밀번호</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TextInput 
                   style={[Styles.TextInput, {flex: 1}]} 
                   onChangeText={setPassword}
-                  placeholder="password"
+                  placeholder="비밀번호"
                   placeholderTextColor="#D9D9D9"
                   secureTextEntry={!isPasswordVisible}
                   value={password}
@@ -234,11 +234,11 @@ const SignUpScreen = () => {
               {passwordError ? <Text style={Styles.error}>{passwordError}</Text> : null}
             
               {/* 비밀번호 확인 입력칸 */}
-              <Text style={Styles.text}>Confirm Password</Text>
+              <Text style={Styles.text}>비밀번호 확인</Text>
               <TextInput 
                 style={Styles.TextInput} 
                 onChangeText={handleConfirmPassword}
-                placeholder="Confirm Password"
+                placeholder="비밀번호 확인"
                 placeholderTextColor="#D9D9D9"
                 secureTextEntry={true}
                 value={confirmPassword}
@@ -247,7 +247,7 @@ const SignUpScreen = () => {
               {/* 비밀번호 일치 여부 에러 메시지 */}
               {confirmPasswordError ? <Text style={Styles.error}>{confirmPasswordError}</Text> : null}
 
-              <Text style={Styles.text}>Vehicle Number</Text>
+              <Text style={Styles.text}>차량번호</Text>
               <TextInput
                 style={Styles.TextInput}
                 onChangeText={setCarNumber}
@@ -256,16 +256,16 @@ const SignUpScreen = () => {
                 value={carNumber}
               />
 
-              <Text style={Styles.text}>Nickname</Text>
+              <Text style={Styles.text}>닉네임</Text>
               <TextInput 
                 style={Styles.TextInput} 
                 onChangeText={setNickname}
-                placeholder="Nickname"
+                placeholder="닉네임"
                 placeholderTextColor="#D9D9D9"
                 value={nickname}
               />
 
-              <Text style={Styles.text}>Birth Date</Text>
+              <Text style={Styles.text}>생년월일</Text>
               {Platform.OS === 'android' && (
                 <TouchableOpacity onPress={openDatePicker}>
                   <View style={Styles.birthDateContainer}>
@@ -300,13 +300,13 @@ const SignUpScreen = () => {
               <TouchableOpacity 
                 style={Styles.SignUpBtn}
                 onPress={handleSignUp}>
-                <Text style={Styles.BtnText}>SignUp</Text>
+                <Text style={Styles.BtnText}>회원가입 완료</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
                 style={{marginTop: 20}}
                 onPress={() => navigation.navigate("LoginScreen", { screen: 'LoginScreen' })}>
-                <Text style={Styles.LoginText}>로그인하러가기</Text>
+                <Text style={Styles.LoginText}>로그인 화면으로</Text>
               </TouchableOpacity>
               </View>
             </ScrollView>

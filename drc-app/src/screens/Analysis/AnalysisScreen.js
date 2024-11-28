@@ -199,7 +199,7 @@ const AnalysisScreen = ({ todayData, fetchData, title, chartDataKey, loadingText
     </View>
 
       <Text style={{
-            color: isDarkMode ? '#b0b0b0' : '#2F4F4F',
+            color: isDarkMode ? '#ffffff' : '#ffffff',
             textAlign: 'right',
             marginRight: 10,
             fontSize: 12,

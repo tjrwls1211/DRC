@@ -61,16 +61,15 @@ const AnalysisCard = ({ num, borderColor, title, todayData, DataKey }) => {
 
     return (
         <View style={[styles.customCard, { backgroundColor: isDarkMode ? '#333333' : '#ffffff' }]}>
-            <View style={[styles.innerCard, { borderColor: borderColor || '#009688' }]}>
-                <Text style={[styles.subText, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>
+            <View style={[styles.innerCard, { borderColor: isDarkMode ? '#333333' : '#ffffff' }]}>
+                <Text style={[styles.subText, { color: isDarkMode ? '#ffffff' : '#2F4F4F', fontWeight: 'bold',fontSize:22 }]}>
                     <Icon name="car-arrow-left" size={30} color={isDarkMode ? '#ffffff' : '#2F4F4F'} /> 저번주 대비
                 </Text>
 
                 {/* 상단 우측 텍스트 추가 */}
                 <Animated.View style={{ opacity: fadeAnim, position: 'absolute', top: 10, right: 10 }}>
                     <Text style={[styles.countText, { 
-                        color: isDarkMode ? '#2F4F4F' : '#2F4F4F', // 형광 초록색
-                        fontWeight: 'bold', // 볼드체 설정
+                        color: isDarkMode ? '#fff' : '#2F4F4F', // 형광 초록색
                         fontSize: 15, // 텍스트 사이즈 18
                     }]}>
                         오늘 {title.replace(" 분석", "")} 횟수: {count}회
