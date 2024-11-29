@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 6,
         margin: 10, // 카드 간격
-        marginBottom: 20,
+        marginBottom: 5,
         elevation: 5, // 안드로이드 그림자 효과
     },
     innerCard: {
