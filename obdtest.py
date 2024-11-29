@@ -30,6 +30,12 @@ data = {
     "speedChange" : 0
 }
 
+def cleanAndExit():
+    print("Cleaning...")
+    GPIO.cleanup()  # GPIO 핀 해제
+    print("Bye!")
+    sys.exit()
+
 # COM 포트 설정 및 타임아웃 증가
 connection = obd.OBD("/dev/rfcomm0", fast=False)
 
@@ -39,12 +45,6 @@ if connection.is_connected():
 else:
     print("OBD-II 연결 실패!")
     exit()
-
-def cleanAndExit():
-    print("Cleaning...")
-    GPIO.cleanup()  # GPIO 핀 해제
-    print("Bye!")
-    sys.exit()
 
 # 첫 번째 HX711 - 엑셀(Accelerator)
 hx1 = HX711(20, 16)
@@ -88,19 +88,33 @@ brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((365, 50
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
 accel_label.config(width=accel_img_normal.width(), height=accel_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
-accel_label.place(relx=1, rely=0.5, anchor="e")  # 윈도우 중앙에 배치
+accel_label.place(relx=0.42, rely=0.5, anchor="center")  # 윈도우 중앙에 배치
 
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
 brake_label.config(width=brake_img_normal.width(), height=brake_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
 brake_label.place(relx=-0.04, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
 
-
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
-text_label = tk.Label(root, text=f"현재 속도", font=font_large, bg="black", fg="white", padx=2, pady=10, width=11)
-text_label.place(relx=0.5, rely=0.3, anchor='center')
+text_label = tk.Label(root, text=f"현재 속도", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
+text_label.place(relx=0.85, rely=0.05, anchor='ne')
 
-rpm_label = tk.Label(root, text=f"현재 RPM", font=font_large, bg="black", fg="white", padx=2, pady=10, width=11)
-rpm_label.place(relx=0.5, rely=0.5, anchor='center')
+rpm_label = tk.Label(root, text=f"현재 RPM", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
+rpm_label.place(relx=0.85, rely=0.25, anchor='ne')
+
+# pygame 초기화
+pygame.mixer.init()
+
+# 음성 재생 시간 기록
+is_accelerating = False
+last_sound_time = {
+    "Unintended Acceleration": 0,
+    "Rapid Acceleration": 0,
+    "Rapid Braking": 0,
+    "Both Feet Driving": 0
+}
+
+sound_delay = 3  # 음성 재생 간격
+state_hold_time = 3  # 상태 유지 시간
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
@@ -145,20 +159,7 @@ brakebrake_sound = pygame.mixer.Sound("brakebrake.wav")
 #양발운전 
 bothdrive_sound = pygame.mixer.Sound("bothdrive.wav")
 
-# pygame 초기화
-pygame.mixer.init()
 
-# 음성 재생 시간 기록
-is_accelerating = False
-last_sound_time = {
-    "Unintended Acceleration": 0,
-    "Rapid Acceleration": 0,
-    "Rapid Braking": 0,
-    "Both Feet Driving": 0
-}
-
-sound_delay = 3  # 음성 재생 간격
-state_hold_time = 3  # 상태 유지 시간
 
 # 전역 변수
 stop_sounds = False
@@ -345,14 +346,9 @@ def run_code():
     
     while True:  # 데이터프레임의 길이에 따라 반복
         try:
-            # 현재 시간 추가
-            now = datetime.now()
-            print("시작시간", now)
-            # 첫 번째 로드셀 (엑셀)
+            # 첫 번째 로드셀 (엑셀)# 두 번째 로드셀 (브레이크)
             val_accelerator = hx1.get_weight(5)
-            # 두 번째 로드셀 (브레이크)
-            val_brake = hx2.get_weight(5)
-            
+            val_brake = hx2.get_weight(5)            
             hx1.power_down()
             hx2.power_down()
             hx1.power_up()
@@ -361,11 +357,9 @@ def run_code():
             # 상태 업데이트 및 UI 갱신
             update_display_state(val_accelerator, val_brake, state)
             
-            # RPM 데이터 요청
+            # RPM 데이터 요청 # 속도 데이터 요청
             rpm_cmd = obd.commands.RPM
             rpm_response = connection.query(rpm_cmd)
-
-            # 속도 데이터 요청
             speed_cmd = obd.commands.SPEED
             speed_response = connection.query(speed_cmd)
             
@@ -394,17 +388,8 @@ def run_code():
                 "speed": int(speed_value),
                 "rpm": int(rpm_value),
                 "speedChange":speed_change  # speedChange data["kmh"]
-            })             
-            print(data)
-            # 레이블 업데이트 (정수 형식)
-            text_label.config(text=f"속도 : {int(speed_value)}")
-            rpm_label.config(text=f"RPM : {rpm_value}")
-            
+            })                  
             client.publish('DriveLog', json.dumps(data), 0, retain=False)
-            now2 = datetime.now()
-            print("종료시간", now2)
-            print("걸린시간 : ", now2-now)
-
         except Exception as error:
             print(error)
             continue
