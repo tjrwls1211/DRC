@@ -51,3 +51,24 @@ export const changeNickname = async (newNickname) => {
         throw error;
     }
 };
+
+// 생년월일 수정 API
+export const changeBirthDate = async (newBirthDate) => {
+    try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.patch(`${API_URL}/user/modifyBirthDate`,
+            { birthDate: newBirthDate }, 
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, // 헤더에 토큰 추가
+                    "Content-Type": "application/json",
+                }
+            }
+        );
+        console.log("생년월일 수정 처리-서버 반환: ", response.data);
+        return response.data; // 서버의 응답 반환
+    } catch (error) {
+        console.error('생년월일 변경 오류:', error);
+        throw error;
+    }
+};
