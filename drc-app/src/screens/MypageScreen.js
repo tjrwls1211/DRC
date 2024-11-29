@@ -10,6 +10,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { useTheme } from '../components/Mode/ThemeContext'; // 다크 모드 Context import
 import { fetchUserInfo } from '../api/userInfoAPI';
+import PWCheckModal from '../components/Modal/PWCheckModal';
 
 const MypageScreen = () => {
   const { isDarkMode } = useTheme(); // 다크 모드 상태 가져오기
@@ -21,6 +22,7 @@ const MypageScreen = () => {
   const [sbrk, setSbrk] = useState(0);
   const [bothPedal, setBothPedal] = useState(0);
   const [totalTimeDrive, setTotalTimeDrive] = useState(0);
+  const [isPWCheckModalVisible, setPWCheckModalVisible] = useState(false); // 비밀번호 인증 모달
 
   const fetchUserData = async () => {
     try {
@@ -96,12 +98,35 @@ const MypageScreen = () => {
     }
   };
 
+  // 비밀번호 인증 모달 닫기 함수
+  const handleClosePWCheckModal = () => {
+    setPWCheckModalVisible(false);
+  };
+
+  // 정보 변경 버튼 클릭 시 비밀번호 인증 모달 열기
+  const handleInfoChangePress = () => {
+    setPWCheckModalVisible(true);
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#fff' }]}>
-      <Text style={[styles.title, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{nickname} 님 안녕하세요!</Text>
-      <Text style={[styles.email, { color: isDarkMode ? '#d3d3d3' : '#495c5c' }]}>{email}</Text>
+    <Text style={[styles.title, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{nickname} 님 안녕하세요!</Text>
+    <Text style={[styles.email, { color: isDarkMode ? '#d3d3d3' : '#495c5c' }]}>{email}</Text>
 
-      <View style={styles.headerVar} />
+    <View style={styles.infoContainer}>
+      <TouchableOpacity style={styles.infoButton} onPress={handleInfoChangePress}>
+        <Text style={styles.infoButtonText}>정보 변경</Text>
+      </TouchableOpacity>
+    </View>
+
+    {/* PWCheckModal 모달 */}
+    <PWCheckModal 
+      visible={isPWCheckModalVisible} 
+      onClose={handleClosePWCheckModal} 
+      onConfirm={() => { /* 인증 성공 후 처리 */ }} 
+    />
+
+    <View style={styles.headerVar} />
 
       <View style={styles.dateContainer}>
         <Icon1 name="calendar-outline" size={27} color={isDarkMode ? '#00BFAE' : "#009688"} onPress={openDatePicker} />
@@ -375,7 +400,23 @@ const styles = StyleSheet.create({
     fontSize: 27,
     fontWeight: 'bold',
     color: '#2F4F4F',
-  }
+  },
+  infoContainer: {
+    marginTop: 0,
+    marginVertical: 10, // 필요에 따라 여백 조절
+    alignItems: 'flex-end', // 오른쪽 정렬
+    
+  },
+  infoButton: {
+    backgroundColor: '#009688',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+  },
+  infoButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+  },
 });
 
 
