@@ -149,15 +149,15 @@ export const getSPedal = async (date) => {
 // 총 주행시간 조회
 export const getTotalTimeDrive = async (date) => {
     try {
-        console.log("총 운 조회 함수 들어옴");
+        console.log("총 주행시간 조회 함수 들어옴");
         const headers = await getTokenHeader();
-        const response = await apiClient.get(`/user/driveTime`, {
+        const response = await apiClient.get(`/api/driveLog/driveTime`, {
             headers,
         });
-        console.log("양발 운전 조회 결과:", response.data);
+        console.log("총 주행시간 조회 결과:", response.data);
         return response.data;
     } catch (error) {
-        console.error("양발 운전 조회 오류:", error.response?.data || error.message);
+        console.error("총 주행시간 조회 오류:", error.response?.data || error.message);
         throw error;
     }
 };
