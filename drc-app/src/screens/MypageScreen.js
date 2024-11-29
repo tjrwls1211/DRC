@@ -101,14 +101,17 @@ const MypageScreen = () => {
     }
   };
 
-  // 비밀번호 확인 모달 닫기
+  // 비밀번호 확인 모달 닫기 - 사용X?
   const handleClosePWCheckModal = () => {
     setPWCheckModalVisible(false);
+    setUserInfoModalVisible(true);
   };
 
-  // 정보 변경 모달 닫기
+  // 개인 정보 변경 모달 닫기
   const handleCloseUserInfoModal = () => {
-    setUserInfoModalVisible(false);
+    
+    setPWCheckModalVisible(false); // 비번 인증 창 닫기
+    //setUserInfoModalVisible(false);
   };
 
   // "정보 변경" 버튼 클릭 시 비밀번호 인증 모달 열기
@@ -116,13 +119,19 @@ const MypageScreen = () => {
     setPWCheckModalVisible(true);
   };
 
-  // 상태 변화 확인을 위한 로그 추가
+  useEffect(() => {
+    console.log("@@@@isUserInfoModalVisible 상태 변경:", isUserInfoModalVisible);
+  }, [isUserInfoModalVisible]); // 상태가 변경될 때마다 실행
+  
+ // 비밀번호 인증 성공 시
   const handlePasswordVerified = () => {
-    console.log("비밀번호 인증 성공: 정보 변경 모달 열기");
-    setPasswordVerified(true); // 인증 상태 변경
-    setUserInfoModalVisible(true); // 정보 수정 모달 열기
-    console.log("isUserInfoModalVisible 상태:", true); // 상태 변화 확인
-    handleClosePWCheckModal(); // 비밀번호 확인 모달 닫기
+    console.log("비밀번호 인증 성공: 개인 정보 변경 모달 열기");
+
+    // 1초 후에 상태 변경 작업 실행
+    setTimeout(() => {
+      setPasswordVerified(true); // 인증 상태 변경
+      setUserInfoModalVisible(true); // 정보 변경 모달 열기
+    }, 1000);
   };
 
   return (
@@ -143,9 +152,9 @@ const MypageScreen = () => {
         onConfirm={handlePasswordVerified} // 인증 성공 시 호출
       />
 
-      {/* 정보 변경 모달 */}
+      {/* 개인 정보 변경 모달 */}
       <ChangUserInfo
-        visible={true}
+        visible={isUserInfoModalVisible}
         onClose={handleCloseUserInfoModal}
       />
 

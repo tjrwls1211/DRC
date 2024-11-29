@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { TextInput, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import BasicModal from './BasicModal'; // 공통 모달 컴포넌트 (가정)
-import { verifyPassword } from '../../api/accountAPI'; // 비밀번호 인증 API (현재 비활성화)
+import { TextInput, Text, StyleSheet, TouchableOpacity, View, Modal } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; // 아이콘을 위해 추가
 
 const PWCheckModal = ({ visible, onClose, onConfirm }) => {
   const [currentPassword, setCurrentPassword] = useState(''); // 현재 비밀번호 상태
@@ -27,31 +26,63 @@ const PWCheckModal = ({ visible, onClose, onConfirm }) => {
   };
 
   return (
-    <BasicModal
+    <Modal
+      transparent={true}
+      animationType="slide"
       visible={visible}
-      onClose={handleClose}
-      title="비밀번호 인증"
+      onRequestClose={handleClose}
     >
-      <TextInput
-        style={styles.input}
-        placeholder="현재 비밀번호"
-        value={currentPassword}
-        onChangeText={setCurrentPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity onPress={checkPassword} style={styles.checkButton}>
-        <Text style={styles.checkButtonText}>인증</Text>
-      </TouchableOpacity>
-      {verificationMessage ? (
-        <Text style={[styles.verificationText, isVerified ? styles.success : styles.error]}>
-          {verificationMessage}
-        </Text>
-      ) : null}
-    </BasicModal>
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+            <Ionicons name="close" size={24} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.title}>비밀번호 인증</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="현재 비밀번호"
+            value={currentPassword}
+            onChangeText={setCurrentPassword}
+            secureTextEntry
+          />
+          <TouchableOpacity onPress={checkPassword} style={styles.checkButton}>
+            <Text style={styles.checkButtonText}>인증</Text>
+          </TouchableOpacity>
+          {verificationMessage ? (
+            <Text style={[styles.verificationText, isVerified ? styles.success : styles.error]}>
+              {verificationMessage}
+            </Text>
+          ) : null}
+        </View>
+      </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명 배경
+  },
+  modalContent: {
+    width: '80%',
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
   input: {
     borderWidth: 1,
     borderColor: '#009688',
@@ -59,12 +90,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 5,
     fontSize: 16,
+    width: '100%',
   },
   checkButton: {
     backgroundColor: '#009688',
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
+    width: '100%',
   },
   checkButtonText: {
     color: 'white',

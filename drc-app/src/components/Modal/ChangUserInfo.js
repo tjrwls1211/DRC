@@ -9,72 +9,93 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { formatDate } from "../../utils/formatDate";
+import { changeNickname, changeBirthDate } from "../../api/userInfoAPI";
+import { changePassword } from "../../api/accountAPI";
 
 const ChangUserInfo = ({ visible, onClose }) => {
+  console.log("개인정보변경 모달 내 열기 상태", visible);
   const [userInfo, setUserInfo] = useState({
-    id: "",
-    nickname: "",
+    id: "test_user123",
+    nickname: "기본닉네임",
     birthDate: "",
-    carId: "",
+    carId: "123가4567",
   });
   const [newNickname, setNewNickname] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [newBirthDate, setNewBirthDate] = useState(new Date("1990-01-01")); // 초기값 설정
-  const [newCarId, setNewCarId] = useState("");
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(true);
+  const [isSaveEnabled, setIsSaveEnabled] = useState(false); // 저장 버튼 활성화 여부
 
   useEffect(() => {
+    // 모달 표시 시 사용자 정보 초기화
     if (visible) {
-      setUserInfo({
+      const initialUserInfo = {
         id: "test_user123",
         nickname: "기본닉네임",
         birthDate: "1990-01-01",
         carId: "123가4567",
-      });
-      setNewNickname("기본닉네임");
-      setNewBirthDate(new Date("1990-01-01"));
-      setNewCarId("123가4567");
+      };
+      setUserInfo(initialUserInfo);
+      setNewNickname(initialUserInfo.nickname);
+      setNewBirthDate(new Date(initialUserInfo.birthDate));
+      setNewPassword("");
+      setConfirmPassword("");
     }
   }, [visible]);
 
   useEffect(() => {
+    // 새 비밀번호와 확인 비밀번호 일치 여부 확인
     setPasswordMatch(newPassword === confirmPassword);
   }, [newPassword, confirmPassword]);
 
+  useEffect(() => {
+    // 저장 버튼 활성화 여부 설정
+    const hasChanges =
+      newNickname !== userInfo.nickname ||
+      formatDate(newBirthDate) !== userInfo.birthDate ||
+      newPassword;
+    setIsSaveEnabled(hasChanges && passwordMatch);
+  }, [newNickname, newBirthDate, newPassword, confirmPassword]);
+
   const handleSave = async () => {
     try {
-      if (newPassword && newPassword !== confirmPassword) {
-        Alert.alert("오류", "새 비밀번호가 일치하지 않습니다.");
-        return;
-      }
+      if (!isSaveEnabled) return; // 저장 버튼이 비활성화된 경우 동작하지 않음
 
+      // 변경 사항 저장
       if (newNickname !== userInfo.nickname) {
-        // 닉네임 변경 API 호출
-        Alert.alert("성공", "닉네임이 변경되었습니다.");
+        const response = await changeNickname(newNickname);
+        if (response.success) {
+          Alert.alert("성공", "닉네임이 변경되었습니다.");
+        } else {
+          throw new Error("닉네임 변경 실패");
+        }
       }
 
       if (newPassword) {
-        // 비밀번호 변경 API 호출
-        Alert.alert("성공", "비밀번호가 변경되었습니다.");
+        const response = await changePassword(newPassword);
+        if (response.success) {
+          Alert.alert("성공", "비밀번호가 변경되었습니다.");
+        } else {
+          throw new Error("비밀번호 변경 실패");
+        }
       }
 
-      if (newBirthDate && formatDate(newBirthDate) !== userInfo.birthDate) {
-        // 생년월일 변경 API 호출
-        console.log("선택한 생년월일:", formatDate(newBirthDate)); // 생년월일 출력
-        Alert.alert("성공", "생년월일이 변경되었습니다.");
+      if (formatDate(newBirthDate) !== userInfo.birthDate) {
+        const response = await changeBirthDate(formatDate(newBirthDate));
+        if (response.success) {
+          Alert.alert("성공", "생년월일이 변경되었습니다.");
+        } else {
+          throw new Error("생년월일 변경 실패");
+        }
       }
 
-      if (newCarId !== userInfo.carId) {
-        // 차량번호 변경 API 호출
-        Alert.alert("성공", "차량번호가 변경되었습니다.");
-      }
-
-      onClose();
+      onClose(); // 저장 후 모달 닫기
     } catch (error) {
       Alert.alert("오류", "정보를 저장하는 중 문제가 발생했습니다.");
       console.error(error);
@@ -82,7 +103,7 @@ const ChangUserInfo = ({ visible, onClose }) => {
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
+    <Modal visible={visible} animationType="slide" transparent={true}>
       <KeyboardAvoidingView
         style={styles.overlay}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -135,21 +156,18 @@ const ChangUserInfo = ({ visible, onClose }) => {
 
             {/* 생년월일 변경 */}
             <View style={styles.inputRow}>
-            <Text style={{ fontWeight: "bold", marginRight: -18, color: "#2F4F4F", width: 100 }}>
-                생년월일
-            </Text>
-            <DateTimePicker
+              <Text style={styles.label}>생년월일</Text>
+              <DateTimePicker
                 value={newBirthDate}
                 mode="date"
                 display="default"
                 onChange={(event, date) => {
-                setDatePickerVisible(false);
-                if (date) {
+                  setDatePickerVisible(false);
+                  if (date) {
                     setNewBirthDate(date);
-                    console.log("선택한 생년월일:", formatDate(date)); // 생년월일 출력
-                }
+                  }
                 }}
-            />
+              />
             </View>
 
             {/* 차량번호 표시 */}
@@ -163,7 +181,11 @@ const ChangUserInfo = ({ visible, onClose }) => {
               <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
                 <Text style={styles.buttonText}>취소</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleSave} style={[styles.saveButton, !passwordMatch && styles.disabledButton]} disabled={!passwordMatch}>
+              <TouchableOpacity
+                onPress={handleSave}
+                style={[styles.saveButton, !isSaveEnabled && styles.disabledButton]}
+                disabled={!isSaveEnabled}
+              >
                 <Text style={styles.buttonText}>저장</Text>
               </TouchableOpacity>
             </View>
