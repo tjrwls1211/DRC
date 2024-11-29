@@ -11,6 +11,7 @@ import * as Sharing from 'expo-sharing';
 import { useTheme } from '../components/Mode/ThemeContext'; // 다크 모드 Context import
 import { fetchUserInfo } from '../api/userInfoAPI';
 import PWCheckModal from '../components/Modal/PWCheckModal';
+import ChangUserInfo from '../components/Modal/ChangUserInfo';
 
 const MypageScreen = () => {
   const { isDarkMode } = useTheme(); // 다크 모드 상태 가져오기
@@ -23,6 +24,8 @@ const MypageScreen = () => {
   const [bothPedal, setBothPedal] = useState(0);
   const [totalTimeDrive, setTotalTimeDrive] = useState(0);
   const [isPWCheckModalVisible, setPWCheckModalVisible] = useState(false); // 비밀번호 인증 모달
+  const [isUserInfoModalVisible, setUserInfoModalVisible] = useState(false); // 정보 수정 모달
+  const [isPasswordVerified, setPasswordVerified] = useState(false); // 인증 상태
 
   const fetchUserData = async () => {
     try {
@@ -98,14 +101,28 @@ const MypageScreen = () => {
     }
   };
 
-  // 비밀번호 인증 모달 닫기 함수
+  // 비밀번호 확인 모달 닫기
   const handleClosePWCheckModal = () => {
     setPWCheckModalVisible(false);
   };
 
-  // 정보 변경 버튼 클릭 시 비밀번호 인증 모달 열기
+  // 정보 변경 모달 닫기
+  const handleCloseUserInfoModal = () => {
+    setUserInfoModalVisible(false);
+  };
+
+  // "정보 변경" 버튼 클릭 시 비밀번호 인증 모달 열기
   const handleInfoChangePress = () => {
     setPWCheckModalVisible(true);
+  };
+
+  // 상태 변화 확인을 위한 로그 추가
+  const handlePasswordVerified = () => {
+    console.log("비밀번호 인증 성공: 정보 변경 모달 열기");
+    setPasswordVerified(true); // 인증 상태 변경
+    setUserInfoModalVisible(true); // 정보 수정 모달 열기
+    console.log("isUserInfoModalVisible 상태:", true); // 상태 변화 확인
+    handleClosePWCheckModal(); // 비밀번호 확인 모달 닫기
   };
 
   return (
@@ -114,17 +131,23 @@ const MypageScreen = () => {
     <Text style={[styles.email, { color: isDarkMode ? '#d3d3d3' : '#495c5c' }]}>{email}</Text>
 
     <View style={styles.infoContainer}>
-      <TouchableOpacity style={styles.infoButton} onPress={handleInfoChangePress}>
-        <Text style={styles.infoButtonText}>정보 변경</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={styles.infoButton} onPress={handleInfoChangePress}>
+          <Text style={styles.infoButtonText}>정보 변경</Text>
+        </TouchableOpacity>
+      </View>
 
-    {/* PWCheckModal 모달 */}
-    <PWCheckModal 
-      visible={isPWCheckModalVisible} 
-      onClose={handleClosePWCheckModal} 
-      onConfirm={() => { /* 인증 성공 후 처리 */ }} 
-    />
+      {/* 비밀번호 확인 모달 */}
+      <PWCheckModal
+        visible={isPWCheckModalVisible}
+        onClose={handleClosePWCheckModal}
+        onConfirm={handlePasswordVerified} // 인증 성공 시 호출
+      />
+
+      {/* 정보 변경 모달 */}
+      <ChangUserInfo
+        visible={true}
+        onClose={handleCloseUserInfoModal}
+      />
 
     <View style={styles.headerVar} />
 

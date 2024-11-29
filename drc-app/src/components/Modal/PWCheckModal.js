@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextInput, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import BasicModal from './BasicModal';
-import { verifyPassword } from '../../api/accountAPI'; // 비밀번호 인증 API
+import BasicModal from './BasicModal'; // 공통 모달 컴포넌트 (가정)
+import { verifyPassword } from '../../api/accountAPI'; // 비밀번호 인증 API (현재 비활성화)
 
 const PWCheckModal = ({ visible, onClose, onConfirm }) => {
   const [currentPassword, setCurrentPassword] = useState(''); // 현재 비밀번호 상태
@@ -11,45 +11,40 @@ const PWCheckModal = ({ visible, onClose, onConfirm }) => {
   // 비밀번호 인증 함수
   const checkPassword = async () => {
     console.log("비밀번호 인증 버튼 클릭");
-    try {
-      const isCorrect = await verifyPassword(currentPassword); // API 호출하여 비밀번호 확인
-      setIsVerified(isCorrect); // 인증 상태 업데이트
-      setVerificationMessage(isCorrect ? "인증되었습니다" : "비밀번호가 틀렸습니다"); // 메시지 설정
-    } catch (error) {
-      setIsVerified(false);
-      console.log("비밀번호 인증 실패 에러", error.response.data);
-      setVerificationMessage(error.response.data.message); // 에러 메시지 설정
-    }
+
+    // 서버 테스트가 안되므로 인증 성공 상태로 바로 처리
+    setIsVerified(true); // 인증 상태를 성공으로 설정
+    setVerificationMessage("인증되었습니다."); // 인증 성공 메시지
+    console.log("onConfirm 호출"); // 디버깅용 로그
+    onConfirm(); // 인증 성공 시 부모 컴포넌트에 알림
   };
 
   const handleClose = () => {
-    // 모달 닫기 전 상태 초기화
-    setCurrentPassword('');
+    setCurrentPassword(''); // 상태 초기화
     setIsVerified(false);
     setVerificationMessage('');
-    onClose(); // 부모 컴포넌트의 모달 닫기 함수
+    onClose(); // 부모 컴포넌트의 모달 닫기 함수 호출
   };
 
   return (
-    <BasicModal 
-      visible={visible} 
-      onClose={handleClose} 
-      onConfirm={onConfirm} // 확인 버튼 클릭 시 호출
+    <BasicModal
+      visible={visible}
+      onClose={handleClose}
       title="비밀번호 인증"
     >
       <TextInput
         style={styles.input}
         placeholder="현재 비밀번호"
         value={currentPassword}
-        onChangeText={setCurrentPassword} // 현재 비밀번호 입력 처리
-        secureTextEntry // 비밀번호 입력 시 가리기
+        onChangeText={setCurrentPassword}
+        secureTextEntry
       />
       <TouchableOpacity onPress={checkPassword} style={styles.checkButton}>
         <Text style={styles.checkButtonText}>인증</Text>
       </TouchableOpacity>
       {verificationMessage ? (
         <Text style={[styles.verificationText, isVerified ? styles.success : styles.error]}>
-          {verificationMessage} // 인증 결과 메시지 표시
+          {verificationMessage}
         </Text>
       ) : null}
     </BasicModal>
@@ -59,7 +54,7 @@ const PWCheckModal = ({ visible, onClose, onConfirm }) => {
 const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
-    borderColor: '#009688', 
+    borderColor: '#009688',
     padding: 10,
     marginBottom: 15,
     borderRadius: 5,
