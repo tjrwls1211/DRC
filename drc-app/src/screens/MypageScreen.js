@@ -98,10 +98,16 @@ const MypageScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#fff' }]}>
-      <Text style={[styles.title, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{nickname} 님 안녕하세요!</Text>
-      <Text style={[styles.email, { color: isDarkMode ? '#d3d3d3' : '#495c5c' }]}>{email}</Text>
+    <Text style={[styles.title, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{nickname} 님 안녕하세요!</Text>
+    <Text style={[styles.email, { color: isDarkMode ? '#d3d3d3' : '#495c5c' }]}>{email}</Text>
 
-      <View style={styles.headerVar} />
+    <View style={styles.infoContainer}>
+      <TouchableOpacity style={styles.infoButton} onPress={() => { /* 클릭 함수 넣을 예정 */ }}>
+        <Text style={styles.infoButtonText}>정보 변경</Text>
+      </TouchableOpacity>
+    </View>
+
+    <View style={styles.headerVar} />
 
       <View style={styles.dateContainer}>
         <Icon1 name="calendar-outline" size={27} color={isDarkMode ? '#00BFAE' : "#009688"} onPress={openDatePicker} />
@@ -375,7 +381,23 @@ const styles = StyleSheet.create({
     fontSize: 27,
     fontWeight: 'bold',
     color: '#2F4F4F',
-  }
+  },
+  infoContainer: {
+    marginTop: 0,
+    marginVertical: 10, // 필요에 따라 여백 조절
+    alignItems: 'flex-end', // 오른쪽 정렬
+    
+  },
+  infoButton: {
+    backgroundColor: '#009688',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+  },
+  infoButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+  },
 });
 
 
