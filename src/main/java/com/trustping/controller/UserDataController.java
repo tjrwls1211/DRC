@@ -26,6 +26,7 @@ import com.trustping.DTO.PasswordDTO;
 import com.trustping.DTO.ResponseDTO;
 import com.trustping.DTO.SignUpRequestDTO;
 import com.trustping.DTO.TokenValidationDTO;
+import com.trustping.DTO.UpdateBirthDateDTO;
 import com.trustping.DTO.UpdateNicknameDTO;
 import com.trustping.DTO.UpdateResponseDTO;
 import com.trustping.entity.UserData;
@@ -42,9 +43,6 @@ public class UserDataController {
 
 	@Autowired
 	private UserDataService userDataService;
-	
-	@Autowired
-	private SegmentService segmentService;
 	
 	@Autowired
 	private UserDataHelperService userDataHelperService;
@@ -130,6 +128,15 @@ public class UserDataController {
 		return ResponseEntity.ok(response);
 	}
 	
+	// 생년월일 변경
+	@PatchMapping("/modifyBirthDate")
+	public ResponseEntity<UpdateResponseDTO> modifyBirthDate(@RequestHeader("Authorization") String token, @RequestBody UpdateBirthDateDTO modifyBirthDateDTO){
+		String jwtToken = token.substring(7);
+		UpdateResponseDTO response = userDataService.modifyBirthDate(jwtToken, modifyBirthDateDTO);		
+		return ResponseEntity.ok(response);
+	}
+	
+	
 	// 비밀번호 인증
 	@PostMapping("/verifyPassword")
 	public ResponseEntity<ResponseDTO> verifyPassword(@RequestHeader("Authorization") String token, @RequestBody PasswordDTO passwordDTO) {
@@ -186,19 +193,4 @@ public class UserDataController {
 	    System.out.println(response);
 	    return ResponseEntity.ok(response);
 	}
-	
-	// 총 주행 시간 조회
-	@GetMapping("driveTime")
-	public ResponseEntity<DriveTimeDTO> getDriveTime(@RequestHeader("Authorization") String token){
-		String jwtToken = token.substring(7);
-		String userId = jwtUtil.extractUsername(jwtToken); 
-		Optional<UserData> userDataOpt = userDataHelperService.getUserDataById(userId);
-		if (userDataOpt.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new DriveTimeDTO(0));
-		}
-		UserData userData = userDataOpt.get();
-		DriveTimeDTO result= segmentService.getDriveTime(userData.getCarId());
-	    return ResponseEntity.ok(result);
-	}
-
 }

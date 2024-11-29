@@ -1,5 +1,7 @@
 package com.trustping.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.trustping.DTO.DriveTimeDTO;
 import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
@@ -23,6 +24,7 @@ import com.trustping.DTO.OtpResponseDTO;
 import com.trustping.DTO.PasswordDTO;
 import com.trustping.DTO.ResponseDTO;
 import com.trustping.DTO.SignUpRequestDTO;
+import com.trustping.DTO.UpdateBirthDateDTO;
 import com.trustping.DTO.UpdateNicknameDTO;
 import com.trustping.DTO.UpdateResponseDTO;
 import com.trustping.entity.UserData;
@@ -240,6 +242,25 @@ public class UserDataServiceImpl implements UserDataService {
 		userData.setNickname(newNickname);
 		userDataRepository.save(userData);
 		return new UpdateResponseDTO(true, "닉네임이 변경 되었습니다", newNickname);
+	}
+	
+	// 생년월일 변경
+	@Override
+	public UpdateResponseDTO modifyBirthDate(String jwtToken, UpdateBirthDateDTO updateBirthDateDTO) {
+		String id = jwtUtil.extractUsername(jwtToken);
+		LocalDate newBirthDate = updateBirthDateDTO.getBirthDate();
+		Optional<UserData> userDataOptional = userDataRepository.findById(id);
+
+		// 사용자가 존재하지 않을 경우 처리
+		if (userDataOptional.isEmpty()) {
+			return new UpdateResponseDTO(false, "ID가 존재하지 않습니다 : " + id, null);
+		}
+
+		UserData userData = userDataOptional.get();
+		userData.setBirthDate(newBirthDate);
+		userDataRepository.save(userData);
+	    String changeBirthDate = newBirthDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		return new UpdateResponseDTO(true, "닉네임이 변경 되었습니다", changeBirthDate);
 	}
 
 	// 비밀번호 인증

@@ -34,6 +34,8 @@ public class SecurityConfig {
                     .requestMatchers("/api/user/mfa").permitAll()
                     .requestMatchers("/api/user/myData").hasRole("USER")  
                     .requestMatchers("/api/user/modifyNickname").hasRole("USER")
+                    .requestMatchers("/api/user/modifyBirthDate").hasRole("USER")  
+                    .requestMatchers("/api/user/driveTime").hasRole("USER")  
                     .requestMatchers("/api/user/verifyPassword").hasRole("USER")
                     .requestMatchers("/api/user/modifyPassword").hasRole("USER")  
                     .requestMatchers("/api/user/deleteUser").hasRole("USER") 
@@ -42,7 +44,6 @@ public class SecurityConfig {
             	    .requestMatchers("/api/abnormal/**").hasRole("USER")
             	    .requestMatchers("/api/driveLog/**").hasRole("USER")
             	    .requestMatchers("/api/score/**").hasRole("USER")
-            	    .requestMatchers("/api/driveLog/**").hasRole("USER")
             	    .anyRequest().authenticated()  // 그 외 요청은 인증 필요
             	)
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);  // JWT 필터 추가
