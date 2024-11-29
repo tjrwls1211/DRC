@@ -345,6 +345,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', // 아이콘 배경색 설정
     borderRadius: 5, // 둥글게 설정 (선택 사항)
     padding: 5, // 패딩 추가 (선택 사항)
+    marginLeft:10,
   },
   icon: {
     width: 35, // 아이콘 너비 조정
