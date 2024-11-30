@@ -45,7 +45,7 @@ const SettingsScreen = () => {
       </View>
 
       <View style={styles.darkModeContainer}>
-        <Text style={{ fontSize: 18, color: isDarkMode ? '#ffffff' : '#000000' }}>다크모드</Text>
+        <Text style={{ fontSize: 18, color: isDarkMode ? '#ffffff' : '#ffffff' }}>다크모드</Text>
         <Switch 
           value={isDarkMode}
           onValueChange={toggleSwitch}
