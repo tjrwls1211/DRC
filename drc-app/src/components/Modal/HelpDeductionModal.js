@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions, Platform } from 'react-native';
 import { useTheme } from '../Mode/ThemeContext';
 
 const HelpDeductionModal = ({ visible, onClose }) => {
@@ -9,8 +9,8 @@ const HelpDeductionModal = ({ visible, onClose }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const images = [
-        require('../../../assets/helpScore/HelpDeduction11.png'), // 이미지 경로
-        require('../../../assets/helpScore/HelpDeduction22.png'),
+        require('../../../assets/helpScore/HelpDeduction1.png'), // 이미지 경로
+        require('../../../assets/helpScore/HelpDeduction2.png'),
     ];
 
     const descriptions = [
@@ -50,7 +50,7 @@ const HelpDeductionModal = ({ visible, onClose }) => {
                         ref={scrollViewRef} // 참조 연결
                     >
                         {images.map((image, index) => (
-                            <View key={index} style={[styles.pageContainer, { width: screenWidth - 62 }]}>
+                            <View key={index} style={[styles.pageContainer, { width: screenWidth - 78 }]}>
                                 {/* 이미지 */}
                                 <Image source={image} style={styles.image} />
 
@@ -95,11 +95,11 @@ const styles = StyleSheet.create({
     },
     pageContainer: {
         alignItems: 'center',
-        marginHorizontal: 2, // 이미지 사이 간격 추가
+        marginHorizontal: 10, // 이미지 사이 간격 추가
     },
     image: {
-        width: 330,
-        height: 230,
+        width: 290,
+        height: 220,
         resizeMode: 'contain',
         marginBottom: 20,
         marginTop: 40,
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     arrowText: {
-        fontSize: 46,
+        fontSize: Platform.OS === 'ios' ? 46  : 24,
         fontWeight: 'bold',
         color: '#009688',
         

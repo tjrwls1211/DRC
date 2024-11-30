@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions, Platform } from 'react-native';
 import { useTheme } from '../Mode/ThemeContext';
 
 const HelpScoreModal = ({ visible, onClose }) => {
@@ -14,8 +14,8 @@ const HelpScoreModal = ({ visible, onClose }) => {
     ];
 
     const descriptions = [
-        '안전운전 점수는 최근 주행시간을\n 5시간 단위로 하나의 구간으로 책정한 뒤\n 최대 6개 구간의 점수를 기반으로 \n평균을 내어 계산됩니다.\n\n',
-        '또한, 주행시간이 30시간이 넘을 경우\n 가장 과거 시점 구간이 제외되고\n 새로운 구간이 점수에 반영됩니다.\n\n\n',
+        '안전운전 점수는 최근 주행시간을\n 10시간 단위로 하나의 구간으로 책정한 뒤\n 최대 6개 구간의 점수를 기반으로 \n평균을 내어 계산됩니다.\n\n',
+        '또한, 주행시간이 60시간이 넘을 경우\n 가장 과거 시점 구간이 제외되고\n 새로운 구간이 점수에 반영됩니다.\n\n\n',
     ];
 
     const nextImage = () => {
@@ -51,10 +51,6 @@ const HelpScoreModal = ({ visible, onClose }) => {
                     >
                         {images.map((image, index) => (
                             <View key={index} style={[styles.pageContainer, { width: screenWidth - 78 }]}>
-                                {/* 페이지 번호 표시 */}
-                                <Text style={[styles.pageNumberText, { color: isDarkMode ? '#fff' : '#000' }]}>
-                                    {index + 1} / {images.length}
-                                </Text>
 
                                 {/* 이미지 */}
                                 <Image source={image} style={styles.image} />
@@ -104,7 +100,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: 300,
-        height: 200,
+        height: 190,
         resizeMode: 'contain',
         marginBottom: 20,
         marginTop: 30,
@@ -124,7 +120,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     arrowText: {
-        fontSize: 24,
+        fontSize: Platform.OS === 'ios' ? 46  : 24,
         fontWeight: 'bold',
         color: '#009688',
     },
