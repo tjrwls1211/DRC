@@ -47,7 +47,7 @@ const SplashScreenComponent = ({ navigation }) => {
         source={require('../../assets/DRCLogo-text.png')}
         style={[styles.logo, { opacity }]} // 투명도 애니메이션 적용
       />
-      <Text style={styles.text}>Pearl</Text>
+      <Text style={styles.text}>Rush Guard</Text>
       <Animated.View style={[styles.carContainer, { transform: [{ translateX }, { translateY }] }]}>
         <FontAwesome5 name="car-side" size={50} color="#ffffff" />
       </Animated.View>
