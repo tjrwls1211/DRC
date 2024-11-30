@@ -143,8 +143,10 @@ const LoginScreen = () => {
     }
 };
 
-const handleOTPFocus = () => {
-  setOtp(Array(6).fill('')); // 모든 입력 초기화
+const handleOTPFocus = (index) => {
+  const newOtp = [...otp];
+  newOtp[index] = ''; // Focused input reset
+  setOtp(newOtp);
 };
 
 
@@ -195,7 +197,7 @@ return (
           </ScrollView>
           
 
-      <Modal isVisible={isModalVisible}>
+          <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>2차 인증</Text>
           <Text style={styles.otpText}>OTP 입력 (6자리)</Text>
@@ -209,6 +211,7 @@ return (
                 value={digit}
                 maxLength={1}
                 keyboardType="numeric"
+                onFocus={() => handleOTPFocus(index)} // Reset on focus
               />
             ))}
           </View>
