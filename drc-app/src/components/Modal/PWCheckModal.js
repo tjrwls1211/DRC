@@ -30,7 +30,14 @@ const PWCheckModal = ({ visible, onClose, onConfirm }) => {
     } catch (error) {
       // 오류 발생 시 메시지 설정
       setIsVerified(false);
-      setVerificationMessage("비밀번호 인증 중 오류가 발생했습니다."); // 오류 메시지
+      
+      // 오류 메시지를 보다 구체적으로 설정
+      if (error.response && error.response.status === 401) {
+        setVerificationMessage("비밀번호가 일치하지 않습니다."); // 401 오류에 대한 메시지
+      } else {
+        setVerificationMessage("비밀번호 인증 중 오류가 발생했습니다."); // 일반 오류 메시지
+      }
+      
       console.error('비밀번호 인증 오류:', error);
     }
 
