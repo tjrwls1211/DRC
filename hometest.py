@@ -64,6 +64,10 @@ root.configure(bg="black")
 font_large = ("Arial", 40, "bold")
 
 # 이미지 로드
+accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((430, 560)))
+accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((430, 560)))
+brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((430, 560)))
+brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((430, 560)))
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
