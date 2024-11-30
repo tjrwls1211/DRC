@@ -66,10 +66,6 @@ hx2.reset()
 hx1.tare()
 hx2.tare()
 
-# MQTT 설정
-client = mqtt.Client()
-client.connect(ip(), 1222, 60)
-
 # Tkinter 창생성
 root = tk.Tk()
 root.title("Car Driving Display")
@@ -116,6 +112,10 @@ last_sound_time = {
 
 sound_delay = 3  # 음성 재생 간격
 state_hold_time = 3  # 상태 유지 시간
+
+# MQTT 설정
+client = mqtt.Client()
+client.connect(ip(), 1222, 60)
 
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
@@ -351,7 +351,8 @@ def run_code():
             
             # 첫 번째 로드셀 (엑셀)# 두 번째 로드셀 (브레이크)
             val_accelerator = hx1.get_weight(5)
-            val_brake = hx2.get_weight(5)            
+            val_brake = hx2.get_weight(5)
+            print(f"엑셀무게, 브레이크무게  : {val_accelerator, val_brake}")            
             hx1.power_down()
             hx2.power_down()
             hx1.power_up()
@@ -391,7 +392,10 @@ def run_code():
                 "speed": int(speed_value),
                 "rpm": int(rpm_value),
                 "speedChange":speed_change  # speedChange data["kmh"]
-            })                  
+            })
+            print(data)
+            text_label.config(text=f"속도 : {int(speed_value)}")
+            rpm_label.config(text=f"RPM : {int(rpm_value)}")                  
             client.publish('DriveLog', json.dumps(data), 0, retain=False)
         except Exception as error:
             print(error)
