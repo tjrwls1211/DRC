@@ -11,7 +11,7 @@ import threading
 import pygame
 from server import ip, port
 import obd
-import random
+import random                                                             
 
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
