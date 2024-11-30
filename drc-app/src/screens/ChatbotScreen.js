@@ -66,7 +66,7 @@ if (inputDate > currentDate) {
             console.log(date, keyword);
             let botResponse = '';
 
-            if (keyword === "급가속" || keyword === "급제동" || keyword === "양발운전") {
+            if (keyword === "급가속" || keyword === "급정거" || keyword === "양발운전") {
                 const result = await fetchData(date, keyword); // 서버로부터 받은 결과 값
                 botResponse = `조회결과 ${result}회 입니다.`;
             } else {
@@ -192,19 +192,6 @@ if (inputDate > currentDate) {
     };
   
     // 조회 및 뒤로가기 버튼 처리
-    const handleQueryPress = () => {
-      if (activeButton === "급가속") {
-          navigation.navigate("SuddenAcceleration"); // SuddenAcceleration.js로 이동
-      } else if (activeButton === "급제동") {
-          navigation.navigate("SuddenBraking"); // SuddenBraking.js로 이동
-      } else if (activeButton === "주행정보") {
-        navigation.navigate("MypageScreen"); // MypageScreen.js로 이동
-    }
-  
-      // 상태 초기화
-      setShowQueryButtons(false);
-      setActiveButton(null); // activeButton 초기화
-  };
   
     const handleBackPress = () => {
       setShowBackOnly(false);
@@ -225,8 +212,8 @@ if (inputDate > currentDate) {
                       {message.isBot && (
                           <View style={styles.botMessageContainer}>
                               <View style={[styles.iconContainer, { backgroundColor: isDarkMode ? '#121212' : '#fff' }]}>
-    <Image source={require('../../assets/iconizer-free-icon-chatbot-5292342-_1_.png')} style={styles.icon} />
-</View>
+                                 <Image source={require('../../assets/iconizer-free-icon-chatbot-5292342-_1_.png')} style={styles.icon} />
+                              </View>
                               <View style={styles.messageContentContainer}>
                                   <Text style={[styles.messageText, { color: isDarkMode ? '#121212' : '#000000' }]}>
                                       {message.text || ''} {/* 빈 문자열 처리 */}
@@ -374,12 +361,14 @@ sendIcon: {
     maxWidth: '75%', // 최대 너비 조정
     borderRadius: 10, // 둥글게 설정
     padding: 10, // 패딩 추가
+    marginRight: 15,
 },
 
   userMessageText: {
     fontSize: 16,
     color: '#ffffff', // 사용자 메시지 글자를 하얀색으로 설정
     flexWrap: 'wrap', // 텍스트 줄 바꿈 허용
+    textAlign: 'center',
   },
   // 나머지 스타일은 그대로 유지...
   buttonsContainer: {

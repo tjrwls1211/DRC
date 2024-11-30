@@ -225,10 +225,10 @@ const MypageScreen = () => {
       <View style={styles.recordContainer}>
 
         <View>
-          <View style={[styles.recordTextBox, { backgroundColor: isDarkMode ? '#40807F' : '#009688' }]}>
+          <View style={[styles.recordTextBox, { backgroundColor: isDarkMode ? '#009688' : '#009688' }]}>
             <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>급가속</Text>
           </View>
-          <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
+          <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#444444' : '#d5e3e2' }]}>
     <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>
         {sacl}
         <Text style={{ fontSize: 14 }}>회</Text> {/* "회"의 크기를 줄임 */}
@@ -238,10 +238,10 @@ const MypageScreen = () => {
         </View>
 
         <View>
-          <View style={[styles.recordTextBox, { backgroundColor: isDarkMode ? '#40807F' : '#009688' }]}>
+          <View style={[styles.recordTextBox, { backgroundColor: isDarkMode ? '#009688' : '#009688' }]}>
             <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>급정거</Text>
           </View>
-          <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
+          <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#444444' : '#d5e3e2' }]}>
     <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>
         {sbrk}
         <Text style={{ fontSize: 14 }}>회</Text> {/* "회"의 크기를 줄임 */}
@@ -251,10 +251,10 @@ const MypageScreen = () => {
         </View>
 
         <View>
-          <View style={[styles.recordTextBox, { backgroundColor: isDarkMode ? '#40807F' : '#009688' }]}>
-            <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>동시페달</Text>
+          <View style={[styles.recordTextBox, { backgroundColor: isDarkMode ? '#009688' : '#009688' }]}>
+            <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>양발운전</Text>
           </View>
-          <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
+          <View style={[styles.recordBox, { backgroundColor: isDarkMode ? '#444444' : '#d5e3e2' }]}>
     <Text style={[styles.recordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>
         {bothPedal}
         <Text style={{ fontSize: 14 }}>회</Text> {/* "회"의 크기를 줄임 */}
@@ -268,10 +268,10 @@ const MypageScreen = () => {
 
 
       <View style={styles.timeRecordContainer}>
-        <View style={[styles.TimeRecordTextBox, { backgroundColor: isDarkMode ? '#40807F' : '#009688' }]}>
+        <View style={[styles.TimeRecordTextBox, { backgroundColor: isDarkMode ? '#009688' : '#009688' }]}>
           <Text style={[styles.recordTitle, { color: isDarkMode ? '#ffffff' : '#ffffff' }]}>총 주행시간</Text>
         </View>
-        <View style={[styles.TimeRecordBox, { backgroundColor: isDarkMode ? '#40807F' : '#d5e3e2' }]}>
+        <View style={[styles.TimeRecordBox, { backgroundColor: isDarkMode ? '#444444' : '#d5e3e2' }]}>
           <Text style={[styles.TimeRecordValue, { color: isDarkMode ? '#ffffff' : '#2F4F4F' }]}>{formatDrivingTime(totalTimeDrive)}</Text>
         </View>
       </View>
@@ -380,6 +380,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 1,
     marginBottom: 1,
+    
   },
   recordTitle: {
     fontSize: 16,

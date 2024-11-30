@@ -39,7 +39,7 @@ export default function AnalysisTabs() {
                 }} 
             />
             <Tab.Screen
-                name="페달동시사용 분석"
+                name="양발운전 분석"
                 component={SamePedal}
                 options={{
                     tabBarIcon: ({ color }) => <Icon2 name="footsteps" size={20} color={color} />, // 아이콘 색상 설정
