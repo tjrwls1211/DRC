@@ -33,7 +33,7 @@ const MypageScreen = () => {
         try {
           const userInfo = await fetchUserInfo();
           setNickname(userInfo.nickname);
-          setEmail(userInfo.email);
+          setEmail(userInfo.id);
         } catch (error) {
           console.error('사용자 정보 가져오기 실패:', error);
         }
@@ -129,19 +129,29 @@ const MypageScreen = () => {
     console.log("@@@@isUserInfoModalVisible 상태 변경:", isUserInfoModalVisible);
   }, [isUserInfoModalVisible]); // 상태가 변경될 때마다 실행
   
- // 비밀번호 인증 성공 시
- const handlePasswordVerified = () => {
-  console.log("비밀번호 인증 성공: 개인 정보 변경 모달 열기");
+  // 비밀번호 인증 성공 시
+  const handlePasswordVerified = () => {
+    console.log("비밀번호 인증 성공: 개인 정보 변경 모달 열기");
 
-  // 비밀번호 인증 모달 닫은 뒤 개인 정보 변경 모달 열기
-  setTimeout(() => {
-    setPWCheckModalVisible(false); // 먼저 비밀번호 확인 모달 닫기
-  }, 300);
-  
-  setTimeout(() => {
-    setUserInfoModalVisible(true); // 딜레이 후 개인 정보 변경 모달 열기
-  }, 1000); // 상태 반영 시간이 필요할 경우 약간의 지연 추가
-};
+    // 비밀번호 인증 모달 닫은 뒤 개인 정보 변경 모달 열기
+    setTimeout(() => {
+      setPWCheckModalVisible(false); // 먼저 비밀번호 확인 모달 닫기
+    }, 300);
+    
+    setTimeout(() => {
+      setUserInfoModalVisible(true); // 딜레이 후 개인 정보 변경 모달 열기
+    }, 1000); // 상태 반영 시간이 필요할 경우 약간의 지연 추가
+  };
+
+  // ChangUserInfo에서 사용자 정보 수정 이 함수 호출하여 사용자 정보 업데이트
+  const handleUserInfoUpdated = async () => {
+    try {
+      const userInfo = await fetchUserInfo(); // 사용자 정보를 다시 가져오기
+      setNickname(userInfo.nickname);       // 닉네임 업데이트
+    } catch (error) {
+      console.error("사용자 정보 업데이트 실패:", error);
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#fff' }]}>
@@ -165,6 +175,7 @@ const MypageScreen = () => {
       <ChangUserInfo
         visible={isUserInfoModalVisible}
         onClose={handleCloseUserInfoModal}
+        onUserInfoUpdated={handleUserInfoUpdated}
       />
 
     <View style={styles.headerVar} />

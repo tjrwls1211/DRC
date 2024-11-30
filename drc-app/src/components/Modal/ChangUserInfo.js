@@ -16,7 +16,7 @@ import { formatDate } from "../../utils/formatDate";
 import { changeNickname, changeBirthDate, fetchUserInfo } from "../../api/userInfoAPI";
 import { changePassword } from "../../api/accountAPI";
 
-const ChangUserInfo = ({ visible, onClose }) => {
+const ChangUserInfo = ({ visible, onClose, onUserInfoUpdated }) => {
   const [userInfo, setUserInfo] = useState({
     id: "",
     nickname: "",
@@ -93,6 +93,11 @@ const ChangUserInfo = ({ visible, onClose }) => {
         } else {
           throw new Error("생년월일 변경 실패");
         }
+      }
+
+      // 부모 컴포넌트에 정보 업데이트 알림
+      if (onUserInfoUpdated) {
+        onUserInfoUpdated();
       }
 
       onClose();
