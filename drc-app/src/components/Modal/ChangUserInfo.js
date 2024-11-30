@@ -10,11 +10,22 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Button,
+  FlatList,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { formatDate } from "../../utils/formatDate";
 import { changeNickname, changeBirthDate, fetchUserInfo } from "../../api/userInfoAPI";
 import { changePassword } from "../../api/accountAPI";
+import DropDownPicker from 'react-native-dropdown-picker';
+import { enableTwoFactorAuth, disableTwoFactorAuth } from '../../api/authAPI'; // 2FA API 가져오기
+import { useTwoFA } from '../../context/TwoFAprovider'; // 2FA Context import
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTheme } from '../Mode/ThemeContext'; // 다크 모드 Context import
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { Linking } from 'react-native';
+import * as Clipboard from 'expo-clipboard'; // 클립보드 작업을 위한 라이브러리
+import TwoFactorAuthModal from "./TwoFactorAuthModal";
 
 const ChangUserInfo = ({ visible, onClose, onUserInfoUpdated }) => {
   const [userInfo, setUserInfo] = useState({
@@ -30,6 +41,91 @@ const ChangUserInfo = ({ visible, onClose, onUserInfoUpdated }) => {
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(true);
   const [isSaveEnabled, setIsSaveEnabled] = useState(false);
+  const { isDarkMode, setIsDarkMode } = useTheme(); // 다크 모드 상태 가져오기
+  
+  // 2차 인증 관련 상태 추가
+  const { is2FAEnabled, setIs2FAEnabled } = useTwoFA();
+  console.log("2차인증 상태 확인: ", is2FAEnabled);
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState([
+    { label: '비활성', value: false },
+    { label: '활성', value: true },
+  ]);
+  const [qrUrl, setQrUrl] = useState(null); // QR URL 상태
+  const [otpKey, setOtpKey] = useState(null); // otpKey 상태
+  const [isModalVisible, setModalVisible] = useState(false); // 모달 상태
+  console.log("isModalVisible 상태: ", isModalVisible);
+
+  // 드롭다운이 열려 있는지 확인
+  const isDropDownOpen = open;
+
+  // 모달의 높이를 결정하는 함수
+  const modalHeight = isDropDownOpen ? 580 : 480; // 드롭다운이 열릴 때 모달 크게 조정
+
+  // 2차 인증 드롭다운 기본값 로컬 저장소에서 가져오기
+  useEffect(() => {
+    const loadTwoFASetting = async () => {
+        // await AsyncStorage.setItem('is2FAEnabled', 'false'); // 로컬 저장소에서 값을 false로 업데이트
+        // setIs2FAEnabled(false); // 상태 업데이트
+        const storedStatus = await AsyncStorage.getItem('is2FAEnabled');
+        const status = storedStatus === 'true';
+        setIs2FAEnabled(status);
+        setOpen(false);
+    };
+
+    loadTwoFASetting();
+  }, []);
+
+  // 2차 인증 활성화/비활성 상태 변경 핸들러
+  const handle2FAChange = async (value) => {
+    if (value) {
+        console.log("2차인증 활성");
+        const { qrUrl, otpKey } = await enableTwoFactorAuth();
+        setQrUrl(qrUrl);
+        setOtpKey(otpKey);
+        setModalVisible(true);
+        Alert.alert("OTP 인증 정보가 생성되었습니다.", "QR 코드를 스캔하거나 설정 key를 사용하여 OTP 코드를 생성하세요.");
+    } else {
+        console.log("2차인증 비활성");
+        try {
+            const response = await disableTwoFactorAuth();
+            setQrUrl(null);
+            setOtpKey(null);
+
+            if (response.success) {
+                Alert.alert("성공", response.message);
+            }
+        } catch (error) {
+            console.error("2차 인증 비활성화 오류:", error);
+            Alert.alert("오류", "2차 인증 비활성화 중 문제가 발생했습니다.");
+        }
+    }
+    setIs2FAEnabled(value);
+    console.log("2차인증 전역상태 업데이트: ", value);
+  };
+
+  // 드롭다운에서 선택된 값에 따라 상태 업데이트
+  useEffect(() => {
+    if (is2FAEnabled) {
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+  }, [is2FAEnabled]);
+
+  // 2차인증 모달 닫기 함수
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleCopyOtpKey = () => {
+    if (otpKey) {
+      Clipboard.setString(otpKey); // otpKey 클립보드에 복사
+      Alert.alert("복사 완료", "OTP 키가 클립보드에 복사되었습니다."); // 복사 완료 알림
+    } else {
+      Alert.alert("오류", "OTP 키가 없습니다."); // otpKey가 없을 경우
+    }
+  }; 
 
   useEffect(() => {
     if (visible) {
@@ -114,94 +210,134 @@ const ChangUserInfo = ({ visible, onClose, onUserInfoUpdated }) => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={-40}
       >
-        <View style={styles.modal}>
-          <ScrollView contentContainerStyle={styles.scrollView}>
-            <Text style={styles.title}>개인정보 변경</Text>
+        <View style={[styles.modal, { height: modalHeight }]}>
+          <FlatList
+            contentContainerStyle={styles.scrollView}
+            data={[]} // 여기에 필요한 데이터 배열을 넣으세요. (필요 없는 경우 빈 배열)
+            ListHeaderComponent={
+              <>
+                <Text style={styles.title}>개인정보 변경</Text>
+  
+                {/* 사용자 ID */}
+                <View style={styles.inputRow}>
+                  <Text style={styles.label}>ID</Text>
+                  <Text>{userInfo.id}</Text>
+                </View>
+  
+                {/* 닉네임 변경 */}
+                <View style={styles.inputRow}>
+                  <Text style={styles.label}>닉네임</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={newNickname}
+                    onChangeText={setNewNickname}
+                  />
+                </View>
+  
+                {/* 비밀번호 변경 */}
+                <View style={styles.inputRow}>
+                  <Text style={styles.label}>새 비밀번호</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={newPassword}
+                    onChangeText={setNewPassword}
+                    secureTextEntry
+                    placeholder="새 비밀번호 입력"
+                  />
+                </View>
+  
+                <View style={styles.inputRow}>
+                  <Text style={styles.label}>새 비밀번호 확인</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    secureTextEntry
+                    placeholder="비밀번호 확인"
+                  />
+                </View>
+  
+                {!passwordMatch && (
+                  <Text style={styles.errorText}>비밀번호가 일치하지 않습니다.</Text>
+                )}
+  
+                {/* 생년월일 변경 */}
+                <View style={styles.inputRow}>
+                  <Text style={{ fontWeight: "bold", marginRight: -12, color: "#2F4F4F", width: 100 }}>
+                    생년월일
+                  </Text>
+                  <DateTimePicker
+                    value={newBirthDate}
+                    mode="date"
+                    display="default"
+                    onChange={(event, date) => {
+                      if (date) {
+                        setNewBirthDate(date);
+                      }
+                    }}
+                  />
+                </View>
+  
+                {/* 차량번호 표시 */}
+                <View style={styles.inputRow}>
+                  <Text style={styles.label}>차량번호</Text>
+                  <Text>{userInfo.carId}</Text>
+                </View>
+  
+                {/* 2차 인증 설정 */}
+                <View style={styles.inputRow}>
+                  <Text style={styles.label}>2차 인증</Text>
+                  <View style={{ flex: 1 }}>
+                    <DropDownPicker
+                      open={open}
+                      value={is2FAEnabled}
+                      items={items} 
+                      setOpen={setOpen} 
+                      setValue={setIs2FAEnabled} 
+                      setItems={setItems} 
+                      onChangeValue={(value) => {
+                        handle2FAChange(value);
+                        setOpen(false); // 선택 후 드롭다운 닫기
+                      }} 
+                      style={[styles.dropdown, { marginTop: 5, backgroundColor: isDarkMode ? '#1f1f1f' : '#ffffff', zIndex: 10 }]} // 드롭다운이 다른 요소 위에 표시되도록 zIndex 설정
+                      dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 10 }]} // 드롭다운 컨테이너에도 zIndex 적용
+                      labelStyle={{ color: isDarkMode ? '#ffffff' : '#009688', fontSize: 18 }} 
+                      textStyle={{ color: isDarkMode ? '#ffffff' : '#009688', fontSize: 18 }} 
+                    />
+                  </View>
+                </View>
+              </>
+            }
+          />
 
-            {/* 사용자 ID */}
-            <View style={styles.inputRow}>
-              <Text style={styles.label}>ID</Text>
-              <Text>{userInfo.id}</Text>
-            </View>
+          <View style={[styles.buttonContainer, { zIndex: 20 }]}>
+            <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
+              <Text style={styles.buttonText}>취소</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleSave}
+              style={[styles.saveButton, !isSaveEnabled && styles.disabledButton]}
+              disabled={!isSaveEnabled}
+            >
+              <Text style={styles.buttonText}>저장</Text>
+            </TouchableOpacity>
+          </View>
 
-            {/* 닉네임 변경 */}
-            <View style={styles.inputRow}>
-              <Text style={styles.label}>닉네임</Text>
-              <TextInput
-                style={styles.input}
-                value={newNickname}
-                onChangeText={setNewNickname}
-              />
-            </View>
-
-            {/* 비밀번호 변경 */}
-            <View style={styles.inputRow}>
-              <Text style={styles.label}>새 비밀번호</Text>
-              <TextInput
-                style={styles.input}
-                value={newPassword}
-                onChangeText={setNewPassword}
-                secureTextEntry
-                placeholder="새 비밀번호 입력"
-              />
-            </View>
-            <View style={styles.inputRow}>
-              <Text style={styles.label}>새 비밀번호 확인</Text>
-              <TextInput
-                style={styles.input}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                secureTextEntry
-                placeholder="비밀번호 확인"
-              />
-            </View>
-            {!passwordMatch && (
-              <Text style={styles.errorText}>비밀번호가 일치하지 않습니다.</Text>
-            )}
-
-            {/* 생년월일 변경 */}
-            <View style={styles.inputRow}>
-              <Text style={{ fontWeight: "bold", marginRight: -18, color: "#2F4F4F", width: 100 }}>
-                  생년월일
-              </Text>
-              <DateTimePicker
-                value={newBirthDate}
-                mode="date"
-                display="default"
-                onChange={(event, date) => {
-                  setDatePickerVisible(false);
-                  if (date) {
-                    setNewBirthDate(date);
-                  }
-                }}
-              />
-            </View>
-
-            {/* 차량번호 표시 */}
-            <View style={styles.inputRow}>
-              <Text style={styles.label}>차량번호</Text>
-              <Text>{userInfo.carId}</Text>
-            </View>
-
-            {/* 버튼 */}
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-                <Text style={styles.buttonText}>취소</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleSave}
-                style={[styles.saveButton, !isSaveEnabled && styles.disabledButton]}
-                disabled={!isSaveEnabled}
-              >
-                <Text style={styles.buttonText}>저장</Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
+          {/* 2차 인증 정보 모달 */}
+          <TwoFactorAuthModal
+            isVisible={isModalVisible}
+            onClose={closeModal}
+            otpKey={otpKey}
+            handleCopyOtpKey={handleCopyOtpKey}
+            qrUrl={qrUrl}
+            isDarkMode={isDarkMode}
+          />
         </View>
       </KeyboardAvoidingView>
     </Modal>
-  );
+  );  
 };
+  
 
 const styles = StyleSheet.create({
   overlay: {
@@ -284,6 +420,46 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     textAlign: "center",
+  },
+  dropdown: {
+    marginVertical: 10,
+    borderColor: '#009688',
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
+  },
+  dropdownContainer: {
+    borderColor: '#009688',
+  },
+  modalContent: {
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#009688',
+  },
+  otpKeyContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  otpKey: {
+    fontSize: 16,
+    marginVertical: 10,
+    color: '#555',
+    padding: 10,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
   },
 });
 
