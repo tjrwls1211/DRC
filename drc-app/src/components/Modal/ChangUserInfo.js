@@ -209,11 +209,11 @@ const ChangUserInfo = ({ visible, onClose, onUserInfoUpdated }) => {
       <KeyboardAvoidingView
         style={styles.overlay}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={-40}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0} // 적절한 오프셋 설정
       >
         <View style={[styles.modal, { height: modalHeight }]}>
           <FlatList
-            contentContainerStyle={styles.scrollView}
+            contentContainerStyle={[styles.scrollView, { flexGrow: 1 }]}
             data={[]} // 여기에 필요한 데이터 배열을 넣으세요. (필요 없는 경우 빈 배열)
             ListHeaderComponent={
               <>
