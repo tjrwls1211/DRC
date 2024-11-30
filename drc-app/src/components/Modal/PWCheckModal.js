@@ -1,6 +1,8 @@
+// 비밀번호 인증 모달
 import React, { useState } from 'react';
 import { TextInput, Text, StyleSheet, TouchableOpacity, View, Modal } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // 아이콘을 위해 추가
+import { Ionicons } from '@expo/vector-icons';
+import { verifyPassword } from '../../api/accountAPI';
 
 const PWCheckModal = ({ visible, onClose, onConfirm }) => {
   const [currentPassword, setCurrentPassword] = useState(''); // 현재 비밀번호 상태
@@ -11,11 +13,34 @@ const PWCheckModal = ({ visible, onClose, onConfirm }) => {
   const checkPassword = async () => {
     console.log("비밀번호 인증 버튼 클릭");
 
+    try {
+      // 비밀번호 인증 API 호출
+      const success = await verifyPassword(currentPassword);
+      
+      if (success) {
+        setIsVerified(true); // 인증 상태를 성공으로 설정
+        setVerificationMessage("인증되었습니다."); // 인증 성공 메시지
+        console.log("onConfirm 호출"); // 디버깅용 로그
+        onConfirm(); // 인증 성공 시 부모 컴포넌트에 알림
+      } else {
+        // 인증 실패 시 메시지 설정
+        setIsVerified(false);
+        setVerificationMessage("비밀번호가 일치하지 않습니다."); // 인증 실패 메시지
+      }
+    } catch (error) {
+      // 오류 발생 시 메시지 설정
+      setIsVerified(false);
+      setVerificationMessage("비밀번호 인증 중 오류가 발생했습니다."); // 오류 메시지
+      console.error('비밀번호 인증 오류:', error);
+    }
+
+    /* 테스트 용
     // 서버 테스트가 안되므로 인증 성공 상태로 바로 처리
     setIsVerified(true); // 인증 상태를 성공으로 설정
     setVerificationMessage("인증되었습니다."); // 인증 성공 메시지
     console.log("onConfirm 호출"); // 디버깅용 로그
     onConfirm(); // 인증 성공 시 부모 컴포넌트에 알림
+    */
   };
 
   const handleClose = () => {

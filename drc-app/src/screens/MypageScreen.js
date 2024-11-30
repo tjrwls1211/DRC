@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, Modal } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -25,17 +26,27 @@ const MypageScreen = () => {
   const [totalTimeDrive, setTotalTimeDrive] = useState(0);
   const [isPWCheckModalVisible, setPWCheckModalVisible] = useState(false); // 비밀번호 인증 모달
   const [isUserInfoModalVisible, setUserInfoModalVisible] = useState(false); // 정보 수정 모달
-  const [isPasswordVerified, setPasswordVerified] = useState(false); // 인증 상태
 
-  const fetchUserData = async () => {
-    try {
-      const userInfo = await fetchUserInfo(); // 사용자 정보 API 호출
-      setNickname(userInfo.nickname); // 닉네임 상태 업데이트
-      setEmail(userInfo.email); // 이메일 상태 업데이트
-    } catch (error) {
-      console.error('사용자 정보 가져오기 실패:', error);
-    }
-  };
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchUserData = async () => {
+        try {
+          const userInfo = await fetchUserInfo();
+          setNickname(userInfo.nickname);
+          setEmail(userInfo.email);
+        } catch (error) {
+          console.error('사용자 정보 가져오기 실패:', error);
+        }
+      };
+
+      fetchUserData(); // 화면 포커스 시 사용자 데이터 가져오기
+
+      // 클린업 함수 (필요할 경우)
+      return () => {
+        // 정리 작업이 필요하다면 여기에 작성
+      };
+    }, [])
+  );
 
   const fetchTotalTimeDrive = async () => {     
     try {       
@@ -48,7 +59,6 @@ const MypageScreen = () => {
   };
 
   useEffect(() => {
-    fetchUserData();
     fetchTotalTimeDrive(); // 주행시간 조회  
     fetchData(); // 초기 로딩 시 주행 기록 조회
   }, []);
@@ -101,17 +111,13 @@ const MypageScreen = () => {
     }
   };
 
-  // 비밀번호 확인 모달 닫기 - 사용X?
+  // 비밀번호 확인 모달 닫기
   const handleClosePWCheckModal = () => {
     setPWCheckModalVisible(false);
-    setUserInfoModalVisible(true);
   };
 
-  // 개인 정보 변경 모달 닫기
   const handleCloseUserInfoModal = () => {
-    
-    setPWCheckModalVisible(false); // 비번 인증 창 닫기
-    //setUserInfoModalVisible(false);
+    setUserInfoModalVisible(false);
   };
 
   // "정보 변경" 버튼 클릭 시 비밀번호 인증 모달 열기
@@ -124,15 +130,18 @@ const MypageScreen = () => {
   }, [isUserInfoModalVisible]); // 상태가 변경될 때마다 실행
   
  // 비밀번호 인증 성공 시
-  const handlePasswordVerified = () => {
-    console.log("비밀번호 인증 성공: 개인 정보 변경 모달 열기");
+ const handlePasswordVerified = () => {
+  console.log("비밀번호 인증 성공: 개인 정보 변경 모달 열기");
 
-    // 1초 후에 상태 변경 작업 실행
-    setTimeout(() => {
-      setPasswordVerified(true); // 인증 상태 변경
-      setUserInfoModalVisible(true); // 정보 변경 모달 열기
-    }, 1000);
-  };
+  // 비밀번호 인증 모달 닫은 뒤 개인 정보 변경 모달 열기
+  setTimeout(() => {
+    setPWCheckModalVisible(false); // 먼저 비밀번호 확인 모달 닫기
+  }, 300);
+  
+  setTimeout(() => {
+    setUserInfoModalVisible(true); // 딜레이 후 개인 정보 변경 모달 열기
+  }, 1000); // 상태 반영 시간이 필요할 경우 약간의 지연 추가
+};
 
   return (
     <View style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#fff' }]}>

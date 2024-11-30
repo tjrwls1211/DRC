@@ -13,16 +13,15 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { formatDate } from "../../utils/formatDate";
-import { changeNickname, changeBirthDate } from "../../api/userInfoAPI";
+import { changeNickname, changeBirthDate, fetchUserInfo } from "../../api/userInfoAPI";
 import { changePassword } from "../../api/accountAPI";
 
 const ChangUserInfo = ({ visible, onClose }) => {
-  console.log("개인정보변경 모달 내 열기 상태", visible);
   const [userInfo, setUserInfo] = useState({
-    id: "test_user123",
-    nickname: "기본닉네임",
+    id: "",
+    nickname: "",
     birthDate: "",
-    carId: "123가4567",
+    carId: "",
   });
   const [newNickname, setNewNickname] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -30,44 +29,45 @@ const ChangUserInfo = ({ visible, onClose }) => {
   const [newBirthDate, setNewBirthDate] = useState(new Date("1990-01-01")); // 초기값 설정
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(true);
-  const [isSaveEnabled, setIsSaveEnabled] = useState(false); // 저장 버튼 활성화 여부
+  const [isSaveEnabled, setIsSaveEnabled] = useState(false);
 
   useEffect(() => {
-    // 모달 표시 시 사용자 정보 초기화
     if (visible) {
-      const initialUserInfo = {
-        id: "test_user123",
-        nickname: "기본닉네임",
-        birthDate: "1990-01-01",
-        carId: "123가4567",
+      const loadUserInfo = async () => {
+        try {
+          const data = await fetchUserInfo(); // 사용자 정보 가져오기
+          setUserInfo({
+            id: data.id,
+            nickname: data.nickname,
+            birthDate: data.birthDate,
+            carId: data.carId,
+          });
+          setNewNickname(data.nickname);
+          setNewBirthDate(new Date(data.birthDate));
+        } catch (error) {
+          Alert.alert("오류", "사용자 정보를 불러오는 중 문제가 발생했습니다.");
+        }
       };
-      setUserInfo(initialUserInfo);
-      setNewNickname(initialUserInfo.nickname);
-      setNewBirthDate(new Date(initialUserInfo.birthDate));
-      setNewPassword("");
-      setConfirmPassword("");
+      loadUserInfo();
     }
   }, [visible]);
 
   useEffect(() => {
-    // 새 비밀번호와 확인 비밀번호 일치 여부 확인
     setPasswordMatch(newPassword === confirmPassword);
   }, [newPassword, confirmPassword]);
 
   useEffect(() => {
-    // 저장 버튼 활성화 여부 설정
     const hasChanges =
       newNickname !== userInfo.nickname ||
       formatDate(newBirthDate) !== userInfo.birthDate ||
-      newPassword;
-    setIsSaveEnabled(hasChanges && passwordMatch);
-  }, [newNickname, newBirthDate, newPassword, confirmPassword]);
+      (newPassword && passwordMatch); // 비밀번호 확인이 일치할 때만 포함
+    setIsSaveEnabled(hasChanges);
+  }, [newNickname, newBirthDate, newPassword, passwordMatch]); // passwordMatch를 의존성 배열에 추가
 
   const handleSave = async () => {
     try {
-      if (!isSaveEnabled) return; // 저장 버튼이 비활성화된 경우 동작하지 않음
+      if (!isSaveEnabled) return;
 
-      // 변경 사항 저장
       if (newNickname !== userInfo.nickname) {
         const response = await changeNickname(newNickname);
         if (response.success) {
@@ -95,7 +95,7 @@ const ChangUserInfo = ({ visible, onClose }) => {
         }
       }
 
-      onClose(); // 저장 후 모달 닫기
+      onClose();
     } catch (error) {
       Alert.alert("오류", "정보를 저장하는 중 문제가 발생했습니다.");
       console.error(error);
@@ -156,7 +156,9 @@ const ChangUserInfo = ({ visible, onClose }) => {
 
             {/* 생년월일 변경 */}
             <View style={styles.inputRow}>
-              <Text style={styles.label}>생년월일</Text>
+              <Text style={{ fontWeight: "bold", marginRight: -18, color: "#2F4F4F", width: 100 }}>
+                  생년월일
+              </Text>
               <DateTimePicker
                 value={newBirthDate}
                 mode="date"
