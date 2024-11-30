@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, Switch, StyleSheet,Button } from 'react-native';
+import { View, Text, Switch, StyleSheet, Button, Alert } from 'react-native';
 import { useTheme } from '../components/Mode/ThemeContext.js'; // 다크 모드 Context import
 import { MaterialIcons } from '@expo/vector-icons';
 import LogoutModal from '../components/Modal/LogoutModal.js';
-import AccountDeletionModal from '../components/Modal/AccountDeletionModal.js'
-
+import AccountDeletionModal from '../components/Modal/AccountDeletionModal.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const SettingsScreen = () => {
+  const navigation = useNavigation(); // 네비게이션 가져오기
   const { isDarkMode, setIsDarkMode } = useTheme(); // 다크 모드 상태 가져오기
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -16,7 +18,6 @@ const SettingsScreen = () => {
     setDeleteModalVisible(false);
   };
 
-  
   const toggleSwitch = () => {
     setIsDarkMode(previousState => !previousState); // 다크 모드 상태를 토글
   };
@@ -51,6 +52,7 @@ const SettingsScreen = () => {
           trackColor={{ false: '#767577', true: '#000000' }} 
         />
       </View>
+
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View style={styles.buttonContainer}>
           <Button 
@@ -64,8 +66,8 @@ const SettingsScreen = () => {
             onPress={() => setDeleteModalVisible(true)} 
           />
         </View>
-        
       </View>
+
       <LogoutModal 
         visible={logoutModalVisible} 
         onClose={() => setLogoutModalVisible(false)} 
