@@ -13,9 +13,9 @@ export const fetchData = async (date, keyword) => {
       url = ""; // 급가속 URL
       dataField = 'sacl'; // 급가속 데이터 필드
       break;
-    case '급제동':
-      url = ""; // 급제동 URL
-      dataField = 'sbrk'; // 급제동 데이터 필드
+    case '급정거':
+      url = ""; // 급정거 URL
+      dataField = 'sbrk'; // 급정거 데이터 필드
       break;
     case '양발운전':
       url = ""; // 양발운전 URL 

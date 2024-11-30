@@ -82,7 +82,7 @@ const MainScreen = () => {
     }; 
 
     const goToSamePedal = () => { 
-        navigation.navigate('AnalysisTabs', { screen: '페달동시사용 분석' }); 
+        navigation.navigate('AnalysisTabs', { screen: '양발운전 분석' }); 
     }; 
     
 
@@ -131,7 +131,7 @@ const MainScreen = () => {
                     /> 
                     <TouchCard 
                         iconSource={require('../../assets/pedal-icon.png')} 
-                        analysis_item="페달동시사용 분석 결과" 
+                        analysis_item="양발운전 분석 결과" 
                         analysis_count={`${analysisCount.bothPedal}회`} 
                         onPress={goToSamePedal} 
                     /> 
