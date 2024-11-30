@@ -94,6 +94,7 @@ const ChangUserInfo = ({ visible, onClose, onUserInfoUpdated }) => {
 
             if (response.success) {
                 Alert.alert("성공", response.message);
+                onClose(); // 2차 인증 비활성화 후 모달 닫기
             }
         } catch (error) {
             console.error("2차 인증 비활성화 오류:", error);
