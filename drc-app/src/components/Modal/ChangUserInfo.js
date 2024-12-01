@@ -45,7 +45,7 @@ const ChangUserInfo = ({ visible, onClose, onUserInfoUpdated }) => {
   
   // 2차 인증 관련 상태 추가
   const { is2FAEnabled, setIs2FAEnabled } = useTwoFA();
-  console.log("2차인증 상태 확인: ", is2FAEnabled);
+  //console.log("2차인증 상태 확인: ", is2FAEnabled);
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([
     { label: '비활성', value: false },
@@ -54,7 +54,7 @@ const ChangUserInfo = ({ visible, onClose, onUserInfoUpdated }) => {
   const [qrUrl, setQrUrl] = useState(null); // QR URL 상태
   const [otpKey, setOtpKey] = useState(null); // otpKey 상태
   const [isModalVisible, setModalVisible] = useState(false); // 모달 상태
-  console.log("isModalVisible 상태: ", isModalVisible);
+  //console.log("isModalVisible 상태: ", isModalVisible);
 
   // 드롭다운이 열려 있는지 확인
   const isDropDownOpen = open;
