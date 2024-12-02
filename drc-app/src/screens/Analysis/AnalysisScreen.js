@@ -20,6 +20,7 @@ const AnalysisScreen = ({ todayData, fetchData, title, chartDataKey, loadingText
   const { isDarkMode } = useTheme();
 
   //const { currentDate, twoWeeksAgo } = getDate(); // 오늘, 2주전 날짜 가져오기
+  // console.log("가져온 날짜:", currentDate, twoWeeksAgo);
   //테스트
   const currentDate = '2024-11-19'; // 오늘 날짜
   const twoWeeksAgo = '2024-11-06'; // 2주 전 날짜
