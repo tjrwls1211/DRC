@@ -121,7 +121,7 @@ client.connect(ip(), 1222, 60)
 def update_display_state(accel_value, brake_value, state):
     global data # driveState를 초기화하려면 필요한 코드
     # 엑셀 이미지 상태 업데이트
-    if accel_value <= 100:
+    if accel_value <= 200:
         if accel_label.cget("image") != str(accel_img_dark):  # 같은 이미지라면 업데이트 안함
             accel_label.config(image=accel_img_dark)
 
@@ -130,7 +130,7 @@ def update_display_state(accel_value, brake_value, state):
             accel_label.config(image=accel_img_normal)
 
     # 브레이크 이미지 상태 업데이트
-    if brake_value <= 100:
+    if brake_value <= 200:
         if brake_label.cget("image") != str(brake_img_dark):
             brake_label.config(image=brake_img_dark)
 
