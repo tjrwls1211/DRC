@@ -57,9 +57,8 @@ hx2.set_reading_format("MSB", "MSB")
 
 # 참조 단위 설정 (로드셀 보정값)
 referenceUnit = 96
-referenceUnit2 = 145
 hx1.set_reference_unit(referenceUnit)
-hx2.set_reference_unit(referenceUnit2)
+hx2.set_reference_unit(referenceUnit)
 
 # 초기화 및 영점 설정
 hx1.reset()
@@ -252,7 +251,7 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
         prev_rpm = rpm_value
 
     # Rapid Acceleration 조건
-    elif accel_value > 3000 and brake_value < 100 and rpm_value >= 2000:
+    elif accel_value > 2500 and brake_value < 100 and rpm_value >= 2000:
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 1
