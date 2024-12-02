@@ -23,11 +23,11 @@ const ChatbotScreen = ({ navigation }) => {
     const callGPTApi = async (userInput) => {
       try {
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-          model: 'gpt-4',
+          model: 'ft:gpt-3.5-turbo-1106:personal::AZtVpenu',
           messages: [{ role: 'user', content: userInput }],
         }, {
           headers: {
-            'Authorization': `Bearer `, // API 키를 여기에 입력하세요.
+            'Authorization': `Bearer API키 비밀`, // API 키를 여기에 입력하세요.
             'Content-Type': 'application/json',
           }
         });
