@@ -1,7 +1,5 @@
 package com.trustping.controller;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.trustping.DTO.DriveTimeDTO;
 import com.trustping.DTO.LoginRequestDTO;
 import com.trustping.DTO.LoginResponseDTO;
 import com.trustping.DTO.MfaRequestDTO;
@@ -29,8 +26,6 @@ import com.trustping.DTO.TokenValidationDTO;
 import com.trustping.DTO.UpdateBirthDateDTO;
 import com.trustping.DTO.UpdateNicknameDTO;
 import com.trustping.DTO.UpdateResponseDTO;
-import com.trustping.entity.UserData;
-import com.trustping.service.SegmentService;
 import com.trustping.service.UserDataHelperService;
 import com.trustping.service.UserDataService;
 import com.trustping.utils.JwtUtil;
@@ -139,7 +134,7 @@ public class UserDataController {
 	
 	// 비밀번호 인증
 	@PostMapping("/verifyPassword")
-	public ResponseEntity<ResponseDTO> verifyPassword(@RequestHeader("Authorization") String token, @RequestBody PasswordDTO passwordDTO) {
+	public ResponseEntity<ResponseDTO> verifyPassword(@RequestHeader("Authorization") String token,@Valid @RequestBody PasswordDTO passwordDTO) {
 	    String jwtToken = token.substring(7);
 	    ResponseDTO response = userDataService.verifyPassword(jwtToken, passwordDTO);
 
@@ -154,7 +149,7 @@ public class UserDataController {
 	
 	// 비밀번호 변경
 	@PatchMapping("/modifyPassword")
-	public ResponseEntity<ResponseDTO> modifyPassword(@RequestHeader("Authorization") String token,@RequestBody PasswordDTO passwordDTO){
+	public ResponseEntity<ResponseDTO> modifyPassword(@RequestHeader("Authorization") String token,@Valid @RequestBody PasswordDTO passwordDTO){
 		String jwtToken = token.substring(7);
 		ResponseDTO response = userDataService.modifyPassword(jwtToken, passwordDTO);		
 		return ResponseEntity.ok(response);
@@ -162,7 +157,7 @@ public class UserDataController {
 	
 	// 회원 탈퇴
 	@DeleteMapping("/deleteUser")
-	public ResponseEntity<ResponseDTO> deleteUser(@RequestHeader("Authorization") String token, @RequestBody PasswordDTO passwordDTO) {
+	public ResponseEntity<ResponseDTO> deleteUser(@RequestHeader("Authorization") String token,@Valid @RequestBody PasswordDTO passwordDTO) {
 	    String jwtToken = token.substring(7);
 	    ResponseDTO response = userDataService.deleteUser(jwtToken, passwordDTO);
 
