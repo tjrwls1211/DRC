@@ -43,8 +43,8 @@ public class SegmentServiceImpl implements SegmentService {
 		
 		UserData userData = userDataOpt.get();
 
-		// 세그먼트가 없거나 현재 세그먼트 1개당 시간(18000초 == 5시간)일 경우 새로운 세그먼트 생성
-		if (currentSegmentOpt.isEmpty() || currentSegmentOpt.get().getTotalDuration() >= 18000) {
+		// 세그먼트가 없거나 현재 세그먼트 1개당 시간(36000초 == 10시간)일 경우 새로운 세그먼트 생성
+		if (currentSegmentOpt.isEmpty() || currentSegmentOpt.get().getTotalDuration() >= 36000) {
 			Segment newSegment = new Segment();
 			newSegment.setCarId(userData);
 			newSegment.setStartTime(dto.getCreateDate());
