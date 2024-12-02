@@ -34,8 +34,8 @@ const MainScreen = () => {
     useFocusEffect(
         React.useCallback(() => {
             const fetchData = async () => {
-                // const today = new Date().toISOString().split('T')[0]; // 오늘 날짜 'YYYY-MM-DD' 형식으로 가져오기
-                const today = '2024-11-06'; // 테스트
+                const today = new Date().toISOString().split('T')[0]; // 오늘 날짜 'YYYY-MM-DD' 형식으로 가져오기
+                // const today = '2024-11-06'; // 테스트
                 console.log("(메인화면)오늘 날짜: ", today);
                 try {
                     const [accel, brake, pedal] = await Promise.all([

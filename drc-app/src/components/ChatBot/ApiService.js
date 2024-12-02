@@ -10,21 +10,22 @@ export const fetchData = async (date, keyword) => {
   // 키워드에 따라 URL 및 데이터 필드 설정
   switch (keyword) {
     case '급가속':
-      url = ""; // 급가속 URL
+      url = "비밀/abnormal/sacl"; // 급가속 URL
       dataField = 'sacl'; // 급가속 데이터 필드
       break;
     case '급정거':
-      url = ""; // 급정거 URL
+      url = "비밀/abnormal/sbrk"; // 급정거 URL (예시)
       dataField = 'sbrk'; // 급정거 데이터 필드
       break;
     case '양발운전':
-      url = ""; // 양발운전 URL 
+      url = "비밀/abnormal/bothPedal"; // 양발운전 URL (예시)
       dataField = 'bothPedal'; // 양발운전 데이터 필드
       break;
     default:
       console.error('Invalid keyword provided');
       return null;
   }
+
 
   // 날짜 유효성 검사
   if (typeof date !== 'string' || !date) {

@@ -10,8 +10,8 @@ const SuddenBraking = () => {
   };
 
   const todayData = async () => {
-    // const today = new Date().toISOString().slice(0, 10); // 오늘 날짜
-    const today = '2024-11-06'; // 테스트
+    const today = new Date().toISOString().slice(0, 10); // 오늘 날짜
+    // const today = '2024-11-06'; // 테스트
     return await getSBrk(today); // 오늘 날짜로 급가속 데이터 조회
   };
 

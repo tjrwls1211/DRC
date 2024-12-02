@@ -73,7 +73,7 @@ const MypageScreen = () => {
       setSbrk(sbrkData.sbrk);
       setBothPedal(bothPedalData.bothPedal);
     } catch (error) {
-      console.error('주행 기록 조회 실패:', error);
+      // console.error('주행 기록 조회 실패:', error);
     }
   };
 

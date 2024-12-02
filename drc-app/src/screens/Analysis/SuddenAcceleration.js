@@ -9,10 +9,10 @@ const SuddenAcceleration = () => {
   };
 
   const todayData = async () => {
-    // const today = new Date().toISOString().slice(0, 10); // 오늘 날짜
-    // return await getSAcl(today); // 오늘 날짜로 급가속 데이터 조회
-    const today = '2024-11-06'; // 테스트
-    return today; // 테스트
+    const today = new Date().toISOString().slice(0, 10); // 오늘 날짜
+    return await getSAcl(today); // 오늘 날짜로 급가속 데이터 조회
+    // const today = '2024-11-06'; // 테스트
+    // return today; // 테스트
   };
 
   return (

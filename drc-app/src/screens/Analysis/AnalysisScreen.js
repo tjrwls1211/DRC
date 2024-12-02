@@ -19,11 +19,11 @@ const AnalysisScreen = ({ todayData, fetchData, title, chartDataKey, loadingText
   const [loading, setLoading] = useState(true);
   const { isDarkMode } = useTheme();
 
-  //const { currentDate, twoWeeksAgo } = getDate(); // 오늘, 2주전 날짜 가져오기
-  // console.log("가져온 날짜:", currentDate, twoWeeksAgo);
+  const { currentDate, twoWeeksAgo } = getDate(); // 오늘, 2주전 날짜 가져오기
+  console.log("가져온 날짜:", currentDate, twoWeeksAgo);
   //테스트
-  const currentDate = '2024-11-19'; // 오늘 날짜
-  const twoWeeksAgo = '2024-11-06'; // 2주 전 날짜
+  // const currentDate = '2024-11-19'; // 오늘 날짜
+  // const twoWeeksAgo = '2024-11-06'; // 2주 전 날짜
 
   // 데이터 fetching 및 그래프 렌더링
   useEffect(() => {
@@ -44,7 +44,7 @@ const AnalysisScreen = ({ todayData, fetchData, title, chartDataKey, loadingText
           date.setDate(date.getDate() - (14 - index)); // 오늘 날짜로부터 14일 전부터 오늘까지의 날짜 생성
           return {
             date: date.toISOString().split('T')[0], // ISO 포맷으로 날짜 생성 (YYYY-MM-DD)
-            [chartDataKey]: Math.floor(Math.random() * 21) // chartDataKey를 키로 사용
+            [chartDataKey]: Math.floor(Math.random() * 11) // chartDataKey를 키로 사용
           };
         });
         // 테스트 데이터 ↑ -----

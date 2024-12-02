@@ -124,7 +124,7 @@ export const getSBrk = async (date) => {
         console.log("급정거 조회 결과:", response.data);
         return response.data;
     } catch (error) {
-        console.error("급정거 조회 오류:", error.response?.data || error.message);
+        // console.error("급정거 조회 오류:", error.response?.data || error.message);
         throw error;
     }
 }
@@ -147,11 +147,11 @@ export const getSPedal = async (date) => {
 };
 
 // 총 주행시간 조회
-export const getTotalTimeDrive = async (date) => {
+export const getTotalTimeDrive = async () => {
     try {
         console.log("총 주행시간 조회 함수 들어옴");
         const headers = await getTokenHeader();
-        const response = await apiClient.get(`/api/driveLog/driveTime`, {
+        const response = await apiClient.get(`/driveLog/driveTime`, {
             headers,
         });
         console.log("총 주행시간 조회 결과:", response.data);
