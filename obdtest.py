@@ -57,8 +57,9 @@ hx2.set_reading_format("MSB", "MSB")
 
 # 참조 단위 설정 (로드셀 보정값)
 referenceUnit = 96
+referenceUnit2 = 145
 hx1.set_reference_unit(referenceUnit)
-hx2.set_reference_unit(referenceUnit)
+hx2.set_reference_unit(referenceUnit2)
 
 # 초기화 및 영점 설정
 hx1.reset()
