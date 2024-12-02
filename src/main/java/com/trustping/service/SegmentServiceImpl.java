@@ -48,7 +48,7 @@ public class SegmentServiceImpl implements SegmentService {
 			Segment newSegment = new Segment();
 			newSegment.setCarId(userData);
 			newSegment.setStartTime(dto.getCreateDate());
-			newSegment.setTotalDuration(0);
+			newSegment.setTotalDuration(0); 
 			// 감점을 위해 첫 점수는 100점으로 시작
 			newSegment.setAverageScore(100);
 			// 이전 세그먼트가 존재할 경우, endTime을 설정하고 저장하고 세그먼트 종료
