@@ -20,7 +20,7 @@ import pandas as pd
 
 
 df = pd.read_csv("/home/drc/DRC/DRC/audi_s1.csv", sep=',')
-
+print(df.head())
 
 # 서버 URL 설정
 url = f'http://{ip()}:{port()}/data'
@@ -211,7 +211,7 @@ def reset_playing_state():
         del state_start_times[last_played_state]
     print("is_playing_sounds reset to False")
 
-def check_info(accel_value, brake_value, rpm_value):
+def check_info(accel_value, brake_value, rpm_value, speed_value):
     global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating
     mqtt_state = None
     current_time = time.time()
