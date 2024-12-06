@@ -201,6 +201,13 @@ RESET_PLAYING_STATE_TIME = {  # 상태별 재생 가능 시간 설정
     "Both Feet Driving": 14
 }
 
+is_accelerating = False
+last_sound_time = {
+    "Unintended Acceleration": 0,
+    "Rapid Acceleration": 0,
+    "Rapid Braking": 0,
+    "Both Feet Driving": 0
+}
 # 현재 상태 유지 시작 시간 저장
 state_start_times = {}
 
