@@ -153,10 +153,10 @@ carstop_2_sound = pygame.mixer.Sound("carstop_2.wav")
 
 #급가속 음성
 accelaccel_sound = pygame.mixer.Sound("accelaccel.wav")
-
+accel_rapid_sound = pygame.mixer.Sound("accel_rapid_sound")
 #급감속 음성
 brakebrake_sound = pygame.mixer.Sound("brakebrake.wav")
-
+rapidbraking_sound = pygame.mixer.Sound("rapidbraking.wav")
 #양발운전 
 bothdrive_sound = pygame.mixer.Sound("bothdrive.wav")
 
@@ -259,7 +259,7 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
         elapsed_time = current_time - last_sound_time.get(state, 0)
         if (state != last_played_state) and elapsed_time >= max(state_hold_time, sound_delay) and not is_playing_sounds:
             stop_sounds = False
-            sounds = [accelaccel_sound]
+            sounds = [accel_rapid_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             last_sound_time[state] = current_time
             last_played_state = state
@@ -275,7 +275,7 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
         elapsed_time = current_time - last_sound_time.get(state, 0)
         if (state != last_played_state) and elapsed_time >= max(state_hold_time, sound_delay) and not is_playing_sounds:
             stop_sounds = False
-            sounds = [brakebrake_sound]
+            sounds = [rapidbraking_sound]
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             last_sound_time[state] = current_time
             last_played_state = state

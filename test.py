@@ -220,7 +220,7 @@ def check_info(accel_value, brake_value, rpm_value):
     state = "Normal Driving" if not rpm_reached_5000 else "Unintended Acceleration"
 
     # 상태 전환과 음성 재생 제어 로직
-    if 200 < accel_value < 1000 and brake_value <= 100 and rpm_value >= 5000:
+    if brake_value >= 500 and rpm_value >= 5000:
         state = "Unintended Acceleration"
         update_display_state(accel_value, brake_value, state)
 
