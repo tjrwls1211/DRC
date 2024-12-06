@@ -72,34 +72,16 @@ root.configure(bg="black")
 # 폰트 설정
 font_large = ("Arial", 35, "bold")
 
-# 속도 구간 설정
-num_bins = 10
-bin_width = 20
-max_speed = 200
-
-# 그래프 초기 설정
-fig, ax = plt.subplots(figsize=(2, 6))
-fig.patch.set_facecolor("black")  # Figure 배경색 설정
-fig.patch.set_alpha(0)  # Figure 배경 투명하게 설정
-ax.set_ylim(0, num_bins)
-ax.axis('off')
-ax.set_facecolor("black")  # 축 배경색 설정
-
-# 초기 막대 생성
-bars = [ax.bar(1, 1, bottom=i, color="lightgray", width=0.5, edgecolor='black') for i in range(num_bins)]
-
-
-
-# 이미지 로드
-accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((365, 500)))
-accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((365, 500)))
-brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((365, 500)))
-brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((365, 500)))
+#이미지 로드
+accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((430, 560)))
+accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((430, 560)))
+brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((430, 560)))
+brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((430, 560)))
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
 accel_label.config(width=accel_img_normal.width(), height=accel_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
-accel_label.place(relx=0.42, rely=0.5, anchor="center")  # 윈도우 중앙에 배치
+accel_label.place(relx=1, rely=0.5, anchor="e")  # 윈도우 중앙에 배치
 
 brake_label = tk.Label(root, image=brake_img_dark, bg="black")
 brake_label.config(width=brake_img_normal.width(), height=brake_img_normal.height())  # 이미지 크기에 맞게 레이블 크기 설정
@@ -107,8 +89,11 @@ brake_label.place(relx=-0.04, rely=0.5, anchor="w")  # 왼쪽 중앙에 배치
 
 
 #data부분을 나중에 속도 데이터로 넣으면될꺼같음 
-text_label = tk.Label(root, text=f"현재 ", font=font_large, bg="black", fg="white", padx=2, pady=10, width=9)
-text_label.place(relx=0.85, rely=0.05, anchor='ne')
+text_label = tk.Label(root, text=f"현재 속도", font=font_large, bg="black", fg="white", padx=2, pady=10, width=11)
+text_label.place(relx=0.5, rely=0.3, anchor='center')
+
+rpm_label = tk.Label(root, text=f"현재 RPM", font=font_large, bg="black", fg="white", padx=2, pady=10, width=11)
+rpm_label.place(relx=0.5, rely=0.5, anchor='center')
 
 
 # pygame 초기화
@@ -121,35 +106,11 @@ is_accelerating = False
 client = mqtt.Client()
 client.connect(ip(), 1222, 60)
 
-# 애니메이션 업데이트 함수
-def update(frame):
-    # CSV에서 speed_value 가져오기
-    speed_value = df.iloc[frame]['Ground Speed']
-    if pd.isna(speed_value):
-        speed_value = 0  # 기본값 설정
-    
-    # 현재 레벨 계산 (0~9 범위)
-    current_level = min(int(speed_value // 20), 9)  # 0~9로 제한
-
-    # 막대 색상 업데이트    
-    colors = ['green', 'green', 'green', 'yellow', 'yellow', 'yellow', 'orange', 'orange', 'red', 'red']
-    for i, bar in enumerate(bars):
-        bar[0].set_color(colors[i] if i <= current_level else "lightgray")
-
-    canvas.draw()  # 그래프 업데이트
-
-# 애니메이션 실행
-ani = FuncAnimation(fig, update, interval=1000)  # 1000ms마다 업데이트
-
-# Tkinter 창에 그래프 추가
-canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().place(relx=0.84, rely=0.2, anchor="n", width=300, height=400)
-
 # 상태 업데이트 및 이미지 전환 함수
 def update_display_state(accel_value, brake_value, state):
     global data # driveState를 초기화하려면 필요한 코드
     # 엑셀 이미지 상태 업데이트
-    if accel_value <= 30:
+    if accel_value <= 200:
         if accel_label.cget("image") != str(accel_img_dark):  # 같은 이미지라면 업데이트 안함
             accel_label.config(image=accel_img_dark)
 
@@ -158,7 +119,7 @@ def update_display_state(accel_value, brake_value, state):
             accel_label.config(image=accel_img_normal)
 
     # 브레이크 이미지 상태 업데이트
-    if brake_value <= 30:
+    if brake_value <= 200:
         if brake_label.cget("image") != str(brake_img_dark):
             brake_label.config(image=brake_img_dark)
 
@@ -259,7 +220,7 @@ def check_info(accel_value, brake_value, rpm_value):
     state = "Normal Driving" if not rpm_reached_5000 else "Unintended Acceleration"
 
     # 상태 전환과 음성 재생 제어 로직
-    if 200 < accel_value < 1000 and brake_value <= 30 and rpm_value >= 5000:
+    if 200 < accel_value < 1000 and brake_value <= 100 and rpm_value >= 5000:
         state = "Unintended Acceleration"
         update_display_state(accel_value, brake_value, state)
 
@@ -330,7 +291,7 @@ def check_info(accel_value, brake_value, rpm_value):
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 is_playing_sounds = True
                 threading.Timer(RESET_PLAYING_STATE_TIME[state], reset_playing_state).start()
-    elif brake_value > 200 and accel_value <= 30:
+    elif brake_value > 3000 and accel_value <= 100:
         state = "Rapid Braking"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 2
@@ -344,7 +305,7 @@ def check_info(accel_value, brake_value, rpm_value):
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 is_playing_sounds = True
                 threading.Timer(RESET_PLAYING_STATE_TIME[state], reset_playing_state).start()
-    elif accel_value > 100 and brake_value > 100:
+    elif accel_value > 400 and brake_value > 400:
         state = "Both Feet Driving"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 3
@@ -447,7 +408,7 @@ def run_code():
             print(data)
             # 레이블 업데이트 (정수 형식)
             text_label.config(text=f"현재 : {int(speed_value)}")    
-            
+            rpm_label.config(text=f"RPM : {int(rpm_value)}")
             client.publish('pedal', json.dumps(data), 0, retain=False)
             i += 1
             time.sleep(1)
