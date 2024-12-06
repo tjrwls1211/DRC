@@ -175,7 +175,7 @@ def play_sounds_in_sequence(sounds):
                 is_playing_sounds = False  # 재생 상태 플래그 해제
                 return
             time.sleep(0.1)  # 비차단 대기
-        time.sleep(3)  # 음성 간 3초 간격
+        time.sleep(6)  # 음성 간 3초 간격
 
     is_playing_sounds = False  # 모든 음성 재생 완료 후 플래그 해제
 
