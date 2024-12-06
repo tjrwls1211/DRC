@@ -153,7 +153,7 @@ carstop_2_sound = pygame.mixer.Sound("carstop_2.wav")
 
 #급가속 음성
 accelaccel_sound = pygame.mixer.Sound("accelaccel.wav")
-accel_rapid_sound = pygame.mixer.Sound("accel_rapid_sound")
+accel_rapid_sound = pygame.mixer.Sound("accel_rapid.wav")
 #급감속 음성
 brakebrake_sound = pygame.mixer.Sound("brakebrake.wav")
 rapidbraking_sound = pygame.mixer.Sound("rapidbraking.wav")
