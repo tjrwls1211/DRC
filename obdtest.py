@@ -251,7 +251,7 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
         prev_rpm = rpm_value
 
     # Rapid Acceleration 조건
-    elif accel_value > 2500 and brake_value < 100 and rpm_value >= 2000:
+    elif accel_value > 2000 and brake_value < 100 and rpm_value >= 2000:
         state = "Rapid Acceleration"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 1
