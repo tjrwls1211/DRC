@@ -205,7 +205,7 @@ RESET_PLAYING_STATE_TIME = {  # 상태별 재생 가능 시간 설정
 state_start_times = {}
 
 
-def check_info(accel_value, brake_value, rpm_value, speed_value):
+def check_info(accel_value, brake_value, rpm_value):
     global stop_sounds, is_playing_sounds, prev_mqtt_state, prev_rpm, last_played_state, rpm_reached_5000, is_accelerating, last_accel_time, last_sound_time
     mqtt_state = None
     
@@ -214,7 +214,7 @@ def check_info(accel_value, brake_value, rpm_value, speed_value):
     current_time = time.time()  # 현재 시간 기록
 
     # Unintended Acceleration + 5000 RPM 조건 결합
-    if 700 < accel_value < 2000 and brake_value <= 100 and rpm_value >= 5000 and speed_value >= 40:
+    if brake_value >= 1000 and rpm_value >= 5000:
         state = "Unintended Acceleration"
         update_display_state(accel_value, brake_value, state)
 
