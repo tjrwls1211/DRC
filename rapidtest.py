@@ -257,10 +257,13 @@ def check_info(accel_value, brake_value, rpm_value):
             
             if is_playing_sounds:
                 stop_sounds = True  # 기존 음성 중단
-                time.sleep(1)  # 1초 대기 후 새 음성 재생
+                while is_playing_sounds:
+                    time.sleep(0.1)  # 음성이 끝날 때까지 대기
+                stop_sounds = False
             
-            threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
+            # 첫 번째 음성을 재생하고 두 번째 음성을 대기
             is_playing_sounds = True
+            threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             threading.Timer(3, reset_playing_state).start()
 
         elif rpm_value < 4000 and rpm_value >= 3000 and not is_playing_sounds:
@@ -269,7 +272,9 @@ def check_info(accel_value, brake_value, rpm_value):
             
             if is_playing_sounds:
                 stop_sounds = True  # 기존 음성 중단
-                time.sleep(1)  # 1초 대기 후 새 음성 재생
+                while is_playing_sounds:
+                    time.sleep(0.1)  # 음성이 끝날 때까지 대기
+                stop_sounds = False
 
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
@@ -281,14 +286,17 @@ def check_info(accel_value, brake_value, rpm_value):
             
             if is_playing_sounds:
                 stop_sounds = True  # 기존 음성 중단
-                time.sleep(1)  # 1초 대기 후 새 음성 재생
+                while is_playing_sounds:
+                    time.sleep(0.1)  # 음성이 끝날 때까지 대기
+                stop_sounds = False
 
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
             rpm_reached_5000 = False  # 2000 RPM 이하로 떨어지면 플래그 초기화
             threading.Timer(3, reset_playing_state).start()
-        
+
         prev_rpm = rpm_value
+
 
 
 
