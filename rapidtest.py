@@ -250,48 +250,46 @@ def check_info(accel_value, brake_value, rpm_value):
     # RPM 감소 구간에 따른 음성 출력
     if rpm_reached_5000:
         elapsed_time = current_time - last_sound_time.get(state, 0)
+
         if rpm_value < 5000 and rpm_value >= 4000 and not is_playing_sounds:
             print("노브레이크 상황", rpm_value, prev_rpm)
             sounds = [nobrake_1_sound, nobrake_2_sound, nobrake_3_sound]
             
             if is_playing_sounds:
                 stop_sounds = True  # 기존 음성 중단
-                while is_playing_sounds:
-                    time.sleep(1)
-                stop_sounds = False 
-                
+                time.sleep(1)  # 1초 대기 후 새 음성 재생
+            
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
             threading.Timer(3, reset_playing_state).start()
+
         elif rpm_value < 4000 and rpm_value >= 3000 and not is_playing_sounds:
             print("점점 스피드가 줄어드는 상황", rpm_value, prev_rpm)
             sounds = [speedless_1_sound, speedless_2_sound]
             
             if is_playing_sounds:
                 stop_sounds = True  # 기존 음성 중단
-                while is_playing_sounds:
-                    time.sleep(1)
-                stop_sounds = False 
-                
+                time.sleep(1)  # 1초 대기 후 새 음성 재생
+
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
             threading.Timer(3, reset_playing_state).start()
+
         elif rpm_value < 3000 and rpm_value >= 2000 and not is_playing_sounds:
             print("차가 점점 멈추는 상황", rpm_value, prev_rpm)
             sounds = [carstop_1_sound, carstop_2_sound]
             
             if is_playing_sounds:
                 stop_sounds = True  # 기존 음성 중단
-                while is_playing_sounds:
-                    time.sleep(1)
-                stop_sounds = False 
-                
+                time.sleep(1)  # 1초 대기 후 새 음성 재생
+
             threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
             is_playing_sounds = True
             rpm_reached_5000 = False  # 2000 RPM 이하로 떨어지면 플래그 초기화
             threading.Timer(3, reset_playing_state).start()
-            
+        
         prev_rpm = rpm_value
+
 
 
     # Rapid Acceleration 조건
