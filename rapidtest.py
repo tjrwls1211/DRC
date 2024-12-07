@@ -279,7 +279,7 @@ def check_info(accel_value, brake_value, rpm_value):
             if not is_playing_sounds:
                 is_playing_sounds = True
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
-                rpm_reached_5000 = False  # 2000 RPM 이하로 떨어지면 플래그 초기화
+                #rpm_reached_5000 = False  # 2000 RPM 이하로 떨어지면 플래그 초기화
                 threading.Timer(150, reset_playing_state).start()
 
         prev_rpm = rpm_value
