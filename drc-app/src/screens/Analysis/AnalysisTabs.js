@@ -5,12 +5,12 @@ import SuddenBraking from "./SuddenBraking";
 import SamePedal from "./SamePedal";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon2 from 'react-native-vector-icons/Ionicons';
-import { useTheme } from "../../components/Mode/ThemeContext"; // 다크 모드 Context import
+import { useTheme } from "../../components/Mode/ThemeContext";
 
 const Tab = createBottomTabNavigator();
 
 export default function AnalysisTabs() {
-    const { isDarkMode } = useTheme(); // 다크 모드 상태 가져오기
+    const { isDarkMode } = useTheme();
 
     return (
         <Tab.Navigator

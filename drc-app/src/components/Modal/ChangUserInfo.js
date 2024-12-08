@@ -18,13 +18,11 @@ import { formatDate } from "../../utils/formatDate";
 import { changeNickname, changeBirthDate, fetchUserInfo } from "../../api/userInfoAPI";
 import { changePassword } from "../../api/accountAPI";
 import DropDownPicker from 'react-native-dropdown-picker';
-import { enableTwoFactorAuth, disableTwoFactorAuth } from '../../api/authAPI'; // 2FA API 가져오기
-import { useTwoFA } from '../../context/TwoFAprovider'; // 2FA Context import
+import { enableTwoFactorAuth, disableTwoFactorAuth } from '../../api/authAPI';
+import { useTwoFA } from '../../context/TwoFAprovider'; // 2FA Context
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useTheme } from '../Mode/ThemeContext'; // 다크 모드 Context import
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
-import { Linking } from 'react-native';
-import * as Clipboard from 'expo-clipboard'; // 클립보드 작업을 위한 라이브러리
+import { useTheme } from '../Mode/ThemeContext';
+import * as Clipboard from 'expo-clipboard'; // 클립보드 작업 라이브러리
 import TwoFactorAuthModal from "./TwoFactorAuthModal";
 
 const ChangUserInfo = ({ visible, onClose, onUserInfoUpdated }) => {
@@ -37,36 +35,31 @@ const ChangUserInfo = ({ visible, onClose, onUserInfoUpdated }) => {
   const [newNickname, setNewNickname] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [newBirthDate, setNewBirthDate] = useState(new Date("1990-01-01")); // 초기값 설정
+  const [newBirthDate, setNewBirthDate] = useState(new Date("1990-01-01"));
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(true);
   const [isSaveEnabled, setIsSaveEnabled] = useState(false);
-  const { isDarkMode, setIsDarkMode } = useTheme(); // 다크 모드 상태 가져오기
+  const { isDarkMode, setIsDarkMode } = useTheme();
   
-  // 2차 인증 관련 상태 추가
+  // 2차 인증 관련 상태
   const { is2FAEnabled, setIs2FAEnabled } = useTwoFA();
-  //console.log("2차인증 상태 확인: ", is2FAEnabled);
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([
     { label: '비활성', value: false },
     { label: '활성', value: true },
   ]);
-  const [qrUrl, setQrUrl] = useState(null); // QR URL 상태
-  const [otpKey, setOtpKey] = useState(null); // otpKey 상태
-  const [isModalVisible, setModalVisible] = useState(false); // 모달 상태
-  //console.log("isModalVisible 상태: ", isModalVisible);
+  const [qrUrl, setQrUrl] = useState(null);
+  const [otpKey, setOtpKey] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   // 드롭다운이 열려 있는지 확인
   const isDropDownOpen = open;
 
-  // 모달의 높이를 결정하는 함수
   const modalHeight = isDropDownOpen ? 580 : 480; // 드롭다운이 열릴 때 모달 크게 조정
 
   // 2차 인증 드롭다운 기본값 로컬 저장소에서 가져오기
   useEffect(() => {
     const loadTwoFASetting = async () => {
-        // await AsyncStorage.setItem('is2FAEnabled', 'false'); // 로컬 저장소에서 값을 false로 업데이트
-        // setIs2FAEnabled(false); // 상태 업데이트
         const storedStatus = await AsyncStorage.getItem('is2FAEnabled');
         const status = storedStatus === 'true';
         setIs2FAEnabled(status);
@@ -122,9 +115,9 @@ const ChangUserInfo = ({ visible, onClose, onUserInfoUpdated }) => {
   const handleCopyOtpKey = () => {
     if (otpKey) {
       Clipboard.setString(otpKey); // otpKey 클립보드에 복사
-      Alert.alert("복사 완료", "OTP 키가 클립보드에 복사되었습니다."); // 복사 완료 알림
+      Alert.alert("복사 완료", "OTP 키가 클립보드에 복사되었습니다.");
     } else {
-      Alert.alert("오류", "OTP 키가 없습니다."); // otpKey가 없을 경우
+      Alert.alert("오류", "OTP 키가 없습니다.");
     }
   }; 
 
@@ -209,12 +202,12 @@ const ChangUserInfo = ({ visible, onClose, onUserInfoUpdated }) => {
       <KeyboardAvoidingView
         style={styles.overlay}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0} // 적절한 오프셋 설정
+        keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
       >
         <View style={[styles.modal, { height: modalHeight }]}>
           <FlatList
             contentContainerStyle={[styles.scrollView, { flexGrow: 1 }]}
-            data={[]} // 여기에 필요한 데이터 배열을 넣으세요. (필요 없는 경우 빈 배열)
+            data={[]}
             ListHeaderComponent={
               <>
                 <Text style={styles.title}>개인정보 변경</Text>
@@ -383,7 +376,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
   },
   datePicker: {
-    flex: 1, // 전체 가로 길이 사용
+    flex: 1,
     backgroundColor: "#f9f9f9",
     borderWidth: 1,
     borderColor: "#009688",

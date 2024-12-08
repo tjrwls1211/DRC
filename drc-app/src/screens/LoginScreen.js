@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Platform, Alert, Image } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { loginUser, checkTokenValidity, checkOTP } from '../api/authAPI'; // api.js에서 loginUser 함수 가져오기
+import { loginUser, checkTokenValidity, checkOTP } from '../api/authAPI';
 import { useTwoFA } from '../context/TwoFAprovider.js'; // 2차 인증 필요 상태 Context import
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Modal from 'react-native-modal';
@@ -10,7 +10,7 @@ const LoginScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // 오류 메시지
+  const [errorMessage, setErrorMessage] = useState('');
   
   const { setIs2FAEnabled } = useTwoFA(); // 2차 인증 상태 설정 함수 가져오기
   const [otp, setOtp] = useState(Array(6).fill('')); // 6자리 OTP 입력 상태

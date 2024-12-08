@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import BaseCard from './BaseCard';
-import { useTheme } from '../Mode/ThemeContext'; // 다크 모드 Context import
+import { useTheme } from '../Mode/ThemeContext';
 import HelpScoreModal from "../../components/Modal/HelpScoreModal";
 
 const ViewCard = ({ name, score }) => {
-    const { isDarkMode } = useTheme(); // 다크 모드 상태 가져오기
-    const [helpScoreVisible, setHelpScoreVisible] = useState(false); // 모달 표시 상태
+    const { isDarkMode } = useTheme(); 
+    const [helpScoreVisible, setHelpScoreVisible] = useState(false); 
 
-    const openHelpScoreModal = () => setHelpScoreVisible(true); // 모달 열기 함수
+    const openHelpScoreModal = () => setHelpScoreVisible(true);
 
     const getScoreColor = (score) => {
-        return `#009688`; // RGB 색상 반환
+        return `#009688`;
     };
 
     return (
@@ -33,7 +32,7 @@ const ViewCard = ({ name, score }) => {
             {/* HelpScoreModal 컴포넌트 추가 */}
             <HelpScoreModal 
                 visible={helpScoreVisible} 
-                onClose={() => setHelpScoreVisible(false)} // 모달 닫기 함수
+                onClose={() => setHelpScoreVisible(false)}
             />
         </View>
     );

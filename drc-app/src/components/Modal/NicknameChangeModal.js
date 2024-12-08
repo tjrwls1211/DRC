@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextInput, StyleSheet, Alert, View } from 'react-native'; // View를 포함합니다.
+import { TextInput, StyleSheet, Alert, View } from 'react-native';
 import BasicModal from './BasicModal';
 import { fetchUserInfo, changeNickname } from '../../api/userInfoAPI';
 import { useTheme } from '../Mode/ThemeContext';

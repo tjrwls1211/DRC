@@ -1,11 +1,10 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, Image } from 'react-native';
 import BaseCard from './BaseCard';
-import { useTheme } from '../Mode/ThemeContext'; // 다크 모드 Context import
+import { useTheme } from '../Mode/ThemeContext';
 
-// Card 컴포넌트 정의
 const Card = ({ analysis_item, analysis_count, iconSource, onPress }) => {
-    const { isDarkMode } = useTheme(); // 다크 모드 상태 가져오기
+    const { isDarkMode } = useTheme(); 
 
     return (
         <TouchableOpacity onPress={onPress}>
@@ -15,7 +14,7 @@ const Card = ({ analysis_item, analysis_count, iconSource, onPress }) => {
                         styles.iconContainer, 
                         { 
                             borderColor: isDarkMode ? '#fff' : 'rgba(0, 150, 136, 1)', 
-                            backgroundColor: isDarkMode ? '#d3d3d3' : '#fff' // 다크 모드일 때 배경색 하얀색
+                            backgroundColor: isDarkMode ? '#d3d3d3' : '#fff'
                         }
                     ]}>
                         <Image source={iconSource} style={styles.icon} />
@@ -39,13 +38,13 @@ const Card = ({ analysis_item, analysis_count, iconSource, onPress }) => {
 
 const styles = StyleSheet.create({
     baseCard: {
-        borderRadius: 13, // 모서리 둥글게
-        padding: 10, // 내부 여백
-        elevation: 2, // 그림자 효과 (안드로이드)
-        shadowColor: '#000', // 그림자 색상 (iOS)
-        shadowOffset: { width: 0, height: 2 }, // 그림자 오프셋
-        shadowOpacity: 0.3, // 그림자 투명도
-        shadowRadius: 4, // 그림자 반경
+        borderRadius: 13,
+        padding: 10,
+        elevation: 2, 
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 }, 
+        shadowOpacity: 0.3, 
+        shadowRadius: 4,
     },
     container: {
         flexDirection: 'row',

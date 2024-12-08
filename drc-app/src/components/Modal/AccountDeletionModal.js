@@ -14,7 +14,6 @@ const AccountDeletionModal = ({ visible, onClose }) => {
   const handleCheckPassword = async () => {
     try {
       const isCorrect = await verifyPassword(password);
-      //const isCorrect = true; // 테스트용
       if (isCorrect) {
         setVerificationMessage("인증되었습니다.");
         setIsVerified(true);
@@ -24,7 +23,7 @@ const AccountDeletionModal = ({ visible, onClose }) => {
       }
     } catch (error) {
       console.error('비밀번호 검증 에러:', error.response.data);
-      setVerificationMessage(error.response.data.message); // 서버 반환한 에러 메시지 사용
+      setVerificationMessage(error.response.data.message);
       setIsVerified(false);
     }
   };
@@ -39,8 +38,8 @@ const AccountDeletionModal = ({ visible, onClose }) => {
       await deleteUserAccount(password);
       await AsyncStorage.removeItem('token'); // 로컬 저장소 토큰 삭제
       Alert.alert("회원 탈퇴 완료", "계정이 성공적으로 삭제되었습니다.");
-      navigation.navigate('LoginScreen'); // 로그인 화면으로 이동
-      onClose(); // 모달 닫기
+      navigation.navigate('LoginScreen'); 
+      onClose();
     } catch (error) {
       console.error('회원 탈퇴 과정에서 오류 발생:', error);
       Alert.alert("회원 탈퇴 실패", "회원 탈퇴 중 오류가 발생했습니다.");
@@ -49,10 +48,10 @@ const AccountDeletionModal = ({ visible, onClose }) => {
 
   // 모달 닫기 시 상태 초기화
   const handleClose = () => {
-    setPassword(''); // 비밀번호 초기화
-    setIsVerified(false); // 인증 상태 초기화
-    setVerificationMessage(''); // 메시지 초기화
-    onClose(); // 부모 컴포넌트의 onClose 호출
+    setPassword('');
+    setIsVerified(false); 
+    setVerificationMessage('');
+    onClose();
   };
 
   return (
@@ -121,7 +120,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#2F4F4F', // 다크 슬레이트 그레이
+    color: '#2F4F4F',
     textAlign: 'center',
   },
   warningText: {

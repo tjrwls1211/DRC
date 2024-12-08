@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'; 
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useTheme } from "../Mode/ThemeContext"; // 다크 모드 Context import
+import { useTheme } from "../Mode/ThemeContext";
 
 const AnalysisCard = ({ num, borderColor, title, todayData, DataKey }) => {
-    const { isDarkMode } = useTheme(); // 다크 모드 상태 가져오기
+    const { isDarkMode } = useTheme();
     const [count, setCount] = useState(0);
-    const [fadeAnim] = useState(new Animated.Value(1)); // 애니메이션 값 초기화
+    const [fadeAnim] = useState(new Animated.Value(1));
 
     useEffect(() => {
         const fetchData = async () => {
@@ -15,7 +15,7 @@ const AnalysisCard = ({ num, borderColor, title, todayData, DataKey }) => {
                 setCount(data[DataKey] || 0); // 데이터 설정 (sacl 값 사용)
             } catch (error) {
                 console.error("데이터 조회 오류:", error);
-                setCount(0); // 오류 발생 시 0으로 설정
+                setCount(0);
             }
         };
 
@@ -28,10 +28,10 @@ const AnalysisCard = ({ num, borderColor, title, todayData, DataKey }) => {
             Animated.sequence([
                 Animated.timing(fadeAnim, {
                     toValue: 0,
-                    duration: 1000, // 애니메이션 지속 시간: 500ms
+                    duration: 1000,
                     useNativeDriver: true, 
                 }),
-                // 두 번째 애니메이션: opacity를 1로 변경 (다시 보임)
+                // 두 번째 애니메이션: opacity를 1로 변경 (보임 상태)
                 Animated.timing(fadeAnim, {
                     toValue: 1,
                     duration: 1300,
@@ -69,8 +69,8 @@ const AnalysisCard = ({ num, borderColor, title, todayData, DataKey }) => {
                 {/* 상단 우측 텍스트 추가 */}
                 <Animated.View style={{ opacity: fadeAnim, position: 'absolute', top: 10, right: 10 }}>
                     <Text style={[styles.countText, { 
-                        color: isDarkMode ? '#fff' : '#2F4F4F', // 형광 초록색
-                        fontSize: 15, // 텍스트 사이즈 18
+                        color: isDarkMode ? '#fff' : '#2F4F4F',
+                        fontSize: 15,
                     }]}>
                         오늘 {title.replace(" 분석", "")} 횟수: {count}회
                     </Text>
@@ -93,62 +93,42 @@ const AnalysisCard = ({ num, borderColor, title, todayData, DataKey }) => {
 const styles = StyleSheet.create({
     customCard: {
         height: '35%',
-        width: '95%', // 카드 너비 설정
+        width: '95%',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#ffffff',
-        borderRadius: 15, // 둥근 모서리
+        borderRadius: 15,
         padding: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 6,
-        margin: 10, // 카드 간격
+        margin: 10,
         marginBottom: 5,
-        elevation: 5, // 안드로이드 그림자 효과
+        elevation: 5,
     },
     innerCard: {
         flex: 1,
         width: '100%',
-        borderRadius: 10, // 내부 둥근 흰색 테두리 모양
+        borderRadius: 10,
         borderWidth: 1,
-        borderColor: '#009688', // 흰색 테두리 색상
+        borderColor: '#009688',
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 10, // 상단 여백을 주어 원이 걸치도록 함
-    },
-    circle: {
-        position: 'absolute',
-        top: -70, // 카드 상단에 걸쳐 위치
-        width: 100,
-        height: 100,
-        borderRadius: 70, // 원 모양
-        backgroundColor: 'white', // 검정색 원
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#000', // 그림자 색상
-        shadowOffset: { width: 0, height: 2 }, // 그림자 위치
-        shadowOpacity: 0.5, // 그림자 투명도
-        shadowRadius: 4, // 그림자 흐림 효과
-        elevation: 5, // 안드로이드에서 그림자 효과
-    },
-    logo: {
-        width: 40,
-        height: 40,
-        resizeMode: 'contain', // 로고 크기 조정
+        paddingTop: 10,
     },
     subText: {
         fontSize: 18,
-        color: '#2F4F4F', // 흰색 텍스트
+        color: '#2F4F4F', 
         textAlign: 'center',
-        marginBottom: 10, // 텍스트와 숫자 사이의 간격
+        marginBottom: 10, 
     },
     num: {
         fontSize: 40,
         fontWeight: 'bold',
-        color: '#2F4F4F', // 흰색 텍스트
+        color: '#2F4F4F', 
         textAlign: 'center',
-        marginRight: 10, // 화살표 아이콘과의 간격
+        marginRight: 10, 
     },
     row: {
         flexDirection: 'row',

@@ -5,9 +5,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { verifyPassword } from '../../api/accountAPI';
 
 const PWCheckModal = ({ visible, onClose, onConfirm }) => {
-  const [currentPassword, setCurrentPassword] = useState(''); // 현재 비밀번호 상태
+  const [currentPassword, setCurrentPassword] = useState(''); // 현재 비밀번호
   const [isVerified, setIsVerified] = useState(false); // 비밀번호 인증 상태
-  const [verificationMessage, setVerificationMessage] = useState(''); // 인증 메시지 상태
+  const [verificationMessage, setVerificationMessage] = useState(''); 
 
   // 비밀번호 인증 함수
   const checkPassword = async () => {
@@ -18,20 +18,16 @@ const PWCheckModal = ({ visible, onClose, onConfirm }) => {
       const success = await verifyPassword(currentPassword);
       
       if (success) {
-        setIsVerified(true); // 인증 상태를 성공으로 설정
-        setVerificationMessage("인증되었습니다."); // 인증 성공 메시지
-        console.log("onConfirm 호출"); // 디버깅용 로그
+        setIsVerified(true); // 인증 상태 성공으로 설정
+        setVerificationMessage("인증되었습니다.");
         onConfirm(); // 인증 성공 시 부모 컴포넌트에 알림
       } else {
-        // 인증 실패 시 메시지 설정
         setIsVerified(false);
-        setVerificationMessage("비밀번호가 일치하지 않습니다."); // 인증 실패 메시지
+        setVerificationMessage("비밀번호가 일치하지 않습니다.");
       }
     } catch (error) {
-      // 오류 발생 시 메시지 설정
       setIsVerified(false);
       
-      // 오류 메시지를 보다 구체적으로 설정
       if (error.response && error.response.status === 401) {
         setVerificationMessage("비밀번호가 일치하지 않습니다."); // 401 오류에 대한 메시지
       } else {
@@ -40,18 +36,10 @@ const PWCheckModal = ({ visible, onClose, onConfirm }) => {
       
       console.error('비밀번호 인증 오류:', error);
     }
-
-    /* 테스트 용
-    // 서버 테스트가 안되므로 인증 성공 상태로 바로 처리
-    setIsVerified(true); // 인증 상태를 성공으로 설정
-    setVerificationMessage("인증되었습니다."); // 인증 성공 메시지
-    console.log("onConfirm 호출"); // 디버깅용 로그
-    onConfirm(); // 인증 성공 시 부모 컴포넌트에 알림
-    */
   };
 
   const handleClose = () => {
-    setCurrentPassword(''); // 상태 초기화
+    setCurrentPassword('');
     setIsVerified(false);
     setVerificationMessage('');
     onClose(); // 부모 컴포넌트의 모달 닫기 함수 호출

@@ -22,7 +22,7 @@ const TwoFactorAuthModal = ({ isVisible, onClose, otpKey, handleCopyOtpKey, qrUr
           fontSize: 22, 
           fontWeight: 'bold',
           textAlign: 'center',
-          marginBottom: 15 // 제목과 다음 요소 사이 간격 추가
+          marginBottom: 15,
         }}>
           2차 인증 정보
         </Text>
@@ -32,7 +32,7 @@ const TwoFactorAuthModal = ({ isVisible, onClose, otpKey, handleCopyOtpKey, qrUr
             <Text style={{ 
               color: isDarkMode ? '#ffffff' : '#555', 
               textAlign: 'center',
-              marginRight: 10 // 텍스트와 복사 아이콘 사이 간격 추가
+              marginRight: 10 // 텍스트와 복사 아이콘 사이 간격
             }}>
               OTP 설정 키: {otpKey}
             </Text>
@@ -46,7 +46,7 @@ const TwoFactorAuthModal = ({ isVisible, onClose, otpKey, handleCopyOtpKey, qrUr
           title="QR 확인" 
           color={isDarkMode ? '#ffffff' : '#009688'} 
           onPress={() => Linking.openURL(qrUrl)} 
-          style={{ marginTop: 15 }} // 버튼 위쪽 간격 추가
+          style={{ marginTop: 15 }}
         />
       </View>
     </Modal>

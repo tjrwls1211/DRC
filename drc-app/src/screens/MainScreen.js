@@ -1,5 +1,5 @@
 import React, { useState } from "react"; 
-import { View, StyleSheet, TouchableOpacity, Text, Image, Platform, } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Image, Platform } from 'react-native';
 import ViewCard from "../components/Card/ViewCard"; 
 import TouchCard from "../components/Card/TouchCard"; 
 import HelpScoreModal from "../components/Modal/HelpScoreModal"; 
@@ -187,9 +187,9 @@ const styles = StyleSheet.create({
         marginRight:-10,
     }, 
     logo: {
-        width: 130, // 로고의 너비 설정
-        height: 130, // 로고의 높이 설정
-        resizeMode: 'contain', // 로고 크기 조정
+        width: 130, // 로고의 너비
+        height: 130, // 로고의 높이
+        resizeMode: 'contain', // 로고 크기
         opacity: 0.8,
     },
     logoContainer: {

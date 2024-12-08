@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    textAlign: 'center', // 텍스트 가운데 정렬
+    textAlign: 'center',
   },
   content: {
     marginBottom: 20,
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     flex: 1,
-    marginRight: 5, // 버튼 간격
+    marginRight: 5, 
   },
   cancelText: {
     fontWeight: 'bold',
@@ -69,10 +69,10 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     flex: 1,
-    marginLeft: 5, // 버튼 간격
+    marginLeft: 5,
   },
   confirmText: {
-    color: 'white', // 확인 버튼 텍스트 색상
+    color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
   },
