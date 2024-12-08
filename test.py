@@ -72,11 +72,11 @@ root.configure(bg="black")
 # 폰트 설정
 font_large = ("Arial", 35, "bold")
 
-#이미지 로드
-accel_img_normal = ImageTk.PhotoImage(Image.open("accel_normal.png").resize((430, 560)))
-accel_img_dark = ImageTk.PhotoImage(Image.open("accel_dark.png").resize((430, 560)))
-brake_img_normal = ImageTk.PhotoImage(Image.open("brake_normal.png").resize((430, 560)))
-brake_img_dark = ImageTk.PhotoImage(Image.open("brake_dark.png").resize((430, 560)))
+# 이미지 파일이 있는 'image' 폴더에서 로드
+accel_img_normal = ImageTk.PhotoImage(Image.open("image/accel_normal.png").resize((430, 560)))
+accel_img_dark = ImageTk.PhotoImage(Image.open("image/accel_dark.png").resize((430, 560)))
+brake_img_normal = ImageTk.PhotoImage(Image.open("image/brake_normal.png").resize((430, 560)))
+brake_img_dark = ImageTk.PhotoImage(Image.open("image/brake_dark.png").resize((430, 560)))
 
 # 이미지 레이블 생성
 accel_label = tk.Label(root, image=accel_img_dark, bg="black")
@@ -127,27 +127,32 @@ def update_display_state(accel_value, brake_value, state):
         if brake_label.cget("image") != str(brake_img_normal):
             brake_label.config(image=brake_img_normal)
 
-#급발진 음성
-rapidspeed_1_sound = pygame.mixer.Sound("rapidspeed_1.wav")
-rapidspeed_2_sound = pygame.mixer.Sound("rapidspeed_2.wav")
-rapidspeed_3_sound = pygame.mixer.Sound("rapidspeed_3.wav")
-rapidspeed_4_sound = pygame.mixer.Sound("rapidspeed_4.wav")
-nobrake_1_sound = pygame.mixer.Sound("nobrake_1.wav")
-nobrake_2_sound = pygame.mixer.Sound("nobrake_2.wav")
-nobrake_3_sound = pygame.mixer.Sound("nobrake_3.wav")
-speedless_1_sound = pygame.mixer.Sound("speedless_1.wav")
-speedless_2_sound = pygame.mixer.Sound("speedless_2.wav")
-carstop_1_sound = pygame.mixer.Sound("carstop_1.wav")
-carstop_2_sound = pygame.mixer.Sound("carstop_2.wav")
+# 디렉토리 경로 설정
+sound_dir = "sound"
 
-#급가속 음성
-accelaccel_sound = pygame.mixer.Sound("accelaccel.wav")
+# 급발진 음성
+rapidspeed_1_sound = pygame.mixer.Sound(f"{sound_dir}/rapidspeed_1.wav")
+rapidspeed_2_sound = pygame.mixer.Sound(f"{sound_dir}/rapidspeed_2.wav")
+rapidspeed_3_sound = pygame.mixer.Sound(f"{sound_dir}/rapidspeed_3.wav")
+rapidspeed_4_sound = pygame.mixer.Sound(f"{sound_dir}/rapidspeed_4.wav")
+nobrake_1_sound = pygame.mixer.Sound(f"{sound_dir}/nobrake_1.wav")
+nobrake_2_sound = pygame.mixer.Sound(f"{sound_dir}/nobrake_2.wav")
+nobrake_3_sound = pygame.mixer.Sound(f"{sound_dir}/nobrake_3.wav")
+speedless_1_sound = pygame.mixer.Sound(f"{sound_dir}/speedless_1.wav")
+speedless_2_sound = pygame.mixer.Sound(f"{sound_dir}/speedless_2.wav")
+carstop_1_sound = pygame.mixer.Sound(f"{sound_dir}/carstop_1.wav")
+carstop_2_sound = pygame.mixer.Sound(f"{sound_dir}/carstop_2.wav")
 
-#급감속 음성
-brakebrake_sound = pygame.mixer.Sound("brakebrake.wav")
+# 급가속 음성
+accelaccel_sound = pygame.mixer.Sound(f"{sound_dir}/accelaccel.wav")
+accel_rapid_sound = pygame.mixer.Sound(f"{sound_dir}/accel_rapid.wav")
 
-#양발운전 
-bothdrive_sound = pygame.mixer.Sound("bothdrive.wav")
+# 급감속 음성
+brakebrake_sound = pygame.mixer.Sound(f"{sound_dir}/brakebrake.wav")
+rapidbraking_sound = pygame.mixer.Sound(f"{sound_dir}/rapidbraking.wav")
+
+# 양발운전
+bothdrive_sound = pygame.mixer.Sound(f"{sound_dir}/bothdrive.wav")
 
 
 # 전역 변수
