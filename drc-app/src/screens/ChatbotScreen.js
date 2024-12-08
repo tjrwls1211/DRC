@@ -309,13 +309,11 @@ if (inputDate > currentDate) {
 const styles = StyleSheet.create({
   container: {
       flex: 1,
-      backgroundColor: '#ffffff',
   },
-  cchatContainer: {
+  chatContainer: {
     paddingVertical: 20,
     paddingHorizontal: 10,
     flexGrow: 1, // ScrollView가 늘어나도록 설정
-    justifyContent: 'flex-end', // 메시지가 아래로 쌓이도록 설정
   },
   messageContainer: {
     marginBottom: 10,
@@ -329,7 +327,6 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     marginRight: 10, // 아이콘과 메시지 간의 간격
-    backgroundColor: '#fff', // 아이콘 배경색 설정
     borderRadius: 5, // 둥글게 설정 (선택 사항)
     padding: 5, // 패딩 추가 (선택 사항)
     marginLeft:10,
@@ -338,13 +335,12 @@ const styles = StyleSheet.create({
     width: 35, // 아이콘 너비 조정
     height: 35, // 아이콘 높이 조정
     resizeMode: 'contain', // 비율 유지
-},
-sendIcon: {
-  width: 30, // 아이콘 너비
-  height: 30, // 아이콘 높이
-  resizeMode: 'contain', // 비율 유지
-},
-
+  },
+  sendIcon: {
+    width: 30, // 아이콘 너비
+    height: 30, // 아이콘 높이
+    resizeMode: 'contain', // 비율 유지
+  },
   messageContentContainer: {
     backgroundColor: '#d3d3d3', // 챗봇 메시지 배경색
     borderRadius: 10,
@@ -362,15 +358,13 @@ sendIcon: {
     borderRadius: 10, // 둥글게 설정
     padding: 10, // 패딩 추가
     marginRight: 15,
-},
-
+  },
   userMessageText: {
     fontSize: 16,
     color: '#ffffff', // 사용자 메시지 글자를 하얀색으로 설정
     flexWrap: 'wrap', // 텍스트 줄 바꿈 허용
     textAlign: 'center',
   },
-  // 나머지 스타일은 그대로 유지...
   buttonsContainer: {
     marginTop: 20,
   },
@@ -384,81 +378,57 @@ sendIcon: {
     paddingHorizontal: 10, // 기본 패딩
     backgroundColor: '#009688',
     borderRadius: 5,
-},
-largeButton: {
-  width: 100, // 원하는 너비로 설정
-  height: 35, // 원하는 높이로 설정
-  backgroundColor: '#009688',
-  borderRadius: 5,
-  justifyContent: 'center', // 수직 중앙 정렬
-  alignItems: 'center', // 수평 중앙 정렬
-  marginHorizontal: 5, // 버튼 간의 간격을 조절
-},
-
-buttonText: {
-  fontSize: 16,
-  color: '#fff',
-  textAlign: 'center', // 수평 중앙 정렬
-  // flex: 1, // 이 줄은 제거하세요
-  lineHeight: 17.5, // 버튼의 높이에 맞춰서 수직 중앙 정렬
-},
-
+  },
+  largeButton: {
+    width: 100, // 원하는 너비로 설정
+    height: 35, // 원하는 높이로 설정
+    backgroundColor: '#009688',
+    borderRadius: 5,
+    justifyContent: 'center', // 수직 중앙 정렬
+    alignItems: 'center', // 수평 중앙 정렬
+    marginHorizontal: 5, // 버튼 간의 간격을 조절
+  },
+  buttonText: {
+    fontSize: 16,
+    color: '#fff',
+    textAlign: 'center', // 수평 중앙 정렬
+    lineHeight: 17.5, // 버튼의 높이에 맞춰서 수직 중앙 정렬
+  },
   inputContainer: {
     flexDirection: 'row',
     padding: 10,
-    backgroundColor: '#fff',
     borderTopWidth: 1,
     borderColor: '#ccc',
-  },
-  input: {
-    flex: 1,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    height: 40, // 입력란 높이 조정
-    borderRadius: 20, // 둥글게 설정
-  },
-  sendButton: {
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    paddingVertical: 1, // 위아래 패딩 조정
-    paddingHorizontal: 7, // 좌우 패딩 조정
-    justifyContent: 'center', // 가운데 정렬
-    alignItems: 'center', // 가운데 정렬
-  },
-  sendButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    textAlign: 'center', // 가운데 정렬
-  },
-  queryButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 10,
-  },
-  queryButton: {
-    padding: 10,
-    backgroundColor: '#009688',
-    borderRadius: 5,
-  },
-  queryButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  authButtonContainer: {
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  authButton: {
-    padding: 10,
-    backgroundColor: '#ff9800',
-    borderRadius: 5,
-  },
-  authButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-});
+    },
+    input: {
+      flex: 1,
+      borderWidth: 1,
+      borderRadius: 5,
+      paddingHorizontal: 10,
+      height: 40, // 입력란 높이 조정
+      borderRadius: 20, // 둥글게 설정
+    },
+    sendButton: {
+      borderRadius: 5,
+      paddingVertical: 1, // 위아래 패딩 조정
+      paddingHorizontal: 7, // 좌우 패딩 조정
+      justifyContent: 'center', // 가운데 정렬
+      alignItems: 'center', // 가운데 정렬
+    },
+    queryButtonsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      marginTop: 10,
+    },
+    queryButton: {
+      padding: 10,
+      backgroundColor: '#009688',
+      borderRadius: 5,
+    },
+    queryButtonText: {
+      color: '#fff',
+      fontSize: 16,
+    },
+  });
 
 export default ChatbotScreen;

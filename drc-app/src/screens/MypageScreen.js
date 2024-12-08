@@ -73,7 +73,7 @@ const MypageScreen = () => {
       setSbrk(sbrkData.sbrk);
       setBothPedal(bothPedalData.bothPedal);
     } catch (error) {
-      // console.error('주행 기록 조회 실패:', error);
+        console.error('주행 기록 조회 실패:', error);
     }
   };
 
@@ -296,9 +296,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginTop: 15,
-    marginTop: 15,
     marginBottom: 5,
-    color: '#2F4F4F',
     marginBottom:10,
   },
   email: {
@@ -360,8 +358,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
   },
-  recordBox:
- {
+  recordBox: {
     alignItems: 'center',
     backgroundColor: '#d5e3e2',
     width: Platform.OS === 'ios' ? 115  : 105,
@@ -372,7 +369,6 @@ const styles = StyleSheet.create({
   },
   recordTextBox: {
     alignItems: 'center',
-    backgroundColor: '#2F4F4F',
     width: '100%',
     height: 40,
     borderTopRightRadius: 5,  
@@ -380,11 +376,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 1,
     marginBottom: 1,
-    
   },
   recordTitle: {
     fontSize: 16,
-    color: '#2F4F4F',
   },
   recordValue: {
     fontSize: 34,
@@ -407,7 +401,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#009688',
-    borderColor: '#009688',
     borderWidth: 1,
     paddingVertical: 10,
     borderRadius: 5,
@@ -425,7 +418,6 @@ const styles = StyleSheet.create({
   },
   TimeRecordBox: {
     alignItems: 'center',
-    backgroundColor: '#d5e3e2',
     width: '100%',
     height: 85,
     borderBottomRightRadius: 5,  
@@ -435,30 +427,22 @@ const styles = StyleSheet.create({
   },
   TimeRecordTextBox: {
     alignItems: 'center',
-    backgroundColor: '#2F4F4F',
+    justifyContent: 'center',
     width: '100%',
     height: 40,
     borderTopRightRadius: 5,  
     borderTopLeftRadius: 5,  
-    justifyContent: 'center',
     marginRight:1,
     marginBottom: 1,
-  },
-  timeVar: {
-    backgroundColor: '#000',
-    height: 1,
-    zIndex: 20,
   },
   TimeRecordValue: {
     fontSize: 27,
     fontWeight: 'bold',
-    color: '#2F4F4F',
   },
   infoContainer: {
     marginTop: 0,
     marginVertical: 10, // 필요에 따라 여백 조절
     alignItems: 'flex-end', // 오른쪽 정렬
-    
   },
   infoButton: {
     backgroundColor: '#009688',

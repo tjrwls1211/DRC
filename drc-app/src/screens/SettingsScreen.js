@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#ffffff',
   },
   labelSpacing: {
     marginLeft: 10,
@@ -98,7 +97,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 24,
     marginLeft: 10,
-    color: '#2F4F4F', // 다크 슬레이트 그레이
     fontWeight: 'bold',
   },
   darkModeContainer: {

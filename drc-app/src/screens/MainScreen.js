@@ -153,7 +153,6 @@ const styles = StyleSheet.create({
     container: { 
         flex: 1, 
         justifyContent: 'flex-start', 
-        backgroundColor: '#ffffff', 
     }, 
     headerContainer: { 
         padding: 20, 
@@ -195,10 +194,6 @@ const styles = StyleSheet.create({
     logoContainer: {
         alignItems: 'center',
         position: 'relative',
-    },
-    helpIcon: {
-        // marginTop: Platform.OS === 'ios' ? '-10%' : '-20%', // 로고와 도움말 아이콘 간 간격
-        // marginLeft: Platform.OS === 'ios' ? '-230%' : '-210%',
     },
     helpView: {
         marginTop: -200, 
