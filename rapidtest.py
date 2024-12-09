@@ -435,7 +435,7 @@ def run_code():
             # 레이블 업데이트 (정수 형식)
             text_label.config(text=f"현재 : {int(speed_value)}")    
             rpm_label.config(text=f"RPM : {int(rpm_value)}")
-            client.publish('DriveLogl', json.dumps(data), 0, retain=False)
+            client.publish('DriveLog', json.dumps(data), 0, retain=False)
             i += 1
             time.sleep(1)
 
