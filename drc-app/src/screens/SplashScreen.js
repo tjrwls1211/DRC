@@ -5,13 +5,12 @@ import { FontAwesome5 } from 'react-native-vector-icons';
 const SplashScreenComponent = ({ navigation }) => {
   const translateX = useRef(new Animated.Value(-250)).current; // 초기 X값: 왼쪽 화면 밖
   const translateY = useRef(new Animated.Value(-40)).current; // 초기 Y값
-  const opacity = useRef(new Animated.Value(0)).current; // 초기 투명도
 
   useEffect(() => {
     const animateCar = () => {
       const animations = [
         Animated.timing(translateX, {
-          toValue: 300, // 오른쪽으로 이동 (화면 밖)
+          toValue: 300, // 오른쪽으로 이동 (화면 밖으로)
           duration: 1500,
           easing: Easing.linear,
           useNativeDriver: true,
@@ -21,31 +20,21 @@ const SplashScreenComponent = ({ navigation }) => {
       Animated.sequence(animations).start();
     };
 
-    const animateLogo = () => {
-      Animated.timing(opacity, {
-        toValue: 1, // 완전 불투명
-        duration: 500,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }).start();
-    };
-
     animateCar();
-    animateLogo();
 
-    // 3초 후에 메인 화면으로 이동
+    // 1.5초 후에 메인 화면으로 이동
     const timer = setTimeout(() => {
       navigation.replace('LoginScreen');
     }, 1500);
 
     return () => clearTimeout(timer); // 클린업
-  }, [translateX, opacity]);
+  }, [translateX]);
 
   return (
     <View style={styles.container}>
       <Animated.Image
         source={require('../../assets/DRCLogo-text.png')}
-        style={[styles.logo, { opacity }]} // 투명도 애니메이션 적용
+        style={styles.logo}
       />
       <Text style={styles.text}>Rush Guard</Text>
       <Animated.View style={[styles.carContainer, { transform: [{ translateX }, { translateY }] }]}>
