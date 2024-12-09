@@ -286,7 +286,12 @@ def check_info(accel_value, brake_value, rpm_value):
                 threading.Thread(target=play_sounds_in_sequence, args=(sounds,), daemon=True).start()
                 #rpm_reached_5000 = False  # 2000 RPM 이하로 떨어지면 플래그 초기화
                 threading.Timer(150, reset_playing_state).start()
-
+            
+            # 조건을 벗어나면 rpm_reached_5000 초기화
+            if rpm_value < 2000:
+                print("3000~2000 RPM 구간을 벗어남, 플래그 초기화")
+                rpm_reached_5000 = False
+            
         prev_rpm = rpm_value
 
 
