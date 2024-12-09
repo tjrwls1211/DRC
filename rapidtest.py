@@ -310,7 +310,7 @@ def check_info(accel_value, brake_value, rpm_value):
             threading.Timer(3, reset_playing_state).start()
 
     # Rapid Braking 조건
-    elif brake_value > 5000 and accel_value <= 100:
+    elif brake_value > 3000 and accel_value <= 100:
         state = "Rapid Braking"
         update_display_state(accel_value, brake_value, state)
         mqtt_state = 2
