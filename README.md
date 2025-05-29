@@ -1,4 +1,4 @@
-# 🚗 DRC (Don't Rush the Car)
+# DRC (Don't Rush the Car)
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/8150a1ff-b04e-4dfa-b45d-0bdf1df7c4b8" alt="drc" width="500"/>
@@ -26,6 +26,7 @@
 | 분석 | Python (데이터 처리, 이상 패턴 검출) |
 | 기타 | GitHub Actions, TTS 음성 알림 |
 
+
 ## 📡 통신 프로토콜
 
 - **MQTT**
@@ -43,6 +44,7 @@
 
 ---
 
+
 ## 🔍 주요 기능
 
 - **실시간 이상 운전 감지**  
@@ -52,6 +54,7 @@
 - **주행 로그 기반 운전 점수 확인**
 
 ---
+
 
 ## 🧪 감지 기준
 
@@ -63,8 +66,9 @@
   - 속도 전 구간 초당 14km/h 이상 감속
 - **양발 운전**
   - 브레이크, 가속 페달이 동시에 일정 수치 이상
-    
+
 ---
+
 
 ## 🚀 프로젝트 실행 방법
 
