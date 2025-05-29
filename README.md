@@ -88,7 +88,7 @@
 DRC/
 ├── backend/         # Spring Boot 서버
 ├── frontend/        # React Native 앱
-├── raspberryPi/       # 센서 데이터 수집 및 송신 코드
+├── raspberrypi/       # 센서 데이터 수집 및 송신 코드
 ├── README.md
 ```
 
