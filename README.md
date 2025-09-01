@@ -21,7 +21,7 @@
 ## 📊 데이터 흐름도 (DFD)
 
 <p align="center">
-  <img src="./DRC_DFD.png" alt="DFD" width="700"/>
+  <img src="https://github.com/user-attachments/assets/618ff47c-7e4f-4131-8073-327cc2b77592" alt="DFD" width="700"/>
 </p>
 
 ---
@@ -71,29 +71,29 @@
 **감지 기준**  
 아래 표와 같이 속도 구간별 가속/감속 변화량을 기준으로 이상 운전을 감지합니다.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/53319d4c-7f04-4b42-a769-51d0c861a5e1" alt="drc" width="500"/>
-</p>
-
-**점수 산정 방식**  
-운전 중 발생한 이벤트(급가속, 급제동, 양발운전 등)의 횟수와 심각도에 따라 점수를 계산합니다.
+**감지 기준 & 점수 산정 방식**
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/420906ae-9392-4ade-9e74-b239e07eb196" alt="drc" width="500"/>
+  <img src="https://github.com/user-attachments/assets/53319d4c-7f04-4b42-a769-51d0c861a5e1" alt="criteria" width="400"/>
+  <img src="https://github.com/user-attachments/assets/420906ae-9392-4ade-9e74-b239e07eb196" alt="scoring" width="400"/>
 </p>
 
 ---
 
 ## 🚘 실제 운행 모습 및 결과
 
-**실제 운행 중 화면**
+**실제 운행 화면 & DB 저장 화면**
+
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/1e0c816e-69cf-45d6-be59-69a12e9cb2d7" alt="drc" width="500"/>
+  <img src="https://github.com/user-attachments/assets/1e0c816e-69cf-45d6-be59-69a12e9cb2d7" alt="driving" width="400"/>
+  <img src="https://github.com/user-attachments/assets/06b5dfc5-96c8-46c1-8cf9-b0523b30621d" alt="db" width="400"/>
 </p>
 
-**DB 저장 화면 (실시간 페달 압력 값, RPM, 속도 기록)**
+**앱 내에서 점수 및 습관 확인 가능**
+
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/06b5dfc5-96c8-46c1-8cf9-b0523b30621d" alt="drc" width="500"/>
+  <img src="https://github.com/user-attachments/assets/56c87812-607f-4ac6-a9c4-84bfe7988c5f" alt="app1" width="400"/>
+  <img src="https://github.com/user-attachments/assets/4f56473c-e72e-4073-8ddb-a41d9536b89f" alt="app2" width="400"/>
 </p>
 
 ---
