@@ -92,8 +92,8 @@
 **앱 내에서 점수 및 습관 확인 가능**
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/56c87812-607f-4ac6-a9c4-84bfe7988c5f" alt="app1" width="400"/>
-  <img src="https://github.com/user-attachments/assets/4f56473c-e72e-4073-8ddb-a41d9536b89f" alt="app2" width="400"/>
+  <img src="https://github.com/user-attachments/assets/56c87812-607f-4ac6-a9c4-84bfe7988c5f" alt="app1" width="300"/>
+  <img src="https://github.com/user-attachments/assets/4f56473c-e72e-4073-8ddb-a41d9536b89f" alt="app2" width="300"/>
 </p>
 
 ---
